@@ -96,7 +96,6 @@ class Inovarti_Pagarme_Model_Api
 
 		$response = $client->request();
 		$body = json_decode($response->getBody(), true);
-		Mage::log($body, null, 'pagarme.log');
 		$result = $this->parseObject($body);
 		return $result;
 	}

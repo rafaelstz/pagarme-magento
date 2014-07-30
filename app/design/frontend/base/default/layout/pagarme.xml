@@ -9,6 +9,17 @@
 -->
 
 <layout>
+	<!-- Pagarme Checkout Handle -->
+	<pagarme_checkout_handle>
+		<reference name="head">
+			<action method="addJs" ifconfig="payment/pagarme_cc/active"><script>pagarme/prototype/validation.js</script></action>
+		</reference>
+	</pagarme_checkout_handle>
+
+	<checkout_onepage_index>
+		<update handle="pagarme_checkout_handle"/>
+	</checkout_onepage_index>
+
 	<!-- Pagarme Checkout Success Handle -->
 	<pagarme_checkout_success_handle>
 		<reference name="checkout.success">

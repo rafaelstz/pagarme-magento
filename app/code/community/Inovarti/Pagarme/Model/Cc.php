@@ -5,7 +5,7 @@
  * @package    Inovarti_Pagarme
  * @author     Suporte <suporte@inovarti.com.br>
  */
-class Inovarti_Pagarme_Model_Cc extends Mage_Payment_Model_Method_Cc
+class Inovarti_Pagarme_Model_Cc extends Mage_Payment_Model_Method_Abstract
 {
 	const REQUEST_TYPE_AUTH_CAPTURE = 'AUTH_CAPTURE';
     const REQUEST_TYPE_AUTH_ONLY    = 'AUTH_ONLY';
@@ -29,14 +29,8 @@ class Inovarti_Pagarme_Model_Cc extends Mage_Payment_Model_Method_Cc
             $data = new Varien_Object($data);
         }
         $info = $this->getInfoInstance();
-        $info->setCcType($data->getCcType())
-            ->setCcOwner($data->getCcOwner())
-            ->setCcLast4(substr($data->getCcNumber(), -4))
-            ->setCcNumber($data->getCcNumber())
-            ->setCcCid($data->getCcCid())
-            ->setCcExpMonth($data->getCcExpMonth())
-            ->setCcExpYear($data->getCcExpYear())
-            ->setInstallments($data->getInstallments())
+        $info->setInstallments($data->getInstallments())
+            ->setPagarmeCardHash($data->getPagarmeCardHash())
             ;
         return $this;
     }
@@ -72,10 +66,11 @@ class Inovarti_Pagarme_Model_Cc extends Mage_Payment_Model_Method_Cc
 			Mage::throwException(implode("\n", $messages));
 		}
 
-		// transaction info
-		$payment->setTransactionId($transaction->getId())
+		$payment->setTransactionId($payment->getPagarmeTransactionId() . '-' . Mage_Sales_Model_Order_Payment_Transaction::TYPE_REFUND)
+            ->setParentTransactionId($payment->getParentTransactionId())
 			->setIsTransactionClosed(1)
-			->setTransactionAdditionalInfo(Mage_Sales_Model_Order_Payment_Transaction::RAW_DETAILS,array('status' => $transaction->getStatus()));
+            ->setShouldCloseParentTransaction(1)
+			->setTransactionAdditionalInfo(Mage_Sales_Model_Order_Payment_Transaction::RAW_DETAILS, array('status' => $transaction->getStatus()));
 
 		return $this;
 	}
@@ -88,16 +83,14 @@ class Inovarti_Pagarme_Model_Cc extends Mage_Payment_Model_Method_Cc
 		switch ($requestType) {
 			case self::REQUEST_TYPE_AUTH_ONLY:
 			case self::REQUEST_TYPE_AUTH_CAPTURE:
+                $customer = Mage::helper('pagarme')->getCustomerInfoFromOrder($payment->getOrder());
 				$data = new Varien_Object();
 				$data->setPaymentMethod(Inovarti_Pagarme_Model_Api::PAYMENT_METHOD_CREDITCARD)
 					->setAmount(Mage::helper('pagarme')->formatAmount($amount))
-					->setCardNumber($payment->getCcNumber())
-					->setCardHolderName($payment->getCcOwner())
-					->setCardExpirationDate($this->_formatCardDate($payment->getCcExpYear(), $payment->getCcExpMonth()))
-					->setCardCvv($payment->getCcCid())
-					->setInstallments($this->getInstallments())
+                    ->setCardHash($payment->getPagarmeCardHash())
+					->setInstallments($payment->getInstallments())
 					->setCapture($requestType == self::REQUEST_TYPE_AUTH_CAPTURE)
-					->setCustomer(Mage::helper('pagarme')->getCustomerInfoFromOrder($payment->getOrder()));
+					->setCustomer($customer);
 
 				$transaction = $pagarme->charge($data);
 				break;
@@ -114,16 +107,21 @@ class Inovarti_Pagarme_Model_Cc extends Mage_Payment_Model_Method_Cc
 			Mage::throwException(implode("\n", $messages));
 		}
 
-		if (!$payment->getPagarmeTransactionId()) {
-			// pagar.me info
-			$payment->setPagarmeTransactionId($transaction->getId())
-				->setPagarmeAntifraudScore($transaction->getAntifraudScore());
+		if ($payment->getPagarmeTransactionId()) {
+            $payment->setTransactionId($payment->getPagarmeTransactionId() . '-' . Mage_Sales_Model_Order_Payment_Transaction::TYPE_CAPTURE)
+                ->setParentTransactionId($payment->getParentTransactionId())
+                ->setIsTransactionClosed(0);
+        } else {
+			$payment->setCcOwner($transaction->getCardHolderName())
+                ->setCcLast4($transaction->getCardLastDigits())
+                ->setCcType(Mage::getSingleton('pagarme/source_cctype')->getTypeByBrand($transaction->getCardBrand()))
+                ->setPagarmeTransactionId($transaction->getId())
+				->setPagarmeAntifraudScore($transaction->getAntifraudScore())
+                ->setTransactionId($transaction->getId())
+                ->setIsTransactionClosed(0);
 		}
 
-		// transaction info
-		$payment->setTransactionId($transaction->getId())
-			->setIsTransactionClosed(0)
-			->setTransactionAdditionalInfo(Mage_Sales_Model_Order_Payment_Transaction::RAW_DETAILS,array('status' => $transaction->getStatus()));
+		$payment->setTransactionAdditionalInfo(Mage_Sales_Model_Order_Payment_Transaction::RAW_DETAILS,array('status' => $transaction->getStatus()));
 
 		return $this;
     }

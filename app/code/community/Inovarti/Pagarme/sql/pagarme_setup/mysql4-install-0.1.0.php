@@ -10,7 +10,8 @@ $installer = new Mage_Sales_Model_Resource_Setup('core_setup');
 // Quote Payment
 $entity = 'quote_payment';
 $attributes = array(
-	'installments' => array('type' => Varien_Db_Ddl_Table::TYPE_SMALLINT)
+	'pagarme_card_hash' => array('type' => Varien_Db_Ddl_Table::TYPE_TEXT),
+    'installments' => array('type' => Varien_Db_Ddl_Table::TYPE_SMALLINT)
 );
 
 foreach ($attributes as $attribute => $options) {

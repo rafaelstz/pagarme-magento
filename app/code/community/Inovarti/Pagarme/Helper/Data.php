@@ -80,6 +80,14 @@ class Inovarti_Pagarme_Helper_Data extends Mage_Core_Helper_Abstract
 		return $apiKey;
 	}
 
+	public function getEncryptionKey()
+	{
+		$mode = Mage::getStoreConfig('payment/pagarme_settings/mode');
+		$encryptionKey = Mage::getStoreConfig('payment/pagarme_settings/encryptionkey_' . $mode);
+
+		return $encryptionKey;
+	}
+
 	public function getAddressLine($field)
 	{
 		$line = Mage::getStoreConfig('payment/pagarme_settings/' . $field . '_field');
