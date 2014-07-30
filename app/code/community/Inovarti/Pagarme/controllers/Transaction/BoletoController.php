@@ -17,7 +17,6 @@ class Inovarti_Pagarme_Transaction_BoletoController extends Mage_Core_Controller
 			&& $pagarme->validateFingerprint($request->getPost('id'), $request->getPost('fingerprint'))
 			&& $request->getPost('current_status') == Inovarti_Pagarme_Model_Api::TRANSACTION_STATUS_PAID
 		) {
-			Mage::log($request->getPost(), null, 'pagarme.log');
 			$orderId = Mage::helper('pagarme')->getOrderIdByTransactionId($request->getPost('id'));
 			$order = Mage::getModel('sales/order')->load($orderId);
 			if (!$order->canInvoice()) {

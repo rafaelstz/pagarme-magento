@@ -135,6 +135,24 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
                         </order_status>
+                        <instructions translate="label">
+                            <label>Instructions</label>
+                            <frontend_type>textarea</frontend_type>
+                            <sort_order>40</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </instructions>
+                        <days_to_expire translate="label">
+                            <label>Days to expire</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>50</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <validate>required-entry validate-number validate-greater-than-zero</validate>
+                            <comment><![CDATA[Days that will be added to expiration date.]]></comment>
+                        </days_to_expire>
                         <sort_order translate="label">
                             <label>Sort Order</label>
                             <frontend_type>text</frontend_type>

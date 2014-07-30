@@ -9,6 +9,7 @@ class Inovarti_Pagarme_Model_Boleto extends Mage_Payment_Model_Method_Abstract
 {
     protected $_code = 'pagarme_boleto';
 
+    protected $_formBlockType = 'pagarme/form_boleto';
     protected $_infoBlockType = 'pagarme/info_boleto';
 
 	protected $_isGateway                   = true;
@@ -26,11 +27,12 @@ class Inovarti_Pagarme_Model_Boleto extends Mage_Payment_Model_Method_Abstract
     public function _place(Mage_Sales_Model_Order_Payment $payment, $amount)
     {
         $order = $payment->getOrder();
-
+        $customer = Mage::helper('pagarme')->getCustomerInfoFromOrder($payment->getOrder());
         $data = new Varien_Object();
 		$data->setPaymentMethod(Inovarti_Pagarme_Model_Api::PAYMENT_METHOD_BOLETO)
 			->setAmount(Mage::helper('pagarme')->formatAmount($amount))
-			->setCustomer(Mage::helper('pagarme')->getCustomerInfoFromOrder($payment->getOrder()))
+            ->setBoletoExpirationDate($this->_generateExpirationDate())
+			->setCustomer($customer)
 			->setPostbackUrl(Mage::getUrl('pagarme/transaction_boleto/postback'));
 
 		$pagarme = Mage::getModel('pagarme/api')
@@ -52,5 +54,13 @@ class Inovarti_Pagarme_Model_Boleto extends Mage_Payment_Model_Method_Abstract
 			->setPagarmeBoletoExpirationDate($transaction->getBoletoExpirationDate());
 
 		return $this;
+    }
+
+    protected function _generateExpirationDate()
+    {
+        $date = new Zend_Date();
+        $date->add($this->getConfigData('days_to_expire'), Zend_Date::DAY);
+        $result = date('Y-m-d H:i:s', Mage::getModel('core/date')->timestamp($date));
+        return $result;
     }
 }

@@ -153,6 +153,7 @@
             	<active>0</active>
                 <model>pagarme/boleto</model>
                 <title>Boleto Bancário</title>
+                <days_to_expire>5</days_to_expire>
                 <payment_action>charge</payment_action>
                 <allowspecific>0</allowspecific>
                 <sort_order>1</sort_order>
