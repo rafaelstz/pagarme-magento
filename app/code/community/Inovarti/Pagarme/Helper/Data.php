@@ -68,23 +68,26 @@ class Inovarti_Pagarme_Helper_Data extends Mage_Core_Helper_Abstract
 		$customer->setSex($this->formatGender($order->getCustomerGender()));
 		$customer->setBornAt($this->formatDob($order->getCustomerDob()));
 		$customer->setAddress($address);
+		Mage::dispatchEvent('pagarme_get_customer_info_from_order_after', array('order' => $order, 'customer_info' => $customer));
 
 		return $customer;
 	}
 
-	public function getApiKey()
+	public function getMode()
 	{
 		$mode = Mage::getStoreConfig('payment/pagarme_settings/mode');
-		$apiKey = Mage::getStoreConfig('payment/pagarme_settings/apikey_' . $mode);
+		return $mode;
+	}
 
+	public function getApiKey()
+	{
+		$apiKey = Mage::getStoreConfig('payment/pagarme_settings/apikey_' . $this->getMode());
 		return $apiKey;
 	}
 
 	public function getEncryptionKey()
 	{
-		$mode = Mage::getStoreConfig('payment/pagarme_settings/mode');
-		$encryptionKey = Mage::getStoreConfig('payment/pagarme_settings/encryptionkey_' . $mode);
-
+		$encryptionKey = Mage::getStoreConfig('payment/pagarme_settings/encryptionkey_' . $this->getMode());
 		return $encryptionKey;
 	}
 
@@ -94,7 +97,6 @@ class Inovarti_Pagarme_Helper_Data extends Mage_Core_Helper_Abstract
 		if ($line) {
 			return $line;
 		}
-
 		return '';
 	}
 }

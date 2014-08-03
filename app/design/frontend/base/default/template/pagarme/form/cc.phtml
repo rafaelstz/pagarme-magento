@@ -6,12 +6,7 @@
  * @author     Suporte <suporte@inovarti.com.br>
  */
 ?>
-<script type="text/javascript" src="https://pagar.me/assets/pagarme.js"></script>
-<script type="text/javascript" src="<?php echo $this->getSkinUrl('pagarme/js/checkout.js') ?>"></script>
-<script type="text/javascript">
-PagarMe.encryption_key = '<?php echo $this->helper('pagarme')->getEncryptionKey() ?>';
-payment.loadPagarmeCcData();
-</script>
+<script type="text/javascript">payment.loadPagarmeCcData();</script>
 <?php $_code=$this->getMethodCode() ?>
 <ul class="form-list" id="payment_form_<?php echo $_code ?>" style="display:none;">
     <li style="display: none;"><input type="hidden" id="<?php echo $_code ?>_pagarme_card_hash" name="payment[pagarme_card_hash]" value="" /></li>
