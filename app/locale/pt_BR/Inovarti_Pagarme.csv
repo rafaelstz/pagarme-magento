@@ -15,6 +15,7 @@
 "Test","Teste"
 "Live","Produção"
 "Api Key","Chave de API"
+"Encryption Key","Chave de criptografia"
 "Street Field","Campo Rua"
 "Number Field","Campo Número da Rua"
 "Neighborhood Field","Campo Bairro"
