@@ -107,6 +107,10 @@ class Inovarti_Pagarme_Model_Cc extends Mage_Payment_Model_Method_Abstract
 			Mage::throwException(implode("\n", $messages));
 		}
 
+        if ($transaction->getStatus() == 'refused') {
+            Mage::throwException($this->_wrapGatewayError($transaction->getAcquirerResponseCode()));
+        }
+
 		if ($payment->getPagarmeTransactionId()) {
             $payment->setTransactionId($payment->getPagarmeTransactionId() . '-' . Mage_Sales_Model_Order_Payment_Transaction::TYPE_CAPTURE)
                 ->setParentTransactionId($payment->getParentTransactionId())
@@ -130,5 +134,10 @@ class Inovarti_Pagarme_Model_Cc extends Mage_Payment_Model_Method_Abstract
     {
     	$formated = sprintf('%02d', $month) . substr($year, -2);
     	return $formated;
+    }
+
+    protected function _wrapGatewayError($code)
+    {
+        return Mage::helper('pagarme')->__('Gateway error: %s', $code);
     }
 }
