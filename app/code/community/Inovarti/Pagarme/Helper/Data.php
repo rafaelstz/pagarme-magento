@@ -55,18 +55,19 @@ class Inovarti_Pagarme_Helper_Data extends Mage_Core_Helper_Abstract
 		$billingAddress = $order->getBillingAddress();
 
 		$address = new Varien_Object();
-		$address->setStreet($billingAddress->getStreet($this->getAddressLine('street')));
-		$address->setNeighborhood($billingAddress->getStreet($this->getAddressLine('neighborhood')));
+		$address->setStreet($billingAddress->getStreet(1));
+		$address->setStreetNumber($billingAddress->getStreet(2));
+		$address->setComplementary($billingAddress->getStreet(3)); // optional
+		$address->setNeighborhood($billingAddress->getStreet(4));
 		$address->setZipcode(Zend_Filter::filterStatic($billingAddress->getPostcode(), 'Digits'));
-		$address->setStreetNumber($billingAddress->getStreet($this->getAddressLine('number')));
 
 		$customer = new Varien_Object();
 		$customer->setName($order->getCustomerName());
 		$customer->setDocumentNumber($order->getCustomerTaxvat());
 		$customer->setEmail($order->getCustomerEmail());
 		$customer->setPhone($this->splitTelephone($billingAddress->getTelephone()));
-		$customer->setSex($this->formatGender($order->getCustomerGender()));
-		$customer->setBornAt($this->formatDob($order->getCustomerDob()));
+		$customer->setSex($this->formatGender($order->getCustomerGender())); // optional
+		$customer->setBornAt($this->formatDob($order->getCustomerDob())); // optional
 		$customer->setAddress($address);
 		Mage::dispatchEvent('pagarme_get_customer_info_from_order_after', array('order' => $order, 'customer_info' => $customer));
 
@@ -89,14 +90,5 @@ class Inovarti_Pagarme_Helper_Data extends Mage_Core_Helper_Abstract
 	{
 		$encryptionKey = Mage::getStoreConfig('payment/pagarme_settings/encryptionkey_' . $this->getMode());
 		return $encryptionKey;
-	}
-
-	public function getAddressLine($field)
-	{
-		$line = Mage::getStoreConfig('payment/pagarme_settings/' . $field . '_field');
-		if ($line) {
-			return $line;
-		}
-		return '';
 	}
 }

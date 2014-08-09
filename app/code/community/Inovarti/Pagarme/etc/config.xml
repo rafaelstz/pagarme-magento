@@ -155,9 +155,6 @@
         <payment>
         	<pagarme_settings>
             	<mode>test</mode>
-                <street_field>1</street_field>
-                <number_field>2</number_field>
-                <neighborhood_field>3</neighborhood_field>
             </pagarme_settings>
             <pagarme_boleto>
             	<active>0</active>
