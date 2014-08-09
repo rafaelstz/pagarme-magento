@@ -9,10 +9,7 @@
 <?php echo $this->htmlEscape($this->getMethod()->getTitle()) ?>
 
 <?php if ($_info = $this->getInfo()):?>
-<?php if ($_info->getCcType()): ?><br /><?php echo $this->__('Credit Card Type') ?>: <br /><?php echo $this->escapeHtml($this->getCcTypeName()) ?><?php endif ?>
-<?php if ($_info->getCcOwner()): ?><br /><?php echo $this->__('Name on the Card') ?>: <br /><?php echo $this->escapeHtml($this->getCcOwner()) ?><?php endif ?>
-<?php if ($_info->getCcLast4()): ?><br /><?php echo $this->__('Credit Card Number') ?>: <br /><?php echo $this->escapeHtml($this->getCcNumber()) ?><?php endif ?>
-<?php if ($_info->getInstallments()): ?><br /><?php echo $this->__('Number of Installments') ?>: <?php echo $this->escapeHtml($this->getInstallments()) ?><?php endif ?>
+<br /><?php echo $this->escapeHtml($this->getInstallmentDescription()) ?>
 <?php endif;?>
 
 <?php echo $this->getChildHtml()?>

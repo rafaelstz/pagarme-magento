@@ -64,6 +64,14 @@ class Inovarti_Pagarme_Block_Info_Cc extends Mage_Payment_Block_Info_Cc
     /**
      * @return string
      */
+    public function getInstallmentDescription()
+    {
+        return $this->getInfo()->getInstallmentDescription();
+    }
+
+    /**
+     * @return string
+     */
     public function getAntifraudScore()
     {
         return sprintf ("%.2f", $this->getInfo()->getPagarmeAntifraudScore());

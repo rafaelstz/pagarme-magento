@@ -18,6 +18,8 @@ class Inovarti_Pagarme_Block_Form_Cc extends Mage_Payment_Block_Form_Cc
     public function getInstallmentsAvailables(){
     	$maxInstallments = (int)Mage::getStoreConfig('payment/pagarme_cc/max_installments');
     	$minInstallmentValue = (float)Mage::getStoreConfig('payment/pagarme_cc/min_installment_value');
+        $interestRate = (float)Mage::getStoreConfig('payment/pagarme_cc/interest_rate');
+        $freeInstallments = (int)Mage::getStoreConfig('payment/pagarme_cc/free_installments');
     	if ($minInstallmentValue < self::MIN_INSTALLMENT_VALUE) {
     		$minInstallmentValue = self::MIN_INSTALLMENT_VALUE;
     	}
@@ -32,16 +34,27 @@ class Inovarti_Pagarme_Block_Form_Cc extends Mage_Payment_Block_Form_Cc
     		$n = 1;
     	}
 
-    	$installments = array();
-    	for ($i=1; $i <= $n; $i++) {
-    		$price = round($total / $i, 2);
-    		if ($i==1) {
-    			$label = $this->__('Pay in full - %s', $quote->getStore()->formatPrice($price, false));
-    		} else {
-    			$label = $this->__('%sx - %s', $i, $quote->getStore()->formatPrice($price, false));
-    		}
-    		$installments[$i] = $label;
-    	}
+        $data = new Varien_Object();
+        $data->setEncryptionKey(Mage::helper('pagarme')->getEncryptionKey())
+            ->setAmount($total)
+            ->setInterestRate($interestRate)
+            ->setMaxInstallments($n)
+            ->setFreeInstallments($freeInstallments) // optional
+            ;
+
+        $response = Mage::getModel('pagarme/api')->calculateInstallmentsAmount($data);
+        $collection = $response->getInstallments();
+
+        $installments = array();
+        foreach ($collection as $item) {
+            if ($item->getInstallment() == 1) {
+                $label = $this->__('Pay in full - %s', $quote->getStore()->formatPrice($item->getInstallmentAmount(), false));
+            } else {
+                $label = $this->__('%sx - %s', $item->getInstallment(), $quote->getStore()->formatPrice($item->getInstallmentAmount(), false), $interestDescription) . ' ';
+                $label .= $item->getInstallment() > $freeInstallments ? $this->__('monthly interest rate (%s)', $interestRate.'%') : $this->__('interest-free');
+            }
+            $installments[$item->getInstallment()] = $label;
+        }
     	return $installments;
     }
 }

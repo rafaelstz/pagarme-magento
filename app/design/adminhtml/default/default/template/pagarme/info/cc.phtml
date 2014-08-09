@@ -19,7 +19,7 @@
 <br />
 <?php echo $this->__('Credit Card Number') ?>: <?php echo $this->escapeHtml($this->getCcNumber()) ?>
 <br />
-<?php echo $this->__('Number of Installments') ?>: <?php echo $this->escapeHtml($this->getInstallments()) ?>
+<?php echo $this->__('Installments') ?>: <?php echo $this->escapeHtml($this->getInstallmentDescription()) ?>
 <br />
 <?php if ($this->getInfo()->getPagarmeAntifraudScore()): ?>
 <?php echo $this->__('Antifraud Score') ?>: <strong class="emph"><?php echo $this->escapeHtml($this->getAntifraudScore()) ?>%</strong>

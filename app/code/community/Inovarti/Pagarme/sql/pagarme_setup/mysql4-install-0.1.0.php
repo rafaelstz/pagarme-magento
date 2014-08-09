@@ -11,7 +11,8 @@ $installer = new Mage_Sales_Model_Resource_Setup('core_setup');
 $entity = 'quote_payment';
 $attributes = array(
 	'pagarme_card_hash' => array('type' => Varien_Db_Ddl_Table::TYPE_TEXT),
-    'installments' => array('type' => Varien_Db_Ddl_Table::TYPE_SMALLINT)
+    'installments' => array('type' => Varien_Db_Ddl_Table::TYPE_SMALLINT),
+    'installment_description' => array('type' => Varien_Db_Ddl_Table::TYPE_VARCHAR),
 );
 
 foreach ($attributes as $attribute => $options) {
@@ -22,6 +23,7 @@ foreach ($attributes as $attribute => $options) {
 $entity = 'order_payment';
 $attributes = array(
 	'installments' => array('type' => Varien_Db_Ddl_Table::TYPE_SMALLINT),
+	'installment_description' => array('type' => Varien_Db_Ddl_Table::TYPE_VARCHAR),
 	'pagarme_transaction_id' => array('type' => Varien_Db_Ddl_Table::TYPE_INTEGER),
 	'pagarme_boleto_url' => array('type' => Varien_Db_Ddl_Table::TYPE_VARCHAR),
 	'pagarme_boleto_barcode' => array('type' => Varien_Db_Ddl_Table::TYPE_VARCHAR),

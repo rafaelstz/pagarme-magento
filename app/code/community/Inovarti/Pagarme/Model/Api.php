@@ -84,6 +84,16 @@ class Inovarti_Pagarme_Model_Api
 		return $response;
 	}
 
+	public function calculateInstallmentsAmount(Varien_Object $data)
+	{
+		$response = $this->request(
+			$this->getTransactionCalculateInstallmentsAmountUrl(),
+			$this->parseArray($data),
+			Zend_Http_Client::GET
+		);
+		return $response;
+	}
+
 	public function request($url, $data = array(), $method='GET')
 	{
 		$client = new Varien_Http_Client($url, array('timeout'	=> 30));
@@ -180,6 +190,12 @@ class Inovarti_Pagarme_Model_Api
 	public function getTransactionCardhashUrl()
 	{
 		$url = $this->getBaseUrl() . '/transactions/card_hash_key';
+		return $url;
+	}
+
+	public function getTransactionCalculateInstallmentsAmountUrl()
+	{
+		$url = $this->getBaseUrl() . '/transactions/calculate_installments_amount';
 		return $url;
 	}
 

@@ -30,6 +30,7 @@ class Inovarti_Pagarme_Model_Cc extends Mage_Payment_Model_Method_Abstract
         }
         $info = $this->getInfoInstance();
         $info->setInstallments($data->getInstallments())
+            ->setInstallmentDescription($data->getInstallmentDescription())
             ->setPagarmeCardHash($data->getPagarmeCardHash())
             ;
         return $this;
