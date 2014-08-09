@@ -7,42 +7,12 @@
 
 Payment.prototype._save = Payment.prototype.save;
 Payment.prototype.save = function() {
-    if (this.currentMethod == 'pagarme_cc') {
-        if (checkout.loadWaiting!=false) return;
-        var validator = new Validation(this.form);
-        if (this.validate() && validator.validate()) {
-            checkout.setLoadWaiting('payment');
-            this.savePagarmeCcData();
-            this.generateCardHash();
-        }
-    } else {
-        this._save();
-    }
-};
-
-Payment.prototype.generateCardHash = function(save) {
-    var creditCard = new PagarMe.creditCard();
-    creditCard.cardHolderName = $(this.currentMethod+'_cc_owner').value;
-    creditCard.cardExpirationMonth = $(this.currentMethod+'_expiration').value;
-    creditCard.cardExpirationYear = $(this.currentMethod+'_expiration_yr').value;
-    creditCard.cardNumber = $(this.currentMethod+'_cc_number').value;
-    creditCard.cardCVV = $(this.currentMethod+'_cc_cid').value;
-    creditCard.generateHash(function(cardHash) {
-        $(this.currentMethod+'_pagarme_card_hash').value = cardHash;
-        var request = new Ajax.Request(
-            this.saveUrl,
-            {
-                method:'post',
-                onComplete: this.onComplete,
-                onSuccess: this.onSave,
-                onFailure: checkout.ajaxFailure.bind(checkout),
-                parameters: Form.serialize(this.form)
-            }
-        );
-    }.bind(this));
+    this.savePagarmeCcData();
+    this._save();
 };
 
 Payment.prototype.savePagarmeCcData = function() {
+    if (this.currentMethod != 'pagarme_cc') return;
     var fields = ['cc_type', 'cc_number', 'cc_owner', 'expiration', 'expiration_yr', 'cc_cid'];
     this.pagarmeCcData = {};
     fields.each(function(field){
@@ -57,3 +27,24 @@ Payment.prototype.loadPagarmeCcData = function() {
         }.bind(this));
     }
 };
+
+Review.prototype._save = Review.prototype.save;
+Review.prototype.save = function() {
+    if (payment.currentMethod == 'pagarme_cc') {
+        var creditCard = new PagarMe.creditCard();
+        creditCard.cardHolderName = payment.pagarmeCcData.cc_owner;
+        creditCard.cardExpirationMonth = payment.pagarmeCcData.expiration;
+        creditCard.cardExpirationYear = payment.pagarmeCcData.expiration_yr;
+        creditCard.cardNumber = payment.pagarmeCcData.cc_number;
+        creditCard.cardCVV = payment.pagarmeCcData.cc_cid;
+
+        checkout.setLoadWaiting('review');
+        creditCard.generateHash(function(cardHash) {
+            checkout.setLoadWaiting(false);
+            $(payment.currentMethod+'_pagarme_card_hash').value = cardHash;
+            this._save();
+        }.bind(this));
+    } else {
+        this._save();
+    }
+}
