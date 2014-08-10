@@ -50,7 +50,7 @@ class Inovarti_Pagarme_Block_Form_Cc extends Mage_Payment_Block_Form_Cc
             if ($item->getInstallment() == 1) {
                 $label = $this->__('Pay in full - %s', $quote->getStore()->formatPrice($item->getInstallmentAmount(), false));
             } else {
-                $label = $this->__('%sx - %s', $item->getInstallment(), $quote->getStore()->formatPrice($item->getInstallmentAmount(), false), $interestDescription) . ' ';
+                $label = $this->__('%sx - %s', $item->getInstallment(), $quote->getStore()->formatPrice($item->getInstallmentAmount(), false)) . ' ';
                 $label .= $item->getInstallment() > $freeInstallments ? $this->__('monthly interest rate (%s)', $interestRate.'%') : $this->__('interest-free');
             }
             $installments[$item->getInstallment()] = $label;
