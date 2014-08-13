@@ -36,7 +36,7 @@ class Inovarti_Pagarme_Block_Form_Cc extends Mage_Payment_Block_Form_Cc
 
         $data = new Varien_Object();
         $data->setEncryptionKey(Mage::helper('pagarme')->getEncryptionKey())
-            ->setAmount($total)
+            ->setAmount(Mage::helper('pagarme')->formatAmount($total))
             ->setInterestRate($interestRate)
             ->setMaxInstallments($n)
             ->setFreeInstallments($freeInstallments) // optional
