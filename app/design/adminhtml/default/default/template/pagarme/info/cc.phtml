@@ -13,7 +13,7 @@
 <br />
 <?php echo $this->__('Transaction') ?>: <a href="#" onclick="return Pagarme.load('<?php echo $this->getTransactionUrl() ?>');">#<?php echo $this->escapeHtml($this->getTransactionId()) ?></a>
 <br />
-<?php echo $this->__('Name on the Card') ?>: <?php echo $this->escapeHtml($this->getCcOwner()) ?>
+<?php echo $this->__('Name on Card') ?>: <?php echo $this->escapeHtml($this->getCcOwner()) ?>
 <br />
 <?php echo $this->__('Credit Card Type') ?>: <?php echo $this->escapeHtml($this->getCcTypeName()) ?>
 <br />

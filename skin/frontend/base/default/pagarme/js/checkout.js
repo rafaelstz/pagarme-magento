@@ -7,24 +7,19 @@
 
 Payment.prototype._save = Payment.prototype.save;
 Payment.prototype.save = function() {
-    this.savePagarmeCcData();
-    this._save();
-};
-
-Payment.prototype.savePagarmeCcData = function() {
-    if (this.currentMethod != 'pagarme_cc') return;
-    var fields = ['cc_type', 'cc_number', 'cc_owner', 'expiration', 'expiration_yr', 'cc_cid'];
-    this.pagarmeCcData = {};
-    fields.each(function(field){
-        this.pagarmeCcData[field] = $(this.currentMethod+'_'+field).value;
-    }.bind(this));
-};
-
-Payment.prototype.loadPagarmeCcData = function() {
-    if (this.currentMethod == 'pagarme_cc' && this.pagarmeCcData) {
-        $H(this.pagarmeCcData).each(function(field){
-            $(this.currentMethod+'_'+field.key).value = field.value;
-        }.bind(this));
+    if (checkout.loadWaiting!=false) return;
+    var validator = new Validation(this.form);
+    if (this.validate() && validator.validate()) {
+        if (this.currentMethod == 'pagarme_cc') {
+            this.pagarme_cc_data = {};
+            var fields = ['installments', 'cc_type', 'cc_number', 'cc_owner', 'expiration', 'expiration_yr', 'cc_cid'];
+            fields.each(function(field){
+                this.pagarme_cc_data[field] = $(this.currentMethod+'_'+field).value;
+            }.bind(this));
+        } else {
+            this.pagarme_cc_data = null; //clear data
+        }
+        this._save();
     }
 };
 
@@ -32,11 +27,11 @@ Review.prototype._save = Review.prototype.save;
 Review.prototype.save = function() {
     if (payment.currentMethod == 'pagarme_cc') {
         var creditCard = new PagarMe.creditCard();
-        creditCard.cardHolderName = payment.pagarmeCcData.cc_owner;
-        creditCard.cardExpirationMonth = payment.pagarmeCcData.expiration;
-        creditCard.cardExpirationYear = payment.pagarmeCcData.expiration_yr;
-        creditCard.cardNumber = payment.pagarmeCcData.cc_number;
-        creditCard.cardCVV = payment.pagarmeCcData.cc_cid;
+        creditCard.cardHolderName = payment.pagarme_cc_data.cc_owner;
+        creditCard.cardExpirationMonth = payment.pagarme_cc_data.expiration;
+        creditCard.cardExpirationYear = payment.pagarme_cc_data.expiration_yr;
+        creditCard.cardNumber = payment.pagarme_cc_data.cc_number;
+        creditCard.cardCVV = payment.pagarme_cc_data.cc_cid;
 
         checkout.setLoadWaiting('review');
         creditCard.generateHash(function(cardHash) {

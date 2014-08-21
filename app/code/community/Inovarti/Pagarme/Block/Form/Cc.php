@@ -15,6 +15,19 @@ class Inovarti_Pagarme_Block_Form_Cc extends Mage_Payment_Block_Form_Cc
         $this->setTemplate('pagarme/form/cc.phtml');
     }
 
+    public function getCcMonths()
+    {
+        $months = $this->getData('cc_months');
+        if (is_null($months)) {
+            $months[0] =  $this->__('Month');
+            for ($i=1; $i <= 12; $i++) {
+                $months[$i] = str_pad($i, 2, '0', STR_PAD_LEFT);
+            }
+            $this->setData('cc_months', $months);
+        }
+        return $months;
+    }
+
     public function getInstallmentsAvailables(){
     	$maxInstallments = (int)Mage::getStoreConfig('payment/pagarme_cc/max_installments');
     	$minInstallmentValue = (float)Mage::getStoreConfig('payment/pagarme_cc/min_installment_value');
