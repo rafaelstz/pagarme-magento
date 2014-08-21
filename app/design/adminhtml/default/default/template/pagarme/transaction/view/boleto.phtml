@@ -27,14 +27,6 @@
 					<td class="value"><strong><?php echo $this->__('Boleto') ?></strong></td>
 				</tr>
 				<tr>
-					<td class="label"><label><?php echo $this->__('Barcode') ?></label></td>
-					<td class="value"><strong><?php echo $this->escapeHtml($_transaction->getBoletoBarcode()) ?></strong></td>
-				</tr>
-				<tr>
-					<td class="label"><label><?php echo $this->__('Boleto URL') ?></label></td>
-					<td class="value"><strong><a href="<?php echo $_transaction->getBoletoUrl() ?>"><?php echo $_transaction->getBoletoUrl() ?></a></strong></td>
-				</tr>
-				<tr>
 					<td class="label"><label><?php echo $this->__('Expiration Date') ?></label></td>
 					<td class="value"><strong><?php echo $this->escapeHtml($this->getBoletoExpirationDate()) ?></strong></td>
 				</tr>
