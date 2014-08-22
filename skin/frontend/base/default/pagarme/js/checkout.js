@@ -30,6 +30,30 @@ if (typeof OPC !== "undefined") {
             }
         }
     }
+} else if(typeof IWD !== "undefined" && typeof IWD.OPC !== "undefined") {
+    // One Page Checkout by IWD
+    IWD.OPC._saveOrder = IWD.OPC.saveOrder;
+    IWD.OPC.saveOrder = function() {
+        if (payment.currentMethod == 'pagarme_cc') {
+            var creditCard = new PagarMe.creditCard();
+            creditCard.cardHolderName = $(payment.currentMethod+'_cc_owner').value;
+            creditCard.cardExpirationMonth = $(payment.currentMethod+'_expiration').value;
+            creditCard.cardExpirationYear = $(payment.currentMethod+'_expiration_yr').value;
+            creditCard.cardNumber = $(payment.currentMethod+'_cc_number').value;
+            creditCard.cardCVV = $(payment.currentMethod+'_cc_cid').value;
+
+            IWD.OPC.Checkout.showLoader();
+            IWD.OPC.Checkout.lockPlaceOrder();
+            creditCard.generateHash(function(cardHash) {
+                IWD.OPC.Checkout.hideLoader();
+                IWD.OPC.Checkout.unlockPlaceOrder();
+                $(payment.currentMethod+'_pagarme_card_hash').value = cardHash;
+                this._saveOrder();
+            }.bind(this));
+        } else {
+            this._saveOrder();
+        }
+    }
 } else {
     // Default Magento Checkout
     Payment.prototype._save = Payment.prototype.save;

@@ -23,6 +23,10 @@
 		<update handle="pagarme_checkout_handle"/>
 	</onepagecheckout_index_index>
 
+	<opc_index_index>
+		<update handle="pagarme_checkout_handle"/>
+	</opc_index_index>
+
 	<!-- Pagarme Checkout Success Handle -->
 	<pagarme_checkout_success_handle>
 		<reference name="checkout.success">
