@@ -144,6 +144,16 @@
         e.stop();
     });
 
+    $$('input[name="payment[method]"]').find(function(radio) {
+        Event.observe(radio, 'change', function() {
+            if(radio.value == '<?php echo $_code ?>') {
+                fireEvent($('<?php echo $_code ?>_cc_number'), 'change');
+            } else {
+                $('<?php echo $_code ?>_types').select('li').invoke('addClassName', 'on');
+            }
+        });
+    });
+
     // Fill the form
     if (payment.currentMethod == 'pagarme_cc' && payment.pagarme_cc_data) {
         $H(payment.pagarme_cc_data).each(function(field){

@@ -15,10 +15,13 @@
 		</reference>
 	</pagarme_checkout_handle>
 
-
 	<checkout_onepage_index>
 		<update handle="pagarme_checkout_handle"/>
 	</checkout_onepage_index>
+
+	<onepagecheckout_index_index>
+		<update handle="pagarme_checkout_handle"/>
+	</onepagecheckout_index_index>
 
 	<!-- Pagarme Checkout Success Handle -->
 	<pagarme_checkout_success_handle>
@@ -33,4 +36,8 @@
 	<checkout_onepage_success>
 		<update handle="pagarme_checkout_success_handle"/>
     </checkout_onepage_success>
+
+    <onepagecheckout_index_success>
+		<update handle="pagarme_checkout_success_handle"/>
+    </onepagecheckout_index_success>
 </layout>
