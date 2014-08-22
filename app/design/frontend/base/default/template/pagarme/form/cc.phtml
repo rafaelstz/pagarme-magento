@@ -40,7 +40,7 @@
     <li>
         <label for="<?php echo $_code ?>_cc_number" class="required"><em>*</em><?php echo $this->__('Credit Card Number') ?></label>
         <div class="input-box">
-            <input type="text" id="<?php echo $_code ?>_cc_number" title="<?php echo $this->__('Credit Card Number') ?>" class="input-text required-entry validate-pagarme-cc-number" value="" />
+            <input type="text" id="<?php echo $_code ?>_cc_number" title="<?php echo $this->__('Credit Card Number') ?>" class="input-text pagarme-only-number required-entry validate-pagarme-cc-number" maxlength="19" value="" />
         </div>
     </li>
     <li>
@@ -75,7 +75,7 @@
         <label for="<?php echo $_code ?>_cc_cid" class="required"><em>*</em><?php echo $this->__('Card Verification Number') ?></label>
         <div class="input-box">
             <div class="v-fix pagarme-cvv">
-                <input type="text" title="<?php echo $this->__('Card Verification Number') ?>" class="input-text cvv required-entry validate-pagarme-cc-cvn" id="<?php echo $_code ?>_cc_cid" value="" />
+                <input type="text" title="<?php echo $this->__('Card Verification Number') ?>" class="input-text pagarme-only-number cvv required-entry validate-pagarme-cc-cvn" id="<?php echo $_code ?>_cc_cid" maxlength="4" value="" />
                 <div class="pagarme-cvv-tool-tip">
                     <img src="<?php echo $this->getSkinUrl('pagarme/images/icon_cvv.gif') ?>" class="pagarme-cvv-icon" />
                     <div class="pagarme-cvv-image"><img src="<?php echo $this->getSkinUrl('pagarme/images/cvv.gif') ?>" alt="<?php echo $this->__('Card Verification Number Visual Reference') ?>" title="<?php echo $this->__('Card Verification Number Visual Reference') ?>" /></div>
@@ -128,20 +128,26 @@
     });
 
     // allow only numbers
-    Event.observe($('<?php echo $_code ?>_cc_number'), 'keydown', function(e){
-        var code = e.keyCode || e.which;
-        var isOnlyNumber = ((code > 47 && code < 58 && e.shiftKey == false)
-            || (code > 95 && code < 106)
-            || (e.ctrlKey || code == 8 || code == 9 || code == 13 || code == 16 || code == 35 || code == 36 || code == 37 || code == 38 || code == 39 || code == 40 || code == 46));
+    $$('input.pagarme-only-number').find(function(input){
+        Event.observe(input, 'keydown', function(e){
+            var code = e.keyCode || e.which;
+            var isOnlyNumber = ((code > 47 && code < 58 && e.shiftKey == false)
+                || (code > 95 && code < 106)
+                || (e.ctrlKey || code == 8 || code == 9 || code == 13 || code == 16 || code == 35 || code == 36 || code == 37 || code == 38 || code == 39 || code == 40 || code == 46));
 
-        if (!isOnlyNumber) {
+            if (!isOnlyNumber) {
+                e.stop();
+            }
+        });
+
+        Event.observe(input, 'blur', function(e){
+            this.value = this.value.replace(/[^0-9]/g, '');
+        });
+
+        // prevent menu from right click
+        Event.observe(input, 'contextmenu', function(e){
             e.stop();
-        }
-    });
-
-    // prevent menu from right click
-    Event.observe($('<?php echo $_code ?>_cc_number'), 'contextmenu', function(e){
-        e.stop();
+        })
     });
 
     $$('input[name="payment[method]"]').find(function(radio) {
