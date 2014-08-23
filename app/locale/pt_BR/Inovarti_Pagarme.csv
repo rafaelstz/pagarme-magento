@@ -51,7 +51,7 @@
 "Expiration Date","Data de Validade"
 "Card Verification Number","Código de Segurança"
 "Antifraud Score","Antifraude Score"
-"Gateway error: %s","Não foi possível realizar o pagamento. Por favor, verifique se os dados de seu cartão estão corretos e tente novamente. Caso o erro persista, entre em contato com a central de atendimento de seu cartão e informe o código (%s)."
+"Transaction failed, please try again or contact the card issuing bank.","Falha na transação, por favor tente novamente ou entre em contato com o banco emissor do cartão."
 "Month","Mês"
 "Year","Ano"
 "Payment Method","Método de Pagamento"

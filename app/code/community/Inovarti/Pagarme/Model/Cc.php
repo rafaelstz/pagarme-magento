@@ -139,6 +139,6 @@ class Inovarti_Pagarme_Model_Cc extends Mage_Payment_Model_Method_Abstract
 
     protected function _wrapGatewayError($code)
     {
-        return Mage::helper('pagarme')->__('Gateway error: %s', $code);
+        return Mage::helper('pagarme')->__('Transaction failed, please try again or contact the card issuing bank.');
     }
 }
