@@ -161,11 +161,13 @@
     });
 
     // Fill the form
-    if (payment.currentMethod == 'pagarme_cc' && payment.pagarme_cc_data) {
+    if (typeof payment !== "undefined" && payment.currentMethod == 'pagarme_cc' && payment.pagarme_cc_data) {
         $H(payment.pagarme_cc_data).each(function(field){
             $(payment.currentMethod+'_'+field.key).value = field.value;
             fireEvent($(payment.currentMethod+'_'+field.key), 'change');
         });
     }
+
+    fireEvent($('<?php echo $_code ?>_cc_number'), 'change');
 //]]>
 </script>

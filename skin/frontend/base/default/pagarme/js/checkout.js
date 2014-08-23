@@ -54,6 +54,34 @@ if (typeof OPC !== "undefined") {
             this._saveOrder();
         }
     }
+} else if (typeof AWOnestepcheckoutForm !== "undefined") {
+    //One Step Checkout by aheadWorks
+    AWOnestepcheckoutForm.prototype._placeOrder = AWOnestepcheckoutForm.prototype.placeOrder;
+    AWOnestepcheckoutForm.prototype.placeOrder = function() {
+        if (this.validate()) {
+            if (awOSCPayment.currentMethod == 'pagarme_cc') {
+                var creditCard = new PagarMe.creditCard();
+                creditCard.cardHolderName = $(awOSCPayment.currentMethod+'_cc_owner').value;
+                creditCard.cardExpirationMonth = $(awOSCPayment.currentMethod+'_expiration').value;
+                creditCard.cardExpirationYear = $(awOSCPayment.currentMethod+'_expiration_yr').value;
+                creditCard.cardNumber = $(awOSCPayment.currentMethod+'_cc_number').value;
+                creditCard.cardCVV = $(awOSCPayment.currentMethod+'_cc_cid').value;
+
+                this.showOverlay();
+                this.showPleaseWaitNotice();
+                this.disablePlaceOrderButton();
+                creditCard.generateHash(function(cardHash) {
+                    this.enablePlaceOrderButton();
+                    this.hidePleaseWaitNotice();
+                    this.hideOverlay();
+                    $(awOSCPayment.currentMethod+'_pagarme_card_hash').value = cardHash;
+                    this._placeOrder();
+                }.bind(this));
+            } else {
+                this._placeOrder();
+            }
+        }
+    }
 } else {
     // Default Magento Checkout
     Payment.prototype._save = Payment.prototype.save;
