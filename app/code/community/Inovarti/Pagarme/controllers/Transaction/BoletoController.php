@@ -9,8 +9,7 @@ class Inovarti_Pagarme_Transaction_BoletoController extends Mage_Core_Controller
 {
 	public function postbackAction()
 	{
-		$pagarme = Mage::getModel('pagarme/api')
-			->setApiKey(Mage::helper('pagarme')->getApiKey());
+		$pagarme = Mage::getModel('pagarme/api');
 		$request = $this->getRequest();
 
 		if ($request->isPost()

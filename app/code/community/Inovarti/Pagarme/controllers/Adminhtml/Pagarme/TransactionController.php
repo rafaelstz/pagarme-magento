@@ -11,8 +11,7 @@ class Inovarti_Pagarme_Adminhtml_Pagarme_TransactionController extends Mage_Admi
 	public function viewAction()
 	{
 		$id = $this->getRequest()->getParam('id');
-		$pagarme = Mage::getModel('pagarme/api')
-			->setApiKey(Mage::helper('pagarme')->getApiKey());
+		$pagarme = Mage::getModel('pagarme/api');
 
 		$result = array();
 		$result['success'] = false;

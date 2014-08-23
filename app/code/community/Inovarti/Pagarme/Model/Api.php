@@ -20,107 +20,274 @@ class Inovarti_Pagarme_Model_Api
 	const TRANSACTION_STATUS_REFUSED = 'refused';
 	const TRANSACTION_STATUS_REFUNDED = 'refunded';
 
-
 	protected $_apiKey;
+	protected $_encryptionKey;
 
+	public function __construct()
+    {
+    	$this->_apiKey = Mage::helper('pagarme')->getApiKey();
+    	$this->_encryptionKey = Mage::helper('pagarme')->getEncryptionKey();
+    }
+
+    /**
+	 * Set API Key
+	 *
+	 * @param string $key
+	 * @return Inovarti_Pagarme_Model_Api
+	 */
 	public function setApiKey($key)
 	{
 		$this->_apiKey = $key;
 		return $this;
 	}
 
+	/**
+	 * Get API Key
+	 *
+	 * @return string
+	 */
 	public function getApiKey()
 	{
 		if (!$this->_apiKey) {
-			throw new Exception("You need to configure API key before performing requests.");
+			Mage::throwException(Mage::helper('pagarme')->__('You need to configure API key before performing requests.'));
 		}
 		return $this->_apiKey;
 	}
 
+	/**
+	 * Set Encryption Key
+	 *
+	 * @param string $key
+	 * @return Inovarti_Pagarme_Model_Api
+	 */
+	public function setEncryptionKey($key)
+	{
+		$this->_encryptionKey = $key;
+		return $this;
+	}
+
+	/**
+	 * Get Encryption Key
+	 *
+	 * @return string
+	 */
+	public function getEncryptionKey()
+	{
+		if (!$this->_encryptionKey) {
+			Mage::throwException(Mage::helper('pagarme')->__('You need to configure Encryption key before performing requests.'));
+		}
+		return $this->_encryptionKey;
+	}
+
+	/**
+	 * Authorize or Authorize and Capture a transaction
+	 *
+	 * @param Varien_Object $data
+	 * @return Varien_Object
+	 */
 	public function charge(Varien_Object $data)
 	{
 		$data->setApiKey($this->getApiKey());
-		$response = $this->request(
-			$this->getTransactionUrl(),
-			$this->parseArray($data),
-			Zend_Http_Client::POST
-		);
+		$response = $this->request($this->getTransactionUrl(), $data, Zend_Http_Client::POST);
 		return $response;
 	}
 
+	/**
+	 * Capture a previously authorized transaction
+	 *
+	 * @param int $id
+	 * @return Varien_Object
+	 */
 	public function capture($id)
 	{
 		$data = new Varien_Object();
 		$data->setApiKey($this->getApiKey());
-		$response = $this->request(
-			$this->getTransactionCaptureUrl($id),
-			$this->parseArray($data),
-			Zend_Http_Client::POST
-		);
+		$response = $this->request($this->getTransactionCaptureUrl($id), $data, Zend_Http_Client::POST);
 		return $response;
 	}
 
+	/**
+	 * Refund a previously captured transaction
+	 *
+	 * @param int $id
+	 * @return Varien_Object
+	 */
 	public function refund($id)
 	{
 		$data = new Varien_Object();
 		$data->setApiKey($this->getApiKey());
-		$response = $this->request(
-			$this->getTransactionRefundUrl($id),
-			$this->parseArray($data),
-			Zend_Http_Client::POST
-		);
+		$response = $this->request($this->getTransactionRefundUrl($id), $data, Zend_Http_Client::POST);
 		return $response;
 	}
 
+	/**
+	 * Retrieve transaction info
+	 *
+	 * @param int @id
+	 * @return Varien_Object
+	 */
 	public function find($id)
 	{
 		$data = new Varien_Object();
 		$data->setApiKey($this->getApiKey());
-		$response = $this->request(
-			$this->getTransactionUrl($id),
-			$this->parseArray($data),
-			Zend_Http_Client::GET
-		);
+		$response = $this->request($this->getTransactionUrl($id), $data);
 		return $response;
 	}
 
+	/**
+	 * Calculate installments amount
+	 *
+	 * @param Varien_Object $data
+	 * @return Varien_Object
+	 */
 	public function calculateInstallmentsAmount(Varien_Object $data)
 	{
-		$response = $this->request(
-			$this->getTransactionCalculateInstallmentsAmountUrl(),
-			$this->parseArray($data),
-			Zend_Http_Client::GET
-		);
+		$data->setEncryptionKey($this->getEncryptionKey());
+		$response = $this->request($this->getTransactionCalculateInstallmentsAmountUrl(), $data);
 		return $response;
 	}
 
-	public function request($url, $data = array(), $method='GET')
+	/**
+	 * Send the HTTP request and return an HTTP response object
+	 *
+	 * @param string $url
+	 * @param Varien_Object $data
+	 * @param string $method
+	 * @return Varien_Object
+	 */
+	public function request($url, Varien_Object $data, $method='GET')
 	{
 		$client = new Varien_Http_Client($url, array('timeout'	=> 30));
 		$client->setMethod($method);
 		if ($method == Zend_Http_Client::POST) {
-			$client->setParameterPost($data);
+			$client->setParameterPost($this->_parseArray($data));
 		} else {
-			$client->setParameterGet($data);
+			$client->setParameterGet($this->_parseArray($data));
 		}
 
 		$response = $client->request();
 		$body = json_decode($response->getBody(), true);
-		$result = $this->parseObject($body);
+		$result = $this->_parseObject($body);
 		return $result;
 	}
 
-	public function parseObject(array $data)
+	/**
+	 * Validate Fingerprint
+	 *
+	 * @param int $id
+	 * @param string $fingerprint
+	 * @return bool
+	 */
+	public function validateFingerprint($id, $fingerprint)
+	{
+		$isValid = sha1($id . '#' . $this->getApiKey()) == $fingerprint;
+		return $isValid;
+	}
+
+	/**
+	 * Retrieve base URL
+	 *
+	 * @return string
+	 */
+	public function getBaseUrl()
+	{
+		$url = self::ENDPOINT . '/' . self::VERSION;
+		return $url;
+	}
+
+	/**
+	 * Retrieve transaction URL
+	 *
+	 * @param int $id
+	 * @return string
+	 */
+	public function getTransactionUrl($id=null)
+	{
+		$url = $this->getBaseUrl() . '/transactions';
+		if ($id) {
+			$url .= '/' . $id;
+		}
+		return $url;
+	}
+
+	/**
+	 * Retrieve transaction capture URL
+	 *
+	 * @param int $id
+	 * @return string
+	 */
+	public function getTransactionCaptureUrl($id)
+	{
+		$url = $this->getBaseUrl() . '/transactions/' . $id . '/capture';
+		return $url;
+	}
+
+	/**
+	 * Retrieve transaction refund URL
+	 *
+	 * @param int $id
+	 * @return string
+	 */
+	public function getTransactionRefundUrl($id)
+	{
+		$url = $this->getBaseUrl() . '/transactions/' . $id . '/refund';
+		return $url;
+	}
+
+	/**
+	 * Retrieve transaction card hash URL
+	 *
+	 * @return string
+	 */
+	public function getTransactionCardhashUrl()
+	{
+		$url = $this->getBaseUrl() . '/transactions/card_hash_key';
+		return $url;
+	}
+
+	/**
+	 * Retrieve transaction calculate installments amount URL
+	 *
+	 * @return string
+	 */
+	public function getTransactionCalculateInstallmentsAmountUrl()
+	{
+		$url = $this->getBaseUrl() . '/transactions/calculate_installments_amount';
+		return $url;
+	}
+
+	/**
+	 * Retrieve customer URL
+	 *
+	 * @param int $id
+	 * @return string
+	 */
+	public function getCustomerUrl($id=null)
+	{
+		$url = $this->getBaseUrl() . '/customers';
+		if ($id) {
+			$url .= '/' . $id;
+		}
+		return $url;
+	}
+
+	/**
+	 * Convert an Array to Varien_Object
+	 *
+	 * @param array
+	 * @return Varien_Object
+	 */
+	protected function _parseObject(array $data)
 	{
 		$object = new Varien_Object();
 		foreach ($data as $key => $value) {
 			if (is_array($value)) {
 				if ($this->_isAssoc($value)) {
-					$object->setData($key, $this->parseObject($value));
+					$object->setData($key, $this->_parseObject($value));
 				} else {
 					$items = array();
 					foreach ($value as $itemKey => $itemValue) {
-						$items[$itemKey] = $this->parseObject($itemValue);
+						$items[$itemKey] = $this->_parseObject($itemValue);
 					}
 					$object->setData($key, $items);
 				}
@@ -131,17 +298,23 @@ class Inovarti_Pagarme_Model_Api
 		return $object;
 	}
 
-	public function parseArray(Varien_Object $object)
+	/**
+	 * Convert a Varien_Object to Array
+	 *
+	 * @param Varien_Object
+	 * @return array
+	 */
+	protected function _parseArray(Varien_Object $object)
 	{
 		$array = array();
 		foreach ($object->getData() as $key => $value) {
 			if ($value instanceof Varien_Object) {
-				$array[$key] = $this->parseArray($value);
+				$array[$key] = $this->_parseArray($value);
 			} elseif (is_array($value)) {
 				$items = array();
 				foreach ($value as $itemKey => $itemValue) {
 					if ($itemValue instanceof Varien_Object) {
-						$items[$itemKey] = $this->parseArray($itemValue);
+						$items[$itemKey] = $this->_parseArray($itemValue);
 					} else {
 						$items[$itemKey] = $itemValue;
 					}
@@ -154,60 +327,12 @@ class Inovarti_Pagarme_Model_Api
 		return $array;
 	}
 
-	public function validateFingerprint($id, $fingerprint)
-	{
-		$isValid = sha1($id . '#' . $this->getApiKey()) == $fingerprint;
-		return $isValid;
-	}
-
-	public function getBaseUrl()
-	{
-		$url = self::ENDPOINT . '/' . self::VERSION;
-		return $url;
-	}
-
-	public function getTransactionUrl($id=null)
-	{
-		$url = $this->getBaseUrl() . '/transactions';
-		if ($id) {
-			$url .= '/' . $id;
-		}
-		return $url;
-	}
-
-	public function getTransactionCaptureUrl($id)
-	{
-		$url = $this->getBaseUrl() . '/transactions/' . $id . '/capture';
-		return $url;
-	}
-
-	public function getTransactionRefundUrl($id)
-	{
-		$url = $this->getBaseUrl() . '/transactions/' . $id . '/refund';
-		return $url;
-	}
-
-	public function getTransactionCardhashUrl()
-	{
-		$url = $this->getBaseUrl() . '/transactions/card_hash_key';
-		return $url;
-	}
-
-	public function getTransactionCalculateInstallmentsAmountUrl()
-	{
-		$url = $this->getBaseUrl() . '/transactions/calculate_installments_amount';
-		return $url;
-	}
-
-	public function getCustomerUrl($id=null)
-	{
-		$url = $this->getBaseUrl() . '/customers';
-		if ($id) {
-			$url .= '/' . $id;
-		}
-		return $url;
-	}
-
+	/**
+	 * Check if array is associative or sequential
+	 *
+	 * @param array $array
+	 * @return bool
+	 */
 	protected function _isAssoc($array) {
 	  return (bool)count(array_filter(array_keys($array), 'is_string'));
 	}

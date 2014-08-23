@@ -35,8 +35,7 @@ class Inovarti_Pagarme_Model_Boleto extends Mage_Payment_Model_Method_Abstract
 			->setCustomer($customer)
 			->setPostbackUrl(Mage::getUrl('pagarme/transaction_boleto/postback'));
 
-		$pagarme = Mage::getModel('pagarme/api')
-			->setApiKey(Mage::helper('pagarme')->getApiKey());
+		$pagarme = Mage::getModel('pagarme/api');
 
 		$transaction = $pagarme->charge($data);
 		if ($transaction->getErrors()) {

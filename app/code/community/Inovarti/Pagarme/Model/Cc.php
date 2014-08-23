@@ -54,11 +54,9 @@ class Inovarti_Pagarme_Model_Cc extends Mage_Payment_Model_Method_Abstract
 
 	public function refund(Varien_Object $payment, $amount)
 	{
-		$pagarme = Mage::getModel('pagarme/api')
-			->setApiKey(Mage::helper('pagarme')->getApiKey());
+		$pagarme = Mage::getModel('pagarme/api');
 
 		$transaction = $pagarme->refund($payment->getPagarmeTransactionId());
-
 		if ($transaction->getErrors()) {
 			$messages = array();
 			foreach ($transaction->getErrors() as $error) {
@@ -78,8 +76,7 @@ class Inovarti_Pagarme_Model_Cc extends Mage_Payment_Model_Method_Abstract
 
 	protected function _place($payment, $amount, $requestType)
     {
-    	$pagarme = Mage::getModel('pagarme/api')
-			->setApiKey(Mage::helper('pagarme')->getApiKey());
+    	$pagarme = Mage::getModel('pagarme/api');
 
 		switch ($requestType) {
 			case self::REQUEST_TYPE_AUTH_ONLY:
