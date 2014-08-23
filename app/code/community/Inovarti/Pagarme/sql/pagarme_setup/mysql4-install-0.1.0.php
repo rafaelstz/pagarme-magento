@@ -5,7 +5,10 @@
  * @package    Inovarti_Pagarme
  * @author     Suporte <suporte@inovarti.com.br>
  */
-$installer = new Mage_Sales_Model_Resource_Setup('core_setup');
+
+/* @var $installer Mage_Sales_Model_Resource_Setup */
+$installer = $this;
+$installer->startSetup();
 
 // Quote Payment
 $entity = 'quote_payment';
@@ -34,3 +37,5 @@ $attributes = array(
 foreach ($attributes as $attribute => $options) {
 	$installer->addAttribute($entity, $attribute, $options);
 }
+
+$installer->endSetup();
