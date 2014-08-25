@@ -57,9 +57,8 @@ class Inovarti_Pagarme_Model_Boleto extends Mage_Payment_Model_Method_Abstract
 
     protected function _generateExpirationDate()
     {
-        $date = new Zend_Date();
-        $date->add($this->getConfigData('days_to_expire'), Zend_Date::DAY);
-        $result = date('Y-m-d H:i:s', Mage::getModel('core/date')->timestamp($date));
+        $days = $this->getConfigData('days_to_expire');
+        $result = Mage::getModel('core/date')->date('Y-m-d H:i:s', strtotime("+ $days days"));
         return $result;
     }
 }
