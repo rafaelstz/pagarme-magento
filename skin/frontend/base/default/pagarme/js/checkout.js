@@ -5,7 +5,31 @@
  * @author     Suporte <suporte@inovarti.com.br>
  */
 
-if (typeof OPC !== "undefined") {
+document.observe("dom:loaded",function(){
+
+if (typeof OSCPayment !== "undefined") {
+    // One Step Checkout Brasil 6 Pro
+    OSCPayment._savePayment = OSCPayment.savePayment;
+    OSCPayment.savePayment = function() {
+        if (OSCForm.validate()) {
+            if (OSCPayment.currentMethod == 'pagarme_cc') {
+                var creditCard = new PagarMe.creditCard();
+                creditCard.cardHolderName = $(OSCPayment.currentMethod+'_cc_owner').value;
+                creditCard.cardExpirationMonth = $(OSCPayment.currentMethod+'_expiration').value;
+                creditCard.cardExpirationYear = $(OSCPayment.currentMethod+'_expiration_yr').value;
+                creditCard.cardNumber = $(OSCPayment.currentMethod+'_cc_number').value;
+                creditCard.cardCVV = $(OSCPayment.currentMethod+'_cc_cid').value;
+
+                creditCard.generateHash(function(cardHash) {
+                    $(OSCPayment.currentMethod+'_pagarme_card_hash').value = cardHash;
+                    this._savePayment();
+                }.bind(this));
+            } else {
+                this._savePayment();
+            }
+        }
+    }
+} else if (typeof OPC !== "undefined") {
     // One Step Checkout Brasil
     OPC.prototype._save = OPC.prototype.save;
     OPC.prototype.save = function() {
@@ -123,3 +147,6 @@ if (typeof OPC !== "undefined") {
         }
     }
 }
+
+});
+

@@ -14,6 +14,7 @@ class Inovarti_Pagarme_Model_Observer
         $targetBlocks = array(
             'checkout/onepage_payment',
             'aw_onestepcheckout/onestep_form_paymentmethod',
+            'onestepcheckout/onestep_form_paymentmethod',
         );
         if (in_array($blockType, $targetBlocks) && Mage::getStoreConfig('payment/pagarme_cc/active')) {
             $transport = $observer->getTransport();

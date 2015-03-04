@@ -23,6 +23,10 @@
 		<update handle="pagarme_checkout_handle"/>
 	</onepagecheckout_index_index>
 
+        <onestepcheckout_index_index>
+                <update handle="pagarme_checkout_handle"/>
+        </onestepcheckout_index_index>
+
 	<opc_index_index>
 		<update handle="pagarme_checkout_handle"/>
 	</opc_index_index>
@@ -48,4 +52,8 @@
     <onepagecheckout_index_success>
 		<update handle="pagarme_checkout_success_handle"/>
     </onepagecheckout_index_success>
+
+    <onestepcheckout_index_success>
+                <update handle="pagarme_checkout_success_handle"/>
+    </onestepcheckout_index_success>
 </layout>
