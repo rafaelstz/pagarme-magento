@@ -5,10 +5,20 @@
  * @author     Suporte <suporte@inovarti.com.br>
  */
 
+function pagarmeDisableAll(element){
+    $$(element).each(function(obj){
+        $(obj).disable();
+        $(obj).setStyle({background: 'red'});
+    });
+}
+
 document.observe("dom:loaded",function(){
 
 if (typeof OSCPayment !== "undefined") {
     // One Step Checkout Brasil 6 Pro
+    OSCForm.disablePlaceOrderButton = function() {
+        pagarmeDisableAll ('div#onestepcheckout-place-order button');
+    }
     OSCPayment._savePayment = OSCPayment.savePayment;
     OSCPayment.savePayment = function() {
         if (OSCForm.validate()) {
@@ -108,6 +118,9 @@ if (typeof OSCPayment !== "undefined") {
     }
 } else {
     // Default Magento Checkout
+    Payment.prototype._disable = function() {
+        pagarmeDisableAll ('div#payment-buttons-container button');
+    }
     Payment.prototype._save = Payment.prototype.save;
     Payment.prototype.save = function() {
         if (checkout.loadWaiting!=false) return;
@@ -122,10 +135,14 @@ if (typeof OSCPayment !== "undefined") {
             } else {
                 this.pagarme_cc_data = null; //clear data
             }
+            this._disable();
             this._save();
         }
     };
 
+    Review.prototype._disable = function() {
+        pagarmeDisableAll ('div#review-buttons-container button');
+    }
     Review.prototype._save = Review.prototype.save;
     Review.prototype.save = function() {
         if (payment.currentMethod == 'pagarme_cc') {
@@ -140,9 +157,11 @@ if (typeof OSCPayment !== "undefined") {
             creditCard.generateHash(function(cardHash) {
                 checkout.setLoadWaiting(false);
                 $(payment.currentMethod+'_pagarme_card_hash').value = cardHash;
+                this._disable();
                 this._save();
             }.bind(this));
         } else {
+            this._disable();
             this._save();
         }
     }
