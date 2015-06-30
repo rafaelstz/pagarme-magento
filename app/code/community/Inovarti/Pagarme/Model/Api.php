@@ -89,6 +89,13 @@ class Inovarti_Pagarme_Model_Api
 	{
 		$data->setApiKey($this->getApiKey());
 		$response = $this->request($this->getTransactionUrl(), $data, Zend_Http_Client::POST);
+
+        $result = $response->getData ();
+        if (empty ($result))
+        {
+            Mage::throwException($this->_wrapGatewayError());
+        }
+
 		return $response;
 	}
 
@@ -103,6 +110,13 @@ class Inovarti_Pagarme_Model_Api
 		$data = new Varien_Object();
 		$data->setApiKey($this->getApiKey());
 		$response = $this->request($this->getTransactionCaptureUrl($id), $data, Zend_Http_Client::POST);
+
+        $result = $response->getData ();
+        if (empty ($result))
+        {
+            Mage::throwException($this->_wrapGatewayError());
+        }
+
 		return $response;
 	}
 
@@ -336,4 +350,9 @@ class Inovarti_Pagarme_Model_Api
 	protected function _isAssoc($array) {
 	  return (bool)count(array_filter(array_keys($array), 'is_string'));
 	}
+
+    protected function _wrapGatewayError()
+    {
+        return Mage::helper('pagarme')->__('Transaction failed, please try again or contact the card issuing bank.');
+    }
 }
