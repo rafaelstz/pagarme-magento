@@ -56,6 +56,11 @@
             <pagarme>
                 <class>Inovarti_Pagarme_Helper</class>
             </pagarme>
+            <checkout>
+                <rewrite>
+                    <data>Inovarti_Pagarme_Helper_Checkout_Data</data>
+                </rewrite>
+            </checkout>
         </helpers>
         <payment>
         	<cc>
