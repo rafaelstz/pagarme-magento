@@ -106,7 +106,7 @@ class Inovarti_Pagarme_Model_Cc extends Mage_Payment_Model_Method_Abstract
 		}
 
         if ($transaction->getStatus() == 'refused') {
-            Mage::throwException($this->_wrapGatewayError($transaction->getAcquirerResponseCode()));
+            Mage::throwException($this->_wrapGatewayError($transaction->getStatusReason()));
         }
 
 		if ($payment->getPagarmeTransactionId()) {
@@ -136,6 +136,16 @@ class Inovarti_Pagarme_Model_Cc extends Mage_Payment_Model_Method_Abstract
 
     protected function _wrapGatewayError($code)
     {
-        return Mage::helper('pagarme')->__('Transaction failed, please try again or contact the card issuing bank.');
+        switch ($code)
+        {
+        case 'acquirer': { $result = 'Transaction refused by the card company.'; break; }
+        case 'antifraud': { $result = 'Transação recusada pelo antifraude.'; break; }
+        case 'internal_error': { $result = 'Ocorreu um erro interno ao processar a transação.'; break; }
+        case 'no_acquirer': { $result = 'Sem adquirente configurado para realizar essa transação.'; break; }
+        case 'acquirer_timeout': { $result = 'Transação não processada pela operadora de cartão.'; break; }
+        }
+
+        return Mage::helper('pagarme')->__('Transaction failed, please try again or contact the card issuing bank.') . PHP_EOL
+               . Mage::helper('pagarme')->__($result);
     }
 }

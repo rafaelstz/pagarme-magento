@@ -56,3 +56,9 @@
 "Year","Ano"
 "Payment Method","Método de Pagamento"
 "Amount","Valor"
+"Transaction refused by the card company.","Transação recusada pela operadora de cartão."
+"Transaction rejected by fraud.","Transação recusada pelo antifraude."
+"An internal error occurred while processing the transaction.","Ocorreu um erro interno ao processar a transação."
+"No acquirer configured to perform this transaction.","Sem adquirente configurado para realizar essa transação."
+"Transaction not processed by the card company.","Transação não processada pela operadora de cartão."
+
