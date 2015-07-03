@@ -13,6 +13,13 @@
 		<reference name="head">
 			<action method="addCss" ifconfig="payment/pagarme_cc/active"><stylesheet>pagarme/css/styles.css</stylesheet></action>
 		</reference>
+        <reference name="after_body_start">
+            <block type="page/html" name="core/template">
+                <action method="setTemplate" ifconfig="payment/pagarme_cc/active">
+                    <template>pagarme/checkout/payment/loader.phtml</template>
+                </action>
+            </block>
+        </reference>
 	</pagarme_checkout_handle>
 
 	<checkout_onepage_index>
