@@ -118,6 +118,7 @@
                 </pagarme>
             </updates>
         </layout>
+        <!--
         <events>
             <core_block_abstract_to_html_after>
                 <observers>
@@ -128,6 +129,7 @@
                 </observers>
             </core_block_abstract_to_html_after>
         </events>
+        -->
     </frontend>
     <adminhtml>
         <translate>

@@ -39,9 +39,11 @@ function pagarmeDisableAll(element){
 function pagarmeInitCheckout()
 {
 
+console.log('Pagarme: initCheckout');
+
 PagarMe.encryption_key = pagarme_encryption_key;
 
-PagarMe._ajax = PagarMe.ajax;
+// PagarMe._ajax = PagarMe.ajax;
 PagarMe.ajax = function (url, callback) {
     var httpRequest,
         xmlDoc;
@@ -78,6 +80,8 @@ if (typeof OSCPayment !== "undefined") {
     }
     OSCPayment._savePayment = OSCPayment.savePayment;
     OSCPayment.savePayment = function() {
+        console.log('Pagarme: savePayment');
+
         if (OSCForm.validate()) {
             if (OSCPayment.currentMethod == 'pagarme_cc') {
                 var creditCard = new PagarMe.creditCard();
