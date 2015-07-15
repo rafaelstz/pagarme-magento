@@ -15,14 +15,14 @@
 		</reference>
         <reference name="after_body_start">
             <block type="core/template" name="pagarme_checkout_loader">
-                <action method="setTemplate" ifconfig="payment/pagarme_cc/active">
+                <action method="setTemplate" ifconfig="payment/pagarme_settings/active">
                     <template>pagarme/checkout/payment/loader.phtml</template>
                 </action>
             </block>
         </reference>
         <reference name="before_body_end">
             <block type="core/template" name="pagarme_checkout_js">
-                <action method="setTemplate" ifconfig="payment/pagarme_cc/active">
+                <action method="setTemplate" ifconfig="payment/pagarme_settings/active">
                     <template>pagarme/checkout/payment/js.phtml</template>
                 </action>
             </block>
@@ -48,6 +48,10 @@
 	<aw_onestepcheckout_index_index>
 		<update handle="pagarme_checkout_handle"/>
 	</aw_onestepcheckout_index_index>
+
+	<idecheckoutvm_index_index>
+		<update handle="pagarme_checkout_handle"/>
+	</idecheckoutvm_index_index>
 
 	<!-- Pagarme Checkout Success Handle -->
 	<pagarme_checkout_success_handle>
