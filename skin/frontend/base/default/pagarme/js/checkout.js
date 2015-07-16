@@ -237,7 +237,7 @@ pagarmeShowLoader ();
 var pagarmeJS = document.createElement('script');
 pagarmeJS.type = "text/javascript";
 pagarmeJS.async = true;
-pagarmeJS.src = 'https://pagar.me/assets/pagarme.js';
+pagarmeJS.src = 'https://assets.pagar.me/js/pagarme.min.js';
 pagarmeJS.addEventListener('load', function(){
     pagarmeInitCheckout ();
 
