@@ -4,7 +4,13 @@
  * @category   Inovarti
  * @package    Inovarti_Pagarme
  * @author     Suporte <suporte@inovarti.com.br>
+ *
+ * UPDATED:
+ *
+ * @copyright   Copyright (C) 2015 Gamuza Technologies (http://www.gamuza.com.br/)
+ * @author     Eneias Ramos de Melo <eneias@gamuza.com.br>
  */
+
 class Inovarti_Pagarme_Helper_Data extends Mage_Core_Helper_Abstract
 {
 	public function getOrderIdByTransactionId($tid)
@@ -91,4 +97,23 @@ class Inovarti_Pagarme_Helper_Data extends Mage_Core_Helper_Abstract
 		$encryptionKey = Mage::getStoreConfig('payment/pagarme_settings/encryptionkey_' . $this->getMode());
 		return $encryptionKey;
 	}
+
+    public function _numberOnly ($text)
+    {
+        return preg_replace ("#[^0-9]#", "", $text);
+    }
+
+    // inverse substr with pointer beyond the range
+    public function _iSubstr ($text, $start, $length)
+    {
+        $result = null;
+        $position = strlen ($text);
+
+        for ($i = 0; $i < $start; $i ++) $position --;
+
+        for ($j = $position; $j < $position + $length; $j ++) $result .= $text [$j];
+
+        return $result;
+    }
 }
+

@@ -5,6 +5,11 @@
  * @category   Inovarti
  * @package    Inovarti_Pagarme
  * @author     Suporte <suporte@inovarti.com.br>
+ *
+ * UPDATED:
+ *
+ * @copyright   Copyright (C) 2015 Gamuza Technologies (http://www.gamuza.com.br/)
+ * @author     Eneias Ramos de Melo <eneias@gamuza.com.br>
  */
 -->
 
@@ -24,6 +29,11 @@
             <block type="core/template" name="pagarme_checkout_js">
                 <action method="setTemplate" ifconfig="payment/pagarme_settings/active">
                     <template>pagarme/checkout/payment/js.phtml</template>
+                </action>
+            </block>
+            <block type="core/text" name="pagarme.cdn.js.checkout" ifconfig="payment/pagarme_checkout/active">
+                <action method="setText">
+                    <text><![CDATA[<script src="https://assets.pagar.me/checkout/checkout.js" type="text/javascript"></script>]]></text>
                 </action>
             </block>
         </reference>
@@ -75,3 +85,4 @@
                 <update handle="pagarme_checkout_success_handle"/>
     </onestepcheckout_index_success>
 </layout>
+

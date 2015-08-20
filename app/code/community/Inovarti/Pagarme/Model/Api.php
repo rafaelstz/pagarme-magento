@@ -4,7 +4,13 @@
  * @category   Inovarti
  * @package    Inovarti_Pagarme
  * @author     Suporte <suporte@inovarti.com.br>
+ *
+ * UPDATED:
+ *
+ * @copyright   Copyright (C) 2015 Gamuza Technologies (http://www.gamuza.com.br/)
+ * @author     Eneias Ramos de Melo <eneias@gamuza.com.br>
  */
+
 class Inovarti_Pagarme_Model_Api
 {
 	const VERSION 	= '1';
@@ -12,6 +18,7 @@ class Inovarti_Pagarme_Model_Api
 
 	const PAYMENT_METHOD_BOLETO = 'boleto';
 	const PAYMENT_METHOD_CREDITCARD = 'credit_card';
+    const PAYMENT_METHOD_TRANSACTIONS = 'transactions';
 
 	const TRANSACTION_STATUS_PROCESSING = 'processing';
 	const TRANSACTION_STATUS_AUTHORIZED = 'authorized';
