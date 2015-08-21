@@ -87,3 +87,5 @@ protected function _toHtml()
     return parent::_toHtml();
 }
 
+}
+
