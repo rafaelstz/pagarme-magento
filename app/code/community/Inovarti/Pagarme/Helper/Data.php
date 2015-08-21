@@ -19,7 +19,9 @@ class Inovarti_Pagarme_Helper_Data extends Mage_Core_Helper_Abstract
 		$conn = $resource->getConnection('core_read');
 		$select = $conn->select()
 			->from($resource->getTableName('sales/order_payment'))
-			->where('pagarme_transaction_id = ?', $tid);
+			->where('pagarme_transaction_id = ?', $tid)
+			->reset (Zend_Db_Select::COLUMNS)
+			->columns ('parent_id');
 		return $conn->fetchOne($select);
 	}
 
