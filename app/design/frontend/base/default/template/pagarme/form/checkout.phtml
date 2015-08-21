@@ -1,0 +1,59 @@
+<?php
+/*
+ * @copyright   Copyright (C) 2015 Gamuza Technologies (http://www.gamuza.com.br/)
+ * @author     Eneias Ramos de Melo <eneias@gamuza.com.br>
+ */
+?>
+
+<script type="text/javascript">
+function pagarmeRunCheckout ()
+{
+    var checkout = new PagarMeCheckout.Checkout({
+        "encryption_key" : "<?php echo $this->_getEncryptionKey (); ?>",
+        success: function (data){
+            console.log (data);
+            $('pagarme-checkout-hash').value = data ['card_hash'];
+            $('pagarme-checkout-payment-method').value = data ['payment_method'];
+            $('pagarme-checkout-installments').value = data ['installments'];
+        },
+    });
+
+    checkout.open({
+        "amount" : "<?php echo $this->_getAmount (); ?>",
+        "paymentMethods" : "<?php echo $this->_getInfoData ('payment_method'); ?>",
+        "cardBrands" : "<?php echo $this->_getInfoData ('cctypes'); ?>",
+        "maxInstallments" : "<?php echo $this->_getInfoData ('max_installments'); ?>",
+        "interestRate": "<?php echo $this->_getInfoData ('interest_rate'); ?>",
+        "postbackUrl" : "<?php echo $this->_getPostbackUrl (); ?>",
+        "createToken": "false", /* Do not authorize & capture automatically! */
+        "customerData" : "true",
+        "customerName" : "<?php echo $this->_getAddressData ('firstname') . ' ' . $this->_getAddressData ('lastname'); ?>",
+        "customerDocumentNumber" : "<?php echo $this->_getDocumentNumber (); ?>",
+        "customerEmail" : "<?php echo $this->_getAddressData ('email'); ?>",
+        "customerAddressStreet" : "<?php echo $this->_getStreet (1); ?>",
+        "customerAddressStreetNumber" : "<?php echo $this->_getStreet (2); ?>",
+        "customerAddressComplementary" : "<?php echo $this->_getStreet (3); ?>",
+        "customerAddressNeighborhood" : "<?php echo $this->_getStreet (4); ?>",
+        "customerAddressCity" : "<?php echo $this->_getAddressData ('city'); ?>",
+        "customerAddressState" : "<?php echo $this->_getState (); ?>",
+        "customerAddressZipcode" : "<?php echo $this->_getAddressData ('postcode'); ?>",
+        "customerPhoneDdd" : "<?php echo $this->_getTelephone (10, 2); ?>",
+        "customerPhoneNumber" : "<?php echo $this->_getTelephone (8, 8); ?>",
+    });
+}
+</script>
+
+<?php $_code=$this->getMethodCode(); ?>
+
+<ul class="form-list" id="payment_form_<?php echo $_code ?>" style="display:none;">
+
+<input type="hidden" value="" name="payment[pagarme_checkout_hash]" id="pagarme-checkout-hash" />
+<input type="hidden" value="" name="payment[pagarme_checkout_payment_method]" id="pagarme-checkout-payment-method" />
+<input type="hidden" value="" name="payment[pagarme_checkout_installments]" id="pagarme-checkout-installments" />
+
+<button id="pagarme-checkout-button" class="button" type="button" onclick="pagarmeRunCheckout();">
+    <span><span><?php echo __('Run Checkout'); ?></span></span>
+</button>
+
+</ul>
+

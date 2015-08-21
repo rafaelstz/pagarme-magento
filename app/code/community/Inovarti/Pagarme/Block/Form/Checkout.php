@@ -57,7 +57,7 @@ public function _getState ()
     $region_id = $this->_getQuote ()->getBillingAddress ()->getRegionId ();
 
     $collection = Mage::getModel ('directory/region')->getResourceCollection ()->addCountryFilter ('BR');
-    $collection->getSelect ()->where ("main_table.region_id = {$region_id}");
+    $collection->getSelect ()->where ("main_table.region_id = '{$region_id}'");
 
     $result = $collection->getFirstItem ()->getCode ();
 
@@ -79,5 +79,11 @@ public function _getHelper ()
     return $this->helper ('pagarme');
 }
 
+protected function _toHtml()
+{
+    Mage::dispatchEvent('payment_form_block_to_html_before', array(
+        'block'     => $this
+    ));
+    return parent::_toHtml();
 }
 
