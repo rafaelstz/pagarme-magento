@@ -5,16 +5,34 @@
  */
 ?>
 
+<?php $_code=$this->getMethodCode(); ?>
+
+<ul class="form-list" id="payment_form_<?php echo $_code ?>" style="display:none;">
+
+<input type="hidden" value="" name="payment[pagarme_checkout_hash]" id="pagarme-checkout-hash" />
+<input type="hidden" value="" name="payment[pagarme_checkout_payment_method]" id="pagarme-checkout-payment-method" />
+<input type="hidden" value="" name="payment[pagarme_checkout_installments]" id="pagarme-checkout-installments" />
+
+<button id="pagarme-checkout-button" class="button" type="button">
+    <span><span><?php echo __('Run Checkout'); ?></span></span>
+</button>
+
+</ul>
+
 <script type="text/javascript">
-function pagarmeRunCheckout ()
-{
+$("pagarme-checkout-button").observe ("click", function (event){
     var checkout = new PagarMeCheckout.Checkout({
         "encryption_key" : "<?php echo $this->_getEncryptionKey (); ?>",
         success: function (data){
-            console.log (data);
+            // console.log (data);
             $('pagarme-checkout-hash').value = data ['card_hash'];
             $('pagarme-checkout-payment-method').value = data ['payment_method'];
             $('pagarme-checkout-installments').value = data ['installments'];
+            if (typeof OSCForm !== "undefined") {
+                OSCForm.placeOrder ();
+            } else if (typeof payment !== "undefined") {
+                payment.save ();
+            }
         },
     });
 
@@ -26,7 +44,7 @@ function pagarmeRunCheckout ()
         "interestRate": "<?php echo $this->_getInfoData ('interest_rate'); ?>",
         "postbackUrl" : "<?php echo $this->_getPostbackUrl (); ?>",
         "createToken": "false", /* Do not authorize & capture automatically! */
-        "customerData" : "true",
+        "customerData" : "false",
         "customerName" : "<?php echo $this->_getAddressData ('firstname') . ' ' . $this->_getAddressData ('lastname'); ?>",
         "customerDocumentNumber" : "<?php echo $this->_getDocumentNumber (); ?>",
         "customerEmail" : "<?php echo $this->_getAddressData ('email'); ?>",
@@ -40,20 +58,6 @@ function pagarmeRunCheckout ()
         "customerPhoneDdd" : "<?php echo $this->_getTelephone (10, 2); ?>",
         "customerPhoneNumber" : "<?php echo $this->_getTelephone (8, 8); ?>",
     });
-}
+});
 </script>
-
-<?php $_code=$this->getMethodCode(); ?>
-
-<ul class="form-list" id="payment_form_<?php echo $_code ?>" style="display:none;">
-
-<input type="hidden" value="" name="payment[pagarme_checkout_hash]" id="pagarme-checkout-hash" />
-<input type="hidden" value="" name="payment[pagarme_checkout_payment_method]" id="pagarme-checkout-payment-method" />
-<input type="hidden" value="" name="payment[pagarme_checkout_installments]" id="pagarme-checkout-installments" />
-
-<button id="pagarme-checkout-button" class="button" type="button" onclick="pagarmeRunCheckout();">
-    <span><span><?php echo __('Run Checkout'); ?></span></span>
-</button>
-
-</ul>
 
