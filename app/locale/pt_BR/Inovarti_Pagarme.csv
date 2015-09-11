@@ -62,4 +62,4 @@
 "No acquirer configured to perform this transaction.","Sem adquirente configurado para realizar essa transação."
 "Transaction not processed by the card company.","Transação não processada pela operadora de cartão."
 "Run Checkout","Rodar Checkout"
-
+"Pay","Pagar"
