@@ -352,7 +352,6 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                         </interest_rate>
-                        <!--
                         <free_installments translate="label">
                             <label>Free Installments</label>
                             <frontend_type>text</frontend_type>
@@ -362,7 +361,6 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                         </free_installments>
-                        -->
                         <sort_order translate="label">
                             <label>Sort Order</label>
                             <frontend_type>text</frontend_type>

@@ -14,7 +14,7 @@
 <input type="hidden" value="" name="payment[pagarme_checkout_installments]" id="pagarme-checkout-installments" />
 
 <button id="pagarme-checkout-button" class="button" type="button">
-    <span><span><?php echo __('Pay'); ?></span></span>
+    <span><span><?php echo __('Fill in the card data'); ?></span></span>
 </button>
 
 </ul>
@@ -42,6 +42,7 @@ $("pagarme-checkout-button").observe ("click", function (event){
         "cardBrands" : "<?php echo $this->_getInfoData ('cctypes'); ?>",
         "maxInstallments" : "<?php echo $this->_getInfoData ('max_installments'); ?>",
         "interestRate": "<?php echo $this->_getInfoData ('interest_rate'); ?>",
+        "freeInstallments": "<?php echo $this->_getInfoData ('free_installments'); ?>",
         "postbackUrl" : "<?php echo $this->_getPostbackUrl (); ?>",
         "createToken": "false", /* Do not authorize & capture automatically! */
         "customerData" : "false",
