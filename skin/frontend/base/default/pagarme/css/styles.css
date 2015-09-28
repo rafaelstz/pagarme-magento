@@ -64,4 +64,14 @@
     width: 100%;
     z-index: 1000;
 }
+#pagarme-cardhash-waiting {
+    background: orange;
+    color: white;
+    display: block;
+}
+#pagarme-cardhash-success {
+    background: green;
+    color: white;
+    display: block;
+}
 
