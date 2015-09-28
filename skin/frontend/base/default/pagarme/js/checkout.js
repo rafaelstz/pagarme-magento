@@ -82,6 +82,8 @@ if (typeof OSCPayment !== "undefined") {
     OSCPayment.savePayment = function() {
         console.log('Pagarme: savePayment');
 
+        OSCForm.disablePlaceOrderButton ();
+
         if (OSCForm.validate()) {
             if (OSCPayment.currentMethod == 'pagarme_cc') {
                 var creditCard = new PagarMe.creditCard();
@@ -91,8 +93,17 @@ if (typeof OSCPayment !== "undefined") {
                 creditCard.cardNumber = $(OSCPayment.currentMethod+'_cc_number').value;
                 creditCard.cardCVV = $(OSCPayment.currentMethod+'_cc_cid').value;
 
+                $('pagarme-cardhash-success').hide();
+                $('pagarme-cardhash-waiting').show();
+
                 creditCard.generateHash(function(cardHash) {
                     $(OSCPayment.currentMethod+'_pagarme_card_hash').value = cardHash;
+
+                    $('pagarme-cardhash-waiting').hide();
+                    $('pagarme-cardhash-success').show();
+
+                    OSCForm.enablePlaceOrderButton ();
+
                     this._savePayment();
                 }.bind(this));
             } else {

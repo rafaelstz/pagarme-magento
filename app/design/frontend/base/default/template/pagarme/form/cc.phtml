@@ -85,7 +85,20 @@
         </div>
     </li>
     <?php endif; ?>
+    <li>
+        <label id="pagarme-cardhash-waiting" class="a-center" style="display:none;"><?php echo __('Just a moment ...'); ?></label>
+        <label id="pagarme-cardhash-success" class="a-center" style="display:none;"><?php echo __('All right!'); ?></label>
+    </li>
 </ul>
+<?php if($this->hasVerification()): ?>
+<script type="text/javascript">
+//<![CDATA[
+Event.observe($('<?php echo $_code ?>_cc_cid'), 'keyup', function(){
+    if (this.value.length > 2) fireEvent(this, 'blur');
+});
+//]]>
+</script>
+<?php endif; ?>
 <script type="text/javascript">
 //<![CDATA[
     Event.observe($('<?php echo $_code ?>_installments'), 'change', function(){
