@@ -49,6 +49,7 @@ $("pagarme-checkout-button").observe ("click", function (event){
         "customerName" : "<?php echo $this->_getAddressData ('firstname') . ' ' . $this->_getAddressData ('lastname'); ?>",
         "customerDocumentNumber" : "<?php echo $this->_getDocumentNumber (); ?>",
         "customerEmail" : "<?php echo $this->_getAddressData ('email'); ?>",
+        /*
         "customerAddressStreet" : "<?php echo $this->_getStreet (1); ?>",
         "customerAddressStreetNumber" : "<?php echo $this->_getStreet (2); ?>",
         "customerAddressComplementary" : "<?php echo $this->_getStreet (3); ?>",
@@ -58,6 +59,7 @@ $("pagarme-checkout-button").observe ("click", function (event){
         "customerAddressZipcode" : "<?php echo $this->_getAddressData ('postcode'); ?>",
         "customerPhoneDdd" : "<?php echo $this->_getTelephone (10, 2); ?>",
         "customerPhoneNumber" : "<?php echo $this->_getTelephone (8, 8); ?>",
+        */
     });
 });
 </script>

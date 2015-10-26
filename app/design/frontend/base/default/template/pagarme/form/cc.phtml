@@ -94,7 +94,7 @@
 <script type="text/javascript">
 //<![CDATA[
 Event.observe($('<?php echo $_code ?>_cc_cid'), 'keyup', function(){
-    if (this.value.length > 2) fireEvent(this, 'blur');
+    if (this.value.length > 2) $('<?php echo $_code ?>_installments').focus ();
 });
 //]]>
 </script>
