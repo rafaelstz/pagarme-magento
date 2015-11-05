@@ -63,6 +63,10 @@
 		<update handle="pagarme_checkout_handle"/>
 	</idecheckoutvm_index_index>
 
+	<checkoutsimplificado_index_index>
+		<update handle="pagarme_checkout_handle"/>
+	</checkoutsimplificado_index_index>
+
 	<!-- Pagarme Checkout Success Handle -->
 	<pagarme_checkout_success_handle>
 		<reference name="checkout.success">
@@ -84,5 +88,9 @@
     <onestepcheckout_index_success>
                 <update handle="pagarme_checkout_success_handle"/>
     </onestepcheckout_index_success>
+
+    <checkoutsimplificado_index_success>
+        <update handle="pagarme_checkout_success_handle"/>
+    </checkoutsimplificado_index_success>
 </layout>
 
