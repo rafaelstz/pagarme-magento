@@ -55,6 +55,16 @@ public function getAntifraudScore()
     return sprintf ("%.2f", $this->getInfo()->getPagarmeAntifraudScore());
 }
 
+public function getAdditionalInfo ($key)
+{
+    $transactions = Mage::getResourceModel('sales/order_payment_transaction_collection');
+    $transactions->addOrderIdFilter($this->getInfo()->getOrder()->getId());
+
+    $add_info = $transactions->getFirstItem()->getAdditionalInformation();
+
+    return $add_info ['raw_details_info'][$key];
+}
+
 public function getCcTypeName()
 {
     $types = Mage::getSingleton('payment/config')->getCcTypes();

@@ -200,11 +200,11 @@
                 <group>pagarme</group>
             </pagarme_cc>
             <pagarme_checkout>
-                <active>0</active>
+                <active>1</active>
                 <model>pagarme/checkout</model>
                 <title>Pagarme Checkout</title>
                 <order_status>processing</order_status>
-                <payment_method>credit_card</payment_method>
+                <payment_method>boleto,credit_card</payment_method>
                 <cctypes>VI,MC,AE,DI,JCB,EL,DC,AU,HC</cctypes>
                 <max_installments>12</max_installments>
                 <!--
@@ -212,6 +212,10 @@
                 -->
                 <interest_rate>1.5</interest_rate>
                 <free_installments>5</free_installments>
+                <!--
+                <boleto_discount_amount>10</boleto_discount_amount>
+                <boleto_discount_percentage>5</boleto_discount_percentage>
+                -->
                 <payment_action>authorize_capture</payment_action>
                 <allowspecific>0</allowspecific>
                 <sort_order>3</sort_order>
