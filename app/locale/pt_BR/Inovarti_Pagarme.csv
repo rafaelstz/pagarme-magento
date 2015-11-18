@@ -44,7 +44,7 @@
 "%sx - %s","%sx de %s"
 "monthly interest rate (%s)","com juros (%s a.m.)"
 "interest-free","sem juros"
-"Credit Card","Credit Card"
+"Credit Card","Cartão de Crédito"
 "Credit Card Type","Tipo de Cartão"
 "Credit Card Number","Número do Cartão"
 "Name on Card","Nome no Cartão"
@@ -66,4 +66,6 @@
 "Fill in the card data","Preencher os dados do cartão"
 "Just a moment ...","Um momento ..."
 "All right!","Tudo certo!"
+"Boleto Discount Amount","Valor de Desconto no Boleto"
+"Boleto Discount Percentage","Porcentagem de Desconto no Boleto"
 

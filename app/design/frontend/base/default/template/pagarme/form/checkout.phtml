@@ -45,6 +45,8 @@ $("pagarme-checkout-button").observe ("click", function (event){
         "freeInstallments": "<?php echo $this->_getInfoData ('free_installments'); ?>",
         "postbackUrl" : "<?php echo $this->_getPostbackUrl (); ?>",
         "createToken": "false", /* Do not authorize & capture automatically! */
+        "boletoDiscountAmount": "<?php echo $this->_getInfoData ('boleto_discount_amount'); ?>",
+        "boletoDiscountPercentage": "<?php echo $this->_getInfoData ('boleto_discount_percentage'); ?>",
         "customerData" : "false",
         "customerName" : "<?php echo $this->_getAddressData ('firstname') . ' ' . $this->_getAddressData ('lastname'); ?>",
         "customerDocumentNumber" : "<?php echo $this->_getDocumentNumber (); ?>",
