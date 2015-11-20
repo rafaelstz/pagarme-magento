@@ -4,6 +4,11 @@
  * @category   Inovarti
  * @package    Inovarti_Pagarme
  * @author     Suporte <suporte@inovarti.com.br>
+ *
+ * UPDATED:
+ *
+ * @copyright   Copyright (C) 2015 Gamuza Technologies (http://www.gamuza.com.br/)
+ * @author     Eneias Ramos de Melo <eneias@gamuza.com.br>
  */
 class Inovarti_Pagarme_Model_Cc extends Mage_Payment_Model_Method_Abstract
 {
@@ -38,16 +43,16 @@ class Inovarti_Pagarme_Model_Cc extends Mage_Payment_Model_Method_Abstract
 
 	public function authorize(Varien_Object $payment, $amount)
     {
-    	$this->_place($payment, $amount, self::REQUEST_TYPE_AUTH_ONLY);
+    	$this->_place($payment, $payment->getBaseAmountOrdered (), self::REQUEST_TYPE_AUTH_ONLY);
         return $this;
     }
 
 	public function capture(Varien_Object $payment, $amount)
 	{
 		if ($payment->getPagarmeTransactionId()) {
-			$this->_place($payment, $amount, self::REQUEST_TYPE_CAPTURE_ONLY);
+			$this->_place($payment, $payment->getBaseAmountAuthorized (), self::REQUEST_TYPE_CAPTURE_ONLY);
 		} else {
-			$this->_place($payment, $amount, self::REQUEST_TYPE_AUTH_CAPTURE);
+			$this->_place($payment, $payment->getBaseAmountAuthorized (), self::REQUEST_TYPE_AUTH_CAPTURE);
 		}
         return $this;
 	}

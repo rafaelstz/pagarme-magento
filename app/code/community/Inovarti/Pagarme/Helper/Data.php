@@ -117,5 +117,19 @@ class Inovarti_Pagarme_Helper_Data extends Mage_Core_Helper_Abstract
 
         return $result;
     }
+
+    public function getShippingAmount()
+    {
+        $address = Mage::getModel('checkout/session')->getQuote()->getShippingAddress();
+        if (!empty ($address))
+        {
+            return $address->getShippingAmount();
+        }
+    }
+    
+    public function getBaseSubtotalWithDiscount ()
+    {
+        return Mage::getModel('checkout/session')->getQuote()->getBaseSubtotalWithDiscount ();
+    }
 }
 
