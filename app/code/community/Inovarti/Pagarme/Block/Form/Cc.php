@@ -4,6 +4,11 @@
  * @category   Inovarti
  * @package    Inovarti_Pagarme
  * @author     Suporte <suporte@inovarti.com.br>
+ *
+ * UPDATED:
+ *
+ * @copyright   Copyright (C) 2015 Gamuza Technologies (http://www.gamuza.com.br/)
+ * @author     Eneias Ramos de Melo <eneias@gamuza.com.br>
  */
 class Inovarti_Pagarme_Block_Form_Cc extends Mage_Payment_Block_Form_Cc
 {
@@ -38,7 +43,7 @@ class Inovarti_Pagarme_Block_Form_Cc extends Mage_Payment_Block_Form_Cc
     	}
 
     	$quote = Mage::helper('checkout')->getQuote();
-    	$total = $quote->getGrandTotal();
+    	$total = Mage::helper('pagarme')->getBaseSubtotalWithDiscount () + Mage::helper ('pagarme')->getShippingAmount ();
 
     	$n = floor($total / $minInstallmentValue);
     	if ($n > $maxInstallments) {
