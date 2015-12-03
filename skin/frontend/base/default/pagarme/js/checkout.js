@@ -104,10 +104,10 @@ if (typeof OSCPayment !== "undefined") {
 
                     OSCForm.enablePlaceOrderButton ();
 
-                    this._savePayment();
-                }.bind(this));
+                    OSCPayment._savePayment(); // this._savePayment();
+                }); // .bind(this));
             } else {
-                this._savePayment();
+                OSCPayment._savePayment(); // this._savePayment();
             }
         }
     }

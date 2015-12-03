@@ -59,17 +59,20 @@ public function collect (Mage_Sales_Model_Quote_Address $address)
         {
             if ($item->getInstallment() == $payment_installment)
             {
-                $iamount = intval ($item->getAmount ()) / 100;
+                $iamount = intval ($item->getInstallmentAmount ()) / 100;
                 $famount = (float) number_format ($iamount, 2);
-                $balance = $famount - $total;
+                $iqty = (int) $item->getInstallment();
+                $balance = ($famount * $iqty) - $total;
 
                 $address->setFeeAmount ($balance);
                 $address->setBaseFeeAmount ($balance);
 
+                $quote->setFeeAmount($balance);
+
                 $address->setGrandTotal ($address->getGrandTotal () + $address->getFeeAmount ());
                 $address->setBaseGrandTotal ($address->getBaseGrandTotal () + $address->getBaseFeeAmount ());
 
-                //var_dump ($total, $iamount, $famount, $balance); die;
+                //var_dump ($total, $iamount, $famount, $iqty, $balance); die;
 
                 break;
             }
