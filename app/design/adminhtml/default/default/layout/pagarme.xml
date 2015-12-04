@@ -5,6 +5,11 @@
  * @category   Inovarti
  * @package    Inovarti_Pagarme
  * @author     Suporte <suporte@inovarti.com.br>
+ *
+ * UPDATED:
+ *
+ * @copyright   Copyright (C) 2015 Gamuza Technologies (http://www.gamuza.com.br/)
+ * @author     Eneias Ramos de Melo <eneias@gamuza.com.br>
  */
 -->
 
@@ -21,24 +26,61 @@
         </reference>
     </pagarme_info_handle>
 
+    <pagarme_invoice_fee_handle>
+        <reference name="invoice_totals">
+            <block type="adminhtml/sales_order_totals_item" name="fee" template="pagarme/fee/total.phtml" />
+        </reference>
+    </pagarme_invoice_fee_handle>
+
+    <pagarme_creditmemo_fee_handle>
+        <reference name="creditmemo_totals">
+            <block type="adminhtml/sales_order_totals_item" name="fee" template="pagarme/fee/total.phtml" />
+        </reference>
+    </pagarme_creditmemo_fee_handle>
+
 	<adminhtml_sales_order_view>
         <update handle="pagarme_info_handle"/>
+
+        <reference name="order_totals">
+            <block type="adminhtml/sales_order_totals_item" name="fee" template="pagarme/fee/total.phtml" />
+            <block type="adminhtml/sales_order_totals_item" name="fee.refunded" template="pagarme/fee/refunded.phtml">
+                <action method="setDisplayArea"><area>footer</area></action>
+                <action method="setAfterCondition"><condition>last</condition></action>
+            </block>
+        </reference>
     </adminhtml_sales_order_view>
 
     <adminhtml_sales_order_invoice_new>
         <update handle="pagarme_info_handle"/>
+        <update handle="pagarme_invoice_fee_handle"/>
     </adminhtml_sales_order_invoice_new>
+
+    <adminhtml_sales_order_invoice_updateqty>
+        <update handle="pagarme_invoice_fee_handle"/>
+    </adminhtml_sales_order_invoice_updateqty>
 
     <adminhtml_sales_order_invoice_view>
         <update handle="pagarme_info_handle"/>
+        <update handle="pagarme_invoice_fee_handle"/>
     </adminhtml_sales_order_invoice_view>
 
     <adminhtml_sales_order_creditmemo_new>
         <update handle="pagarme_info_handle"/>
+        <update handle="pagarme_creditmemo_fee_handle"/>
     </adminhtml_sales_order_creditmemo_new>
+
+    <adminhtml_sales_order_creditmemo_updateqty>
+        <update handle="pagarme_creditmemo_fee_handle"/>
+    </adminhtml_sales_order_creditmemo_updateqty>
 
     <adminhtml_sales_order_creditmemo_view>
         <update handle="pagarme_info_handle"/>
+
+        <reference name="creditmemo_totals">
+            <block type="adminhtml/sales_order_totals_item" name="fee.refunded" template="pagarme/fee/refunded.phtml">
+                <action method="setDisplayArea"><area>footer</area></action>
+            </block>
+        </reference>
     </adminhtml_sales_order_creditmemo_view>
 
     <adminhtml_sales_order_shipment_new>
@@ -61,3 +103,4 @@
         </reference>
     </adminhtml_pagarme_transaction_view>
 </layout>
+
