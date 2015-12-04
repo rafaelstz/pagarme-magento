@@ -15,7 +15,7 @@
 <config>
     <modules>
         <Inovarti_Pagarme>
-            <version>0.1.0</version>
+            <version>0.1.1</version>
         </Inovarti_Pagarme>
     </modules>
     <global>
@@ -29,6 +29,10 @@
                 <pagarme_checkout_payment_method><to_order_payment>*</to_order_payment></pagarme_checkout_payment_method>
                 <pagarme_checkout_hash><to_order_payment>*</to_order_payment></pagarme_checkout_hash>
             </sales_convert_quote_payment>
+            <sales_convert_quote_address>
+                <fee_amount><to_order>*</to_order></fee_amount>
+                <base_fee_amount><to_order>*</to_order></base_fee_amount>
+            </sales_convert_quote_address>
         </fieldsets>
     	<models>
     		<pagarme>
@@ -106,10 +110,56 @@
                     <fee>
                         <class>pagarme/quote_address_total_fee</class>
                         <after>grand_total</after>
+                        <renderer>pagarme/checkout_totals_fee</renderer>
+                        <admin_renderer>pagarme/adminhtml_sales_order_create_totals_fee</admin_renderer>
                     </fee>
                 </totals>
             </quote>
+            <order_invoice>
+                <totals>
+                    <fee>
+                        <class>pagarme/sales_order_total_invoice_fee</class>
+                    </fee>
+                </totals>
+            </order_invoice>
+            <order_creditmemo>
+                <totals>
+                    <fee>
+                        <class>pagarme/sales_order_total_creditmemo_fee</class>
+                    </fee>
+                </totals>
+            </order_creditmemo>
        </sales>
+        <pdf>
+            <totals>
+                <fee translate="title">
+                    <title>Fee</title>
+                    <source_field>fee_amount</source_field>
+                    <font_size>7</font_size>
+                    <display_zero>0</display_zero>
+                    <sort_order>650</sort_order>
+                    <amount_prefix></amount_prefix>
+                </fee>
+            </totals>
+        </pdf>
+        <events>
+            <sales_order_invoice_pay>
+                <observers>
+                    <pagarme_sales_order_invoice_pay>
+                        <class>pagarme/observer</class>
+                        <method>invoicePay</method>
+                    </pagarme_sales_order_invoice_pay>
+                </observers>
+            </sales_order_invoice_pay>
+            <sales_order_creditmemo_refund>
+                <observers>
+                    <pagarme_sales_order_creditmemo_refund>
+                        <class>pagarme/observer</class>
+                        <method>creditmemoRefund</method>
+                    </pagarme_sales_order_creditmemo_refund>
+                </observers>
+            </sales_order_creditmemo_refund>
+        </events>
     </global>
     <frontend>
         <routers>

@@ -92,5 +92,59 @@
     <checkoutsimplificado_index_success>
         <update handle="pagarme_checkout_success_handle"/>
     </checkoutsimplificado_index_success>
+
+	<pagarme_order_fee_handle>
+        <reference name="order_totals">
+            <block type="pagarme/sales_order_fee" name="fee" />
+        </reference>
+	</pagarme_order_fee_handle>
+
+	<pagarme_invoice_fee_handle>
+        <reference name="invoice_totals">
+            <block type="pagarme/sales_order_fee" name="fee" />
+        </reference>
+	</pagarme_invoice_fee_handle>
+
+	<pagarme_creditmemo_fee_handle>
+        <reference name="creditmemo_totals">
+            <block type="pagarme/sales_order_fee" name="fee" />
+        </reference>
+	</pagarme_creditmemo_fee_handle>
+
+    <sales_order_view>
+        <update handle="pagarme_order_fee_handle"/>
+    </sales_order_view>
+
+    <sales_order_print>
+        <update handle="pagarme_order_fee_handle"/>
+    </sales_order_print>
+
+    <sales_email_order_items>
+        <update handle="pagarme_order_fee_handle"/>
+    </sales_email_order_items>
+
+    <sales_order_invoice>
+        <update handle="pagarme_invoice_fee_handle"/>
+    </sales_order_invoice>
+
+    <sales_order_printinvoice>
+        <update handle="pagarme_invoice_fee_handle"/>
+    </sales_order_printinvoice>
+
+    <sales_email_order_invoice_items>
+        <update handle="pagarme_invoice_fee_handle"/>
+    </sales_email_order_invoice_items>
+
+    <sales_order_creditmemo>
+        <update handle="pagarme_creditmemo_fee_handle"/>
+    </sales_order_creditmemo>
+
+    <sales_order_printcreditmemo>
+        <update handle="pagarme_creditmemo_fee_handle"/>
+    </sales_order_printcreditmemo>
+
+    <sales_email_order_creditmemo_items>
+        <update handle="pagarme_creditmemo_fee_handle"/>
+    </sales_email_order_creditmemo_items>
 </layout>
 

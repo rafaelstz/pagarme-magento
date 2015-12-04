@@ -29,11 +29,28 @@ function pagarmeHideLoader ()
     $("pagarme-overlay").hide ();
 }
 
-function pagarmeDisableAll(element){
+function pagarmeDisableAll(element)
+{
     $$(element).each(function(obj){
         $(obj).disable();
         $(obj).setStyle({background: 'red'});
     });
+}
+
+function pagarmeCreditCard()
+{
+    var creditCard = new PagarMe.creditCard();
+    creditCard.cardHolderName = $(OSCPayment.currentMethod+'_cc_owner').value;
+    creditCard.cardExpirationMonth = $(OSCPayment.currentMethod+'_expiration').value;
+    creditCard.cardExpirationYear = $(OSCPayment.currentMethod+'_expiration_yr').value;
+    creditCard.cardNumber = $(OSCPayment.currentMethod+'_cc_number').value;
+    creditCard.cardCVV = $(OSCPayment.currentMethod+'_cc_cid').value;
+
+    if(!creditCard.cardHolderName.length
+        || !creditCard.cardExpirationMonth.length || !creditCard.cardExpirationYear.length
+        || !creditCard.cardNumber.length || !creditCard.cardCVV.length) return;
+
+    return creditCard;
 }
 
 function pagarmeInitCheckout()
@@ -84,14 +101,23 @@ if (typeof OSCPayment !== "undefined") {
 
         OSCForm.disablePlaceOrderButton ();
 
-        if (OSCForm.validate()) {
+        if (OSCForm.validate()/* always returns true(!) */) {
             if (OSCPayment.currentMethod == 'pagarme_cc') {
+                /*
                 var creditCard = new PagarMe.creditCard();
                 creditCard.cardHolderName = $(OSCPayment.currentMethod+'_cc_owner').value;
                 creditCard.cardExpirationMonth = $(OSCPayment.currentMethod+'_expiration').value;
                 creditCard.cardExpirationYear = $(OSCPayment.currentMethod+'_expiration_yr').value;
                 creditCard.cardNumber = $(OSCPayment.currentMethod+'_cc_number').value;
                 creditCard.cardCVV = $(OSCPayment.currentMethod+'_cc_cid').value;
+                */
+                creditCard = pagarmeCreditCard();
+                if(!creditCard)
+                {
+                    OSCPayment._savePayment();
+
+                    return;
+                }
 
                 $('pagarme-cardhash-success').hide();
                 $('pagarme-cardhash-waiting').show();
