@@ -7,13 +7,6 @@
  */
 ?>
 <?php $_code=$this->getMethodCode() ?>
-<ul class="form-list pagarme-payment-icons" id="<?php echo $_code ?>_types">
-<?php foreach ($this->getCcAvailableTypes() as $_typeCode => $_typeName): ?>
-    <li class="<?php echo $_typeCode ?> on">
-        <span><?php echo $_typeName ?></span>
-    </li>
-<?php endforeach ?>
-</ul>
 <ul class="form-list" id="payment_form_<?php echo $_code ?>" style="display:none;">
     <li style="display: none;">
         <input type="hidden" id="<?php echo $_code ?>_pagarme_card_hash" name="payment[pagarme_card_hash]" value="" />
@@ -23,6 +16,15 @@
             <option value="<?php echo $_typeCode ?>"><?php echo $_typeName ?></option>
         <?php endforeach ?>
         </select>
+    </li>
+    <li>
+        <ul class="form-list pagarme-payment-icons" id="<?php echo $_code ?>_types">
+        <?php foreach ($this->getCcAvailableTypes() as $_typeCode => $_typeName): ?>
+            <li class="<?php echo $_typeCode ?> on">
+                <span><?php echo $_typeName ?></span>
+            </li>
+        <?php endforeach ?>
+        </ul>
     </li>
     <li>
         <label for="<?php echo $_code ?>_installments" class="required"><em>*</em><?php echo $this->__('Installments') ?></label>
