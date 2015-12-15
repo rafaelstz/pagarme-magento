@@ -71,4 +71,7 @@
 "Fee","Juros"
 "Fee Refunded","Juros Devolvidos"
 "Fee refunded to customer","Juros devolvidos para o cliente"
+"Don't Send Invoice Email","Não Enviar Email de Fatura"
+"Send Invoice Email","Enviar E-mail da Fatura"
+"Send Invoice Update Email","Enviar E-mail de Atualização da Fatura"
 
