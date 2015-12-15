@@ -35,12 +35,25 @@ class Inovarti_Pagarme_Model_Observer
     public function invoicePay(Varien_Event_Observer $observer)
     {
         $invoice = $observer->getEvent()->getInvoice();
+        $order = $invoice->getOrder();
         if ($invoice->getBaseFeeAmount())
         {
-            $order = $invoice->getOrder();
             $order->setFeeAmountInvoiced($order->getFeeAmountInvoiced() + $invoice->getFeeAmount());
             $order->setBaseFeeAmountInvoiced($order->getBaseFeeAmountInvoiced() + $invoice->getBaseFeeAmount());
         }
+        $payment_method = $order->getPayment()->getMethod();
+        $invoice_email = Mage::getStoreConfig("payment/{$payment_method}/invoice_email");
+        $comment = Mage::helper('sales')->__('Approved the payment online.');
+        switch ($invoice_email) {
+        case '1': {
+            $invoice->sendEmail(true, $comment);
+            break;
+        }
+        case '2': {
+            $invoice->sendUpdateEmail(true, $comment);
+            break;
+        }
+        };
         return $this;
     }
 
