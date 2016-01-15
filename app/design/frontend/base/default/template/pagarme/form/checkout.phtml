@@ -29,7 +29,8 @@ $("pagarme-checkout-button").observe ("click", function (event){
             $('pagarme-checkout-payment-method').value = data ['payment_method'];
             $('pagarme-checkout-installments').value = data ['installments'];
             if (typeof OSCForm !== "undefined") {
-                OSCForm.placeOrder ();
+                OSCForm.enablePlaceOrderButton (); // For terms agreement ...
+                if (OSCForm.validate () == true) OSCForm.placeOrder ();
             } else if (typeof payment !== "undefined") {
                 payment.save ();
             }
