@@ -5,8 +5,6 @@
  * @author     Suporte <suporte@inovarti.com.br>
  */
 
-
-
 function pagarmeDocumentHeight()
 {
     var D = document;
@@ -57,8 +55,7 @@ function pagarmeCreditCard()
 
 function pagarmeInitCheckout()
 {
-
-    console.log('Pagarme: initChedackout');
+    console.log('Pagarme: initCheckout');
 
     PagarMe.encryption_key = pagarme_encryption_key;
 
