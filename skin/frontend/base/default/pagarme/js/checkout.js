@@ -55,7 +55,7 @@ function pagarmeCreditCard()
 
 function pagarmeInitCheckout()
 {
-    console.log('Pagarme: initCheckout');
+    console.log('Pagarme: initPagarmeCheckout');
 
     PagarMe.encryption_key = pagarme_encryption_key;
 
