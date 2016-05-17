@@ -105,27 +105,28 @@ Event.observe($('<?php echo $_code ?>_cc_cid'), 'keyup', function(){
 //<![CDATA[
     function pagarmeValidateFields() {
 
-        cardNumber          = (document.getElementById( '<?php echo $_code ?>_cc_number' ).value);
-        cardInstallments    = (document.getElementById( '<?php echo $_code ?>_installments' ).value);
-        cardOwner           = (document.getElementById( '<?php echo $_code ?>_cc_owner' ).value);
-        cardExpiration      = (document.getElementById( '<?php echo $_code ?>_expiration' ).value);
-        cardExpirationYr    = (document.getElementById( '<?php echo $_code ?>_expiration_yr' ).value);
-        cardCid             = (document.getElementById( '<?php echo $_code ?>_cc_cid' ).value);
+        pagarmeCardNumber          = (document.getElementById( '<?php echo $_code ?>_cc_number' ).value);
+        pagarmeCardInstallments    = (document.getElementById( '<?php echo $_code ?>_installments' ).value);
+        pagarmeCardOwner           = (document.getElementById( '<?php echo $_code ?>_cc_owner' ).value);
+        pagarmeCardExpiration      = (document.getElementById( '<?php echo $_code ?>_expiration' ).value);
+        pagarmeCardExpirationYr    = (document.getElementById( '<?php echo $_code ?>_expiration_yr' ).value);
+        pagarmeCardCid             = (document.getElementById( '<?php echo $_code ?>_cc_cid' ).value);
 
-        if (!cardNumber || !cardInstallments || !cardOwner || !cardExpiration || !cardExpirationYr || !cardCid) {
+        if (!pagarmeCardNumber || !pagarmeCardInstallments || !pagarmeCardOwner || !pagarmeCardExpiration
+            || !pagarmeCardExpirationYr || !pagarmeCardCid) {
             return false;
         }
 
         PagarMe.encryption_key = pagarme_encryption_key;
+        var pagarmeCreditCard = new PagarMe.creditCard();
 
-        var creditCard = new PagarMe.creditCard();
-        creditCard.cardHolderName       = cardOwner;
-        creditCard.cardExpirationMonth  = cardExpiration;
-        creditCard.cardExpirationYear   = cardExpirationYr;
-        creditCard.cardNumber           = cardNumber;
-        creditCard.cardCVV              = cardCid;
+        pagarmeCreditCard.cardHolderName       = pagarmeCardOwner;
+        pagarmeCreditCard.cardExpirationMonth  = pagarmeCardExpiration;
+        pagarmeCreditCard.cardExpirationYear   = pagarmeCardExpirationYr;
+        pagarmeCreditCard.cardNumber           = pagarmeCardNumber;
+        pagarmeCreditCard.cardCVV              = pagarmeCardCid;
 
-        var fieldErrors = creditCard.fieldErrors();
+        var fieldErrors = pagarmeCreditCard.fieldErrors();
         var hasErrors = false;
 
         for(var field in fieldErrors) { hasErrors = true; break; }
@@ -135,7 +136,7 @@ Event.observe($('<?php echo $_code ?>_cc_cid'), 'keyup', function(){
             return false;
         }
 
-        creditCard.generateHash(function(cardHash) {
+        pagarmeCreditCard.generateHash(function(cardHash) {
             $("<?php echo $_code ?>_pagarme_card_hash").setValue(cardHash);
         });
     }
