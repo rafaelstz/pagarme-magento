@@ -171,6 +171,15 @@
                     </pagarme_sales_order_creditmemo_refund>
                 </observers>
             </sales_order_creditmemo_refund>
+              <sales_order_place_after>
+                <observers>
+                    <update_order_status_invoiced>
+                        <type>singleton</type>
+                        <class>pagarme/observer</class>
+                        <method>updateOrderStatusInvoiced</method>
+                    </update_order_status_invoiced>
+                </observers>
+            </sales_order_place_after>
         </events>
     </global>
     <frontend>
@@ -296,4 +305,3 @@
         </payment>
     </default>
 </config>
-

@@ -20,59 +20,39 @@ public function postbackAction()
 		$order = Mage::getModel('sales/order')->load($orderId);
 
 		$currentStatus = $request->getPost('current_status');
-        switch($currentStatus)
-        {
-        case Inovarti_Pagarme_Model_Api::TRANSACTION_STATUS_PAID:
-        {
-            $order->setState(Mage_Sales_Model_Order::STATE_NEW)->save();
 
-		    if (!$order->canInvoice())
-            {
-			    Mage::throwException($this->__('The order does not allow creating an invoice.'));
-		    }
+		if ($currentStatus === Inovarti_Pagarme_Model_Api::TRANSACTION_STATUS_PAID) {
+			if (!$order->canInvoice()) {
+				Mage::throwException($this->__('The order does not allow creating an invoice.'));
+			}
 
-		    $invoice = Mage::getModel('sales/service_order', $order)
-			    ->prepareInvoice()
-			    ->register()
-			    ->pay();
+			$invoice = Mage::getModel('sales/service_order', $order)
+				->prepareInvoice()
+				->register()
+				->pay();
 
-		    $invoice->setEmailSent(true);
-		    $invoice->getOrder()->setIsInProcess(true);
+			$invoice->setEmailSent(true);
+			$invoice->getOrder()->setIsInProcess(true);
 
-		    $transactionSave = Mage::getModel('core/resource_transaction')
-			    ->addObject($invoice)
-			    ->addObject($invoice->getOrder())
-			    ->save();
+			$transactionSave = Mage::getModel('core/resource_transaction')
+				->addObject($invoice)
+				->addObject($invoice->getOrder())
+				->save();
 
-		    $invoice->sendEmail();
+			$invoice->sendEmail();
+			$order->addStatusHistoryComment($this->__('Approved by Pagarme via Creditcard postback.'))->save();
+			return $this->getResponse()->setBody('ok');
+		}
 
-            $order->addStatusHistoryComment($this->__('Approved by Pagarme via Creditcard postback.'))->save();
+      if (!$order->canCancel()) {
+    			Mage::throwException($this->__('Order does not allow to be canceled.'));
+    	}
 
-		    $this->getResponse()->setBody('ok');
+      $order->cancel()->save();
+      $order->addStatusHistoryComment($this->__('Canceled by Pagarme via Creditcard postback.'))->save();
 
-		    return;
-        }
-        case Inovarti_Pagarme_Model_Api::TRANSACTION_STATUS_REFUSED:
-        {
-            $order->setState(Mage_Sales_Model_Order::STATE_NEW)->save();
-
-            if (!$order->canCancel())
-            {
-			    Mage::throwException($this->__('Order does not allow to be canceled.'));
-            }
-
-            $order->cancel()->save();
-            $order->addStatusHistoryComment($this->__('Canceled by Pagarme via Creditcard postback.'))->save();
-
-            $this->getResponse()->setBody('ok');
-
-            return;
-        }
-        } // switch
+      return $this->getResponse()->setBody('ok');
 	}
 
 	$this->_forward('404');
 }
-
-}
-
