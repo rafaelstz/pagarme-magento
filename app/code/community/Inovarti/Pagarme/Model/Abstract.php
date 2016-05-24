@@ -1,18 +1,17 @@
 <?php
 /**
- *
- * @category   Inovarti
- * @package    Inovarti_Pagarme
- * @author     Lucas Santos <lucas.santos@pagar.me>
- *
- */
+*  @category   Inovarti
+*  @package    Inovarti_Pagarme
+*  @copyright   Copyright (C) 2016 Pagar Me (http://www.pagar.me/)
+*  @author     Lucas Santos <lucas.santos@pagar.me>
+*/
 abstract class Inovarti_Pagarme_Model_Abstract
     extends Mage_Payment_Model_Method_Abstract
 {
     const REQUEST_TYPE_AUTH_CAPTURE = 'AUTH_CAPTURE';
     const REQUEST_TYPE_AUTH_ONLY    = 'AUTH_ONLY';
     const REQUEST_TYPE_CAPTURE_ONLY = 'CAPTURE_ONLY';
-
+    
     private $pagarmeApi;
 
     public function __construct()

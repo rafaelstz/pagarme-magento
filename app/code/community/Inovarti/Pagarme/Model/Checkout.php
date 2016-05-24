@@ -1,19 +1,18 @@
 <?php
-/*
- * @copyright   Copyright (C) 2015 Gamuza Technologies (http://www.gamuza.com.br/)
- * @author     Eneias Ramos de Melo <eneias@gamuza.com.br>
- */
+/**
+*  @category   Inovarti
+*  @package    Inovarti_Pagarme
+*  @copyright   Copyright (C) 2016 Pagar Me (http://www.pagar.me/)
+*  @author     Lucas Santos <lucas.santos@pagar.me>
+*/
 
-class Inovarti_Pagarme_Model_Checkout
-extends Inovarti_Pagarme_Model_Abstract
+class Inovarti_Pagarme_Model_Checkout extends Inovarti_Pagarme_Model_Abstract
 {
-
     const REQUEST_TYPE_AUTH_CAPTURE = 'AUTH_CAPTURE';
     const REQUEST_TYPE_AUTH_ONLY    = 'AUTH_ONLY';
     const REQUEST_TYPE_CAPTURE_ONLY = 'CAPTURE_ONLY';
 
     protected $_code = 'pagarme_checkout';
-
     protected $_formBlockType = 'pagarme/form_checkout';
     protected $_infoBlockType = 'pagarme/info_checkout';
 
