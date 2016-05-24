@@ -14,8 +14,7 @@ public function postbackAction()
 	$pagarme = Mage::getModel('pagarme/api');
 	$request = $this->getRequest();
 
-	if ($request->isPost() && $pagarme->validateFingerprint($request->getPost('id'), $request->getPost('fingerprint')))
-	{
+	if ($request->isPost() && $pagarme->validateFingerprint($request->getPost('id'), $request->getPost('fingerprint'))) {
 			$orderId = Mage::helper('pagarme')->getOrderIdByTransactionId($request->getPost('id'));
 			$order = Mage::getModel('sales/order')->load($orderId);
 
