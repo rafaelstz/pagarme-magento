@@ -13,6 +13,7 @@
 class Inovarti_Pagarme_Model_Observer
 {
     const PAGARME_CC_PAYMENT_METHOD = 'pagarme_cc';
+    const PAGARME_CHECKOUT_PAYMENT_METHOD = 'pagarme_checkout';
 
     public function addPagarmeJs(Varien_Event_Observer $observer)
     {
@@ -76,18 +77,32 @@ class Inovarti_Pagarme_Model_Observer
         $order = $observer->getEvent()->getOrder();
         $paymentMethod = $order->getPayment()->getMethod();
 
-        if ($order->hasInvoices()
-            && $paymentMethod === self::PAGARME_CC_PAYMENT_METHOD
-            && $order->getState() === Mage_Sales_Model_Order::STATE_PROCESSING
-            && $order->getStatus() === Mage::getStoreConfig('payment/pagarme_cc/order_status')) {
+        if ($paymentMethod === self::PAGARME_CC_PAYMENT_METHOD) {
+            $validatePaymentMethod  = self::PAGARME_CC_PAYMENT_METHOD;
+            $configOrderStatus      = Mage::getStoreConfig('payment/pagarme_cc/order_status');
+            $configOrderStatusPaid  = Mage::getStoreConfig('payment/pagarme_cc/order_status_paid');
+        }
 
-              $order->setStatus(Mage::getStoreConfig('payment/pagarme_cc/order_status_paid'), true);
-              $history = $order->addStatusHistoryComment('status automatically changed to ('.$paymentMethod.') by setting the module Pagar.me', false);
+        if ($paymentMethod === self::PAGARME_CHECKOUT_PAYMENT_METHOD) {
+            $validatePaymentMethod  = self::PAGARME_CHECKOUT_PAYMENT_METHOD;
+            $configOrderStatus      = Mage::getStoreConfig('payment/pagarme_checkout/order_status');
+            $configOrderStatusPaid  = Mage::getStoreConfig('payment/pagarme_checkout/order_status_paid');
+        }
+
+        if (!isset($validatePaymentMethod)) {
+          return $this;
+        }
+
+        if ($order->hasInvoices()
+            && $order->getState() === Mage_Sales_Model_Order::STATE_PROCESSING
+            && $order->getStatus() === $configOrderStatus) {
+
+              $order->setStatus($configOrderStatusPaid, true);
+              $history = $order->addStatusHistoryComment('status automatically changed to ('.$configOrderStatusPaid.') by setting the module Pagar.me', false);
               $history->setIsCustomerNotified(true);
               $order->save();
 
-              Mage::log('status automatically changed to ('.$paymentMethod.') by setting the module Pagar.me', null, 'pagarme.log');
-
+              Mage::log('status automatically changed to ('.$configOrderStatusPaid.') by setting the module Pagar.me', null, 'pagarme.log');
               return $this;
         }
     }

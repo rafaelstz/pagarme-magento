@@ -20,18 +20,27 @@ abstract class Inovarti_Pagarme_Model_Abstract
         $this->pagarmeApi = Mage::getModel('pagarme/api');
     }
 
-    protected function _place($payment, $amount, $requestType)
+    protected function _place($payment, $amount, $requestType, $checkout = false)
     {
         if ($requestType === self::REQUEST_TYPE_AUTH_ONLY || $requestType === self::REQUEST_TYPE_AUTH_CAPTURE) {
             $customer = Mage::helper('pagarme')->getCustomerInfoFromOrder($payment->getOrder());
-            $requestParams = $this->prepareRequestParams($payment, $amount, $requestType, $customer);
+            $requestParams = $this->prepareRequestParams($payment, $amount, $requestType, $customer, $checkout);
             $transaction = $this->charge($requestParams);
 
-            $this->prepareTransaction($transaction, $payment);
+            $this->prepareTransaction($transaction, $payment, $checkout);
             return $this;
         }
 
-        Zend_Debug::dump('CAPTURE_ONLY'); die;
+        die('implementar método de autorização sem captura');
+    }
+
+    public function refund(Varien_Object $payment, $amount)
+    {
+    	$transaction = $pagarme->refund($payment->getPagarmeTransactionId());
+    	$this->checkApiErros($transaction);
+      $this->prepareTransaction($transaction, $payment);
+
+    	return $this;
     }
 
     private function charge($requestParams)
@@ -39,15 +48,22 @@ abstract class Inovarti_Pagarme_Model_Abstract
         return $this->pagarmeApi->charge($requestParams);
     }
 
-    private function prepareRequestParams($payment, $amount, $requestType, $customer)
+    private function prepareRequestParams($payment, $amount, $requestType, $customer, $checkout)
     {
         $requestParams = new Varien_Object();
-        $requestParams->setPaymentMethod(Inovarti_Pagarme_Model_Api::PAYMENT_METHOD_CREDITCARD)
-             ->setAmount(Mage::helper('pagarme')->formatAmount($amount))
-             ->setCardHash($payment->getPagarmeCardHash())
-             ->setInstallments($payment->getInstallments())
+        $requestParams->setAmount(Mage::helper('pagarme')->formatAmount($amount))
              ->setCapture($requestType == self::REQUEST_TYPE_AUTH_CAPTURE)
              ->setCustomer($customer);
+
+        if ($checkout) {
+          $requestParams->setPaymentMethod($payment->getPagarmeCheckoutPaymentMethod());
+          $requestParams->setCardHash($payment->getPagarmeCheckoutHash());
+          $requestParams->setInstallments($payment->getPagarmeCheckoutInstallments());
+        } else {
+          $requestParams->setPaymentMethod(Inovarti_Pagarme_Model_Api::PAYMENT_METHOD_CREDITCARD);
+          $requestParams->setCardHash($payment->getPagarmeCardHash());
+          $requestParams->setInstallments($payment->getInstallments());
+        }
 
          if ($this->getConfigData('async')) {
              $data->setAsync(true);
@@ -57,7 +73,7 @@ abstract class Inovarti_Pagarme_Model_Abstract
         return $requestParams;
     }
 
-    private function prepareTransaction($transaction,$payment)
+    private function prepareTransaction($transaction,$payment, $checkout)
     {
         $this->checkApiErros($transaction);
 
@@ -66,12 +82,23 @@ abstract class Inovarti_Pagarme_Model_Abstract
         }
 
         $payment = $this->preparePaymentMethod($payment,$transaction);
-        $payment->setTransactionAdditionalInfo(
-            Mage_Sales_Model_Order_Payment_Transaction::RAW_DETAILS,
-            array(
-              'status' => $transaction->getStatus()
-            )
-        );
+
+        if ($checkout) {
+            $payment->setTransactionAdditionalInfo(
+                Mage_Sales_Model_Order_Payment_Transaction::RAW_DETAILS, array(
+                  'status' => $transaction->getStatus (),
+                  'payment_method' => $transaction->getPaymentMethod (),
+                  'boleto_url' => $transaction->getBoletoUrl ()
+                  )
+            );
+        } else {
+          $payment->setTransactionAdditionalInfo(
+              Mage_Sales_Model_Order_Payment_Transaction::RAW_DETAILS,
+              array(
+                'status' => $transaction->getStatus()
+              )
+          );
+        }
 
         if ($this->getConfigData('async')) {
             $payment->setIsTransactionPending(true);
@@ -128,5 +155,20 @@ abstract class Inovarti_Pagarme_Model_Abstract
 
         Mage::log(implode("\n", $messages), null, 'pagarme.log');
         Mage::throwException(implode("\n", $messages));
+    }
+
+    protected function _wrapGatewayError($code)
+    {
+        switch ($code)
+        {
+        case 'acquirer': { $result = 'Transaction refused by the card company.'; break; }
+        case 'antifraud': { $result = 'Transação recusada pelo antifraude.'; break; }
+        case 'internal_error': { $result = 'Ocorreu um erro interno ao processar a transação.'; break; }
+        case 'no_acquirer': { $result = 'Sem adquirente configurado para realizar essa transação.'; break; }
+        case 'acquirer_timeout': { $result = 'Transação não processada pela operadora de cartão.'; break; }
+        }
+
+        return Mage::helper('pagarme')->__('Transaction failed, please try again or contact the card issuing bank.') . PHP_EOL
+               . Mage::helper('pagarme')->__($result);
     }
 }
