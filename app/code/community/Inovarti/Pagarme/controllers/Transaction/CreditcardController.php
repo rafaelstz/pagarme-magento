@@ -16,33 +16,33 @@ public function postbackAction()
 
 	if ($request->isPost() && $pagarme->validateFingerprint($request->getPost('id'), $request->getPost('fingerprint')))
 	{
-		$orderId = Mage::helper('pagarme')->getOrderIdByTransactionId($request->getPost('id'));
-		$order = Mage::getModel('sales/order')->load($orderId);
+			$orderId = Mage::helper('pagarme')->getOrderIdByTransactionId($request->getPost('id'));
+			$order = Mage::getModel('sales/order')->load($orderId);
 
-		$currentStatus = $request->getPost('current_status');
+			$currentStatus = $request->getPost('current_status');
 
-		if ($currentStatus === Inovarti_Pagarme_Model_Api::TRANSACTION_STATUS_PAID) {
-			if (!$order->canInvoice()) {
-				Mage::throwException($this->__('The order does not allow creating an invoice.'));
-			}
+			if ($currentStatus === Inovarti_Pagarme_Model_Api::TRANSACTION_STATUS_PAID) {
+					if (!$order->canInvoice()) {
+						Mage::throwException($this->__('The order does not allow creating an invoice.'));
+					}
 
-			$invoice = Mage::getModel('sales/service_order', $order)
-				->prepareInvoice()
-				->register()
-				->pay();
+					$invoice = Mage::getModel('sales/service_order', $order)
+						->prepareInvoice()
+						->register()
+						->pay();
 
-			$invoice->setEmailSent(true);
-			$invoice->getOrder()->setIsInProcess(true);
+					$invoice->setEmailSent(true);
+					$invoice->getOrder()->setIsInProcess(true);
 
-			$transactionSave = Mage::getModel('core/resource_transaction')
-				->addObject($invoice)
-				->addObject($invoice->getOrder())
-				->save();
+					$transactionSave = Mage::getModel('core/resource_transaction')
+						->addObject($invoice)
+						->addObject($invoice->getOrder())
+						->save();
 
-			$invoice->sendEmail();
-			$order->addStatusHistoryComment($this->__('Approved by Pagarme via Creditcard postback.'))->save();
-			return $this->getResponse()->setBody('ok');
-		}
+					$invoice->sendEmail();
+					$order->addStatusHistoryComment($this->__('Approved by Pagarme via Creditcard postback.'))->save();
+					return $this->getResponse()->setBody('ok');
+				}
 
       if (!$order->canCancel()) {
     			Mage::throwException($this->__('Order does not allow to be canceled.'));
