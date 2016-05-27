@@ -11,7 +11,7 @@ abstract class Inovarti_Pagarme_Model_Abstract
     const REQUEST_TYPE_AUTH_CAPTURE = 'AUTH_CAPTURE';
     const REQUEST_TYPE_AUTH_ONLY    = 'AUTH_ONLY';
     const REQUEST_TYPE_CAPTURE_ONLY = 'CAPTURE_ONLY';
-    
+
     private $pagarmeApi;
 
     public function __construct()
@@ -65,8 +65,8 @@ abstract class Inovarti_Pagarme_Model_Abstract
         }
 
          if ($this->getConfigData('async')) {
-             $data->setAsync(true);
-             $data->setPostbackUrl(Mage::getUrl('pagarme/transaction_creditcard/postback'));
+             $requestParams->setAsync(true);
+             $requestParams->setPostbackUrl(Mage::getUrl('pagarme/transaction_creditcard/postback'));
          }
 
         return $requestParams;
