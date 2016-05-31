@@ -29,8 +29,6 @@ abstract class Inovarti_Pagarme_Model_Abstract
             $this->prepareTransaction($transaction, $payment, $checkout);
             return $this;
         }
-
-        die('implementar método de autorização sem captura');
     }
 
     public function refund(Varien_Object $payment, $amount)
