@@ -141,6 +141,9 @@ Event.observe($('<?php echo $_code ?>_cc_cid'), 'keyup', function(){
         });
     }
 
+    $(document).on('click','#onestepcheckout-place-order-button',function(){
+        pagarmeValidateFields();
+    });
 
     var changeElement = false;
     document.on('click', function(evt, elm){
