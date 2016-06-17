@@ -3,9 +3,9 @@
 class Inovarti_Pagarme_Model_Banks extends Mage_Core_Model_Abstract
 {
     /**
-     * Inovarti_Pagarme_Model_Banks constructor.
+     * @return Mage_Core_Model_Abstract
      */
-    protected function __construct()
+    protected function _construct()
     {
         return $this->_init('pagarme/banks');
     }

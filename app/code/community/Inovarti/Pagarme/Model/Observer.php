@@ -106,4 +106,23 @@ class Inovarti_Pagarme_Model_Observer
               return $this;
         }
     }
+
+    /**
+     * Include our composer auto loader for the ElasticSearch modules
+     *
+     * @param Varien_Event_Observer $event
+     */
+    public function controllerFrontInitBefore(Varien_Event_Observer $event)
+    {
+        self::init();
+    }
+
+    /**
+     * Add in auto loader for Elasticsearch components
+     */
+    static function init()
+    {
+        $includePath = Mage::getBaseDir(). "/lib/pagarme/Pagarme.php";
+        require_once($includePath);
+    }
 }
