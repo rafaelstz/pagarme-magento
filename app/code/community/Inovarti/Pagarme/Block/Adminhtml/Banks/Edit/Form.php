@@ -11,7 +11,7 @@ class Inovarti_Pagarme_Block_Adminhtml_Banks_Edit_Form
     {
         $form = new Varien_Data_Form(array(
             "id" => "edit_form",
-            "action" => $this->getUrl("*/*/save", array("entity_id" => $this->getRequest()->getParam("entity_id"))),
+            "action" => $this->getUrl("*/*/save", array("entity_id" => $this->getRequest()->getParam("id"))),
             "method" => "post",
             "enctype" =>"multipart/form-data",
         ));

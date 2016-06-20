@@ -11,7 +11,6 @@ class Inovarti_Pagarme_Block_Adminhtml_Banks_Grid
     public function __construct()
     {
         parent::__construct();
-        $this->prepareCollection();
         $this->setId("pagarmeBanksGrid");
         $this->setDefaultSort("id");
         $this->setDefaultDir("DESC");

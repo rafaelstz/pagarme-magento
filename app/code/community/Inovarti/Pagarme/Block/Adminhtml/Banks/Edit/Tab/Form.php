@@ -27,11 +27,10 @@ class Inovarti_Pagarme_Block_Adminhtml_Banks_Edit_Tab_Form
             "required" => true
         ));
 
-        $fieldset->addField("agency_cv", "text", array(
-            "label" => Mage::helper("pagarme")->__("Agency CV"),
-            "name" => "agency_cv",
-            "class" => "required-entry",
-            "required" => true
+        $fieldset->addField("agency_dv", "text", array(
+            "label" => Mage::helper("pagarme")->__("Agency DV"),
+            "name" => "agency_dv",
+            "required" => false
         ));
 
         $fieldset->addField("account_number", "text", array(
@@ -41,9 +40,9 @@ class Inovarti_Pagarme_Block_Adminhtml_Banks_Edit_Tab_Form
             "required" => true
         ));
 
-        $fieldset->addField("account_cv", "text", array(
-            "label" => Mage::helper("pagarme")->__("Account CV"),
-            "name" => "account_cv",
+        $fieldset->addField("account_dv", "text", array(
+            "label" => Mage::helper("pagarme")->__("Account DV"),
+            "name" => "account_dv",
             "class" => "required-entry",
             "required" => true
         ));

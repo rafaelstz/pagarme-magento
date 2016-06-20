@@ -14,16 +14,7 @@ class Inovarti_Pagarme_Block_Adminhtml_Banks_Edit
         $this->_controller = "adminhtml_banks";
         $this->_updateButton("save", "label", Mage::helper("pagarme")->__("Save Banck Account"));
         $this->_updateButton("delete", "label", Mage::helper("pagarme")->__("Delete Banck Account"));
-
-        $this->_addButton("saveandcontinue", array(
-            "label"     => Mage::helper("pagarme")->__("Save and Continue Edit"),
-            "onclick"   => "saveAndContinueEdit()",
-            "class"     => "save",
-        ), -100);
-        $this->_formScripts[] = "
-		function saveAndContinueEdit(){
-			editForm.submit($('edit_form').action+'back/edit/');
-		}";
+        
     }
 
     /**

@@ -15,6 +15,9 @@ class Inovarti_Pagarme_Model_Observer
     const PAGARME_CC_PAYMENT_METHOD = 'pagarme_cc';
     const PAGARME_CHECKOUT_PAYMENT_METHOD = 'pagarme_checkout';
 
+    /**
+     * @param Varien_Event_Observer $observer
+     */
     public function addPagarmeJs(Varien_Event_Observer $observer)
     {
         $block = $observer->getEvent()->getBlock();
@@ -35,6 +38,10 @@ class Inovarti_Pagarme_Model_Observer
         }
     }
 
+    /**
+     * @param Varien_Event_Observer $observer
+     * @return $this
+     */
     public function invoicePay(Varien_Event_Observer $observer)
     {
         $invoice = $observer->getEvent()->getInvoice();
@@ -60,6 +67,10 @@ class Inovarti_Pagarme_Model_Observer
         return $this;
     }
 
+    /**
+     * @param Varien_Event_Observer $observer
+     * @return $this
+     */
     public function creditmemoRefund(Varien_Event_Observer $observer)
     {
         $creditmemo = $observer->getEvent()->getCreditmemo();
@@ -72,6 +83,10 @@ class Inovarti_Pagarme_Model_Observer
         return $this;
     }
 
+    /**
+     * @param Varien_Event_Observer $observer
+     * @return $this
+     */
     public function updateOrderStatusInvoiced(Varien_Event_Observer $observer)
     {
         $order = $observer->getEvent()->getOrder();
@@ -112,7 +127,7 @@ class Inovarti_Pagarme_Model_Observer
      *
      * @param Varien_Event_Observer $event
      */
-    public function controllerFrontInitBefore(Varien_Event_Observer $event)
+    public function addPagarmeLibrary(Varien_Event_Observer $event)
     {
         self::init();
     }
@@ -122,7 +137,6 @@ class Inovarti_Pagarme_Model_Observer
      */
     static function init()
     {
-        $includePath = Mage::getBaseDir(). "/lib/pagarme/Pagarme.php";
-        require_once($includePath);
+        require_once(Mage::getBaseDir('lib') . DS . 'pagarme' . DS . 'pagarme.php');
     }
 }

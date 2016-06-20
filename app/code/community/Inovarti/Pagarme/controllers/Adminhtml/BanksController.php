@@ -12,14 +12,14 @@ class Inovarti_Pagarme_Adminhtml_BanksController
         $this->_addContent($this->getLayout()->createBlock('pagarme/adminhtml_banks'));
         $this->renderLayout();
     }
-
+    
     public function newAction()
     {
         $this->_title($this->__("Pagarme"));
         $this->_title($this->__("Banks"));
         $this->_title($this->__("New Item"));
-        $id   = $this->getRequest()->getParam("entity_id");
-        $model  = Mage::getModel("pagarme/banks")->load($id);
+        $id   = $this->getRequest()->getParam("id");
+        $model  = Mage::getModel("pagarme/banks");
         $data = Mage::getSingleton("adminhtml/session")->getFormData(true);
 
         if (!empty($data)) {
@@ -76,9 +76,9 @@ class Inovarti_Pagarme_Adminhtml_BanksController
         $bankAccountParams = array(
             "bank_code" => $data['bank_code'],
             "agencia" => $data['agency'],
-            "agencia_dv" => $data['agency_cv'],
+            "agencia_dv" => $data['agency_dv'],
             "conta" => $data['account_number'],
-            "conta_dv" => $data['account_cv'],
+            "conta_dv" => $data['account_dv'],
             "document_number" => $data['document_number'],
             "legal_name" => $data['legal_name']
         );
@@ -89,20 +89,13 @@ class Inovarti_Pagarme_Adminhtml_BanksController
 
             $account->create();
 
-            $banckAccount = mage::getModel('pagarme/banks')
-                ->addData($data)
-                ->setId($account->setBankId())
-                ->save();
-
-            if ($this->getRequest()->getParam("back")) {
-                $this->_redirect("*/*/edit", array("entity_id" => $banckAccount->getId()));
-                return;
-            }
-
-            $this->_redirect("*/*/");
-            return;
+            Mage::getSingleton('adminhtml/session')
+                ->addSuccess(Mage::helper('pagarme')->__('Success create back account'));
+            $this->_redirect('*/*/');
 
         } catch (Exception $e) {
+            Mage::getSingleton('adminhtml/session')
+                ->addError(Mage::helper('pagarme')->__('Error create back account : '. $e->getMessage()));
             $this->_redirect("*/*/");
             return;
         }

@@ -167,6 +167,7 @@ class Inovarti_Pagarme_Model_Api
 	{
 		$data->setEncryptionKey($this->getEncryptionKey());
 		$response = $this->request($this->getTransactionCalculateInstallmentsAmountUrl(), $data);
+
 		return $response;
 	}
 
