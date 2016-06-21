@@ -1,6 +1,6 @@
 <?php
 
-class Inovarti_Pagarme_Block_Adminhtml_Banks_Grid
+class Inovarti_Pagarme_Block_Adminhtml_Recipients_Grid
     extends Inovarti_Pagarme_Block_Adminhtml_AbstractPagarme
 {
     protected $collection;
@@ -13,7 +13,7 @@ class Inovarti_Pagarme_Block_Adminhtml_Banks_Grid
     public function __construct()
     {
         parent::__construct();
-        $this->setId("pagarmeBanksGrid");
+        $this->setId("pagarmeRecipientsGrid");
         $this->setDefaultSort("id");
         $this->setDefaultDir("DESC");
         $this->setSaveParametersInSession(true);
@@ -24,8 +24,8 @@ class Inovarti_Pagarme_Block_Adminhtml_Banks_Grid
      */
     protected function _prepareCollection()
     {
-        $this->pagarmeModel = PagarMe_Bank_Account::all(20, 0);
-        $this->currentModel = Mage::getModel('pagarme/banks');
+        $this->pagarmeModel = PagarMe_Recipient::all(20, 0);
+        $this->currentModel = Mage::getModel('pagarme/recipients');
 
         $this->prepareCollection($this->pagarmeModel);
         $this->setCollection($this->collection);
@@ -47,64 +47,39 @@ class Inovarti_Pagarme_Block_Adminhtml_Banks_Grid
             "sortable"  => false
         ));
 
-        $this->addColumn("legal_name", array(
-            "header" => Mage::helper("pagarme")->__("Legal Name"),
+        $this->addColumn("transfer_enabled", array(
+            "header" => Mage::helper("pagarme")->__("Transfer Enable"),
             "align" => "right",
-            "index" => "legal_name",
+            "index" => "transfer_enabled",
+            "type" => "options",
+            "filter" => false,
+            "sortable"  => false,
+            "options" => Mage::getModel('adminhtml/system_config_source_yesno')->toArray()
+        ));
+
+        $this->addColumn("transfer_interval", array(
+            "header" => Mage::helper("pagarme")->__("Transfer Interval"),
+            "align" => "right",
             "type" => "varchar",
+            "index" => "transfer_interval",
             "filter" => false,
             "sortable"  => false
         ));
 
-        $this->addColumn("bank_code", array(
-            "header" => Mage::helper("pagarme")->__("Bank Code"),
-            "align" => "right",
-            "index" => "bank_code",
-            "filter" => false,
-            "sortable"  => false
-        ));
-
-        $this->addColumn("agency", array(
-            "header" => Mage::helper("pagarme")->__("Agency"),
+        $this->addColumn("transfer_day", array(
+            "header" => Mage::helper("pagarme")->__("Transfer Day"),
             "align" => "right",
             "type" => "number",
-            "index" => "agency",
+            "index" => "transfer_day",
             "filter" => false,
             "sortable"  => false
         ));
 
-        $this->addColumn("agency_dv", array(
-            "header" => Mage::helper("pagarme")->__("Agency Cv"),
+        $this->addColumn("bank_account_id", array(
+            "header" => Mage::helper("pagarme")->__("Bank Account Id"),
             "align" => "right",
+            "index" => "bank_account_id",
             "type" => "number",
-            "index" => "agency_dv",
-            "filter" => false,
-            "sortable"  => false
-        ));
-
-        $this->addColumn("account", array(
-            "header" => Mage::helper("pagarme")->__("Account Number"),
-            "align" => "right",
-            "index" => "account",
-            "type" => "number",
-            "filter" => false,
-            "sortable"  => false
-        ));
-
-        $this->addColumn("account_dv", array(
-            "header" => Mage::helper("pagarme")->__("Account dv"),
-            "align" => "right",
-            "type" => "number",
-            "index" => "account_dv",
-            "filter" => false,
-            "sortable"  => false
-        ));
-
-        $this->addColumn("document_number", array(
-            "header" => Mage::helper("pagarme")->__("Document Number"),
-            "align" => "right",
-            "type" => "number",
-            "index" => "document_number",
             "filter" => false,
             "sortable"  => false
         ));
@@ -113,6 +88,15 @@ class Inovarti_Pagarme_Block_Adminhtml_Banks_Grid
             "header" => Mage::helper("pagarme")->__("Create At"),
             "align" => "right",
             "index" => "date_created",
+            "type" =>   "datetime",
+            "filter" => false,
+            "sortable"  => false
+        ));
+
+        $this->addColumn("date_updated", array(
+            "header" => Mage::helper("pagarme")->__("Updated At"),
+            "align" => "right",
+            "index" => "date_updated",
             "type" =>   "datetime",
             "filter" => false,
             "sortable"  => false
@@ -127,7 +111,6 @@ class Inovarti_Pagarme_Block_Adminhtml_Banks_Grid
      */
     public function getRowUrl($row)
     {
-        //return $this->getUrl("*/*/edit", array("entity_id" => $row->getEntityId()));
-        return null;
+        return $this->getUrl("*/*/edit", array("id" => $row->getId()));
     }
 }

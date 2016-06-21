@@ -4,43 +4,41 @@ $installer = new Mage_Catalog_Model_Resource_Setup('pagarme_setup');
 $installer->startSetup();
 
 $table = $installer->getConnection()
-    ->newTable($installer->getTable('pagarme_banks'))
+    ->newTable($installer->getTable('pagarme_split_rules'))
     ->addColumn('entity_id', Varien_Db_Ddl_Table::TYPE_INTEGER, null, array(
         'identity'  => true,
         'unsigned'  => true,
         'nullable'  => false,
         'primary'   => true,
     ), 'Id')
-    ->addColumn('bank_id', Varien_Db_Ddl_Table::TYPE_INTEGER, null, array(
+    ->addColumn('split_rule_id', Varien_Db_Ddl_Table::TYPE_VARCHAR, 255, array(
         'nullable'  => false,
-    ), 'pagarme bank id')
-    ->addColumn('bank_code', Varien_Db_Ddl_Table::TYPE_INTEGER, null, array(
+    ), 'Pagarme Split Rule Id')
+    ->addColumn('recipient_id', Varien_Db_Ddl_Table::TYPE_VARCHAR, 255, array(
         'nullable'  => false,
-    ), 'Bank Code')
-    ->addColumn('agency', Varien_Db_Ddl_Table::TYPE_INTEGER, null, array(
-        'nullable'  => false,
-    ), 'Agency account')
-    ->addColumn('agency_cv', Varien_Db_Ddl_Table::TYPE_INTEGER, null, array(
-        'nullable'  => false,
-    ), 'Agency verify digit')
-    ->addColumn('account_number', Varien_Db_Ddl_Table::TYPE_VARCHAR, null, array(
-        'nullable'  => false,
-    ), 'Account Number')
-    ->addColumn('account_cv', Varien_Db_Ddl_Table::TYPE_VARCHAR, null, array(
-        'nullable'  => false,
-    ), 'Account verify digit')
-    ->addColumn('document_type', Varien_Db_Ddl_Table::TYPE_VARCHAR, null, array(
-        'nullable'  => false,
-    ), 'Document type')
-    ->addColumn('document_number', Varien_Db_Ddl_Table::TYPE_VARCHAR, null, array(
-        'nullable'  => false,
-    ), 'Document number')
-    ->addColumn('legal_name', Varien_Db_Ddl_Table::TYPE_VARCHAR, null, array(
-        'nullable'  => false,
-    ), 'company name')
+    ), 'Recipient id.')
+    ->addColumn('charge_processing_fee', Varien_Db_Ddl_Table::TYPE_BOOLEAN, null, array(
+        'nullable'  => true,
+    ), 'Sets whether the recipient of this rule will be charged at the rate of Pagar.me')
+    ->addColumn('liable', Varien_Db_Ddl_Table::TYPE_BOOLEAN, null, array(
+        'nullable'  => true,
+    ), 'Sets whether the receiver linked to this rule will be responsible for transaction risk (chargeback)')
+    ->addColumn('percentage', Varien_Db_Ddl_Table::TYPE_VARCHAR, 2, array(
+        'nullable'  => true,
+    ), 'Percentage that the recipient will receive the transaction amount.')
+    ->addColumn('amount', Varien_Db_Ddl_Table::TYPE_VARCHAR, 20, array(
+        'nullable'  => true,
+    ), 'Value that the recipient will receive the transaction.')
+    ->addColumn('shipping_charge', Varien_Db_Ddl_Table::TYPE_BOOLEAN, array(
+        'nullable'  => true,
+        'default'   => false,
+    ), 'Value that the recipient will receive the transaction.')
     ->addColumn('created_at', Varien_Db_Ddl_Table::TYPE_DATETIME, array(
         'nullable'  => false,
-    ), 'company name');
+    ), 'date time created row')
+    ->addColumn('updated_at', Varien_Db_Ddl_Table::TYPE_DATETIME, array(
+        'nullable'  => false,
+    ), 'date time updated row');
 
 $installer->getConnection()->createTable($table);
 $installer->endSetup();
