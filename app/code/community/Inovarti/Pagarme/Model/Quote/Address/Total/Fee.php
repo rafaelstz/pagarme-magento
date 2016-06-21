@@ -36,9 +36,9 @@ class Inovarti_Pagarme_Model_Quote_Address_Total_Fee
             $total = $baseSubtotalWithDiscount + $shippingAmount;
 
             $data = new Varien_Object();
-            $data->setAmount(Mage::helper('pagarme')->formatAmount($total))
+            $data->setAmount(Mage::helper('pagarme')->formatAmount($address->getGrandTotal()))
                 ->setInterestRate($interestRate)
-                ->setMaxInstallments($maxInstallments)
+                ->setMaxInstallments($numberInstallments)
                 ->setFreeInstallments($freeInstallments);
 
             $post = Mage::app()->getRequest()->getPost();
@@ -134,18 +134,15 @@ class Inovarti_Pagarme_Model_Quote_Address_Total_Fee
                 continue;
             }
 
-            $famount = intval ($item->getInstallmentAmount()) / 100;
-            $iqty = intval ($item->getInstallment());
-            $balance = ($famount * $iqty) - $total;
+            $itemAmount = $item->getAmount() / 100;
+            $itemAmount = number_format($itemAmount, 2, '.', '');
 
-            if ($balance < 0) {
-                break;
-            } // The 1 cent problem
+            $fee = $itemAmount - $address->getGrandTotal();
 
-            $address->setFeeAmount($balance);
-            $address->setBaseFeeAmount($balance);
+            $address->setFeeAmount($fee);
+            $address->setBaseFeeAmount($fee);
 
-            $quote->setFeeAmount($balance);
+            $quote->setFeeAmount($fee);
 
             $address->setGrandTotal($address->getGrandTotal() + $address->getFeeAmount());
             $address->setBaseGrandTotal($address->getBaseGrandTotal() + $address->getBaseFeeAmount());
