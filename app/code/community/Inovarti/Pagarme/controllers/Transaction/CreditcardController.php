@@ -45,7 +45,12 @@ class Inovarti_Pagarme_Transaction_CreditcardController
                 return $this->getResponse()->setBody('ok');
             }
 
-            $order->cancel()->save();
+            $order->setState(Mage_Sales_Model_Order::STATE_CANCELED, true);
+            $order->setStatus(Mage_Sales_Model_Order::STATE_CANCELED);
+
+            $order->cancel();
+            $order->save();
+
             $order->addStatusHistoryComment($this->__('Canceled by Pagarme via Creditcard postback.'))->save();
 
             return $this->getResponse()->setBody('ok');
