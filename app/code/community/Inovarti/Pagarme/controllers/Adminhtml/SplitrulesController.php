@@ -71,36 +71,36 @@ class Inovarti_Pagarme_Adminhtml_SplitrulesController
         if (!$this->getRequest()->getParam('entity_id')) {
 
             try {
+
                 $splitRules = Mage::getModel('pagarme/splitrules')
                     ->setData($data)
                     ->save();
 
                 Mage::getSingleton('adminhtml/session')
                     ->addSuccess(Mage::helper('pagarme')->__('Success create Split Rule'));
-                $this->_redirect('*/*/');
+                return $this->_redirect('*/*/');
 
             } catch (Exception $e) {
 
                 Mage::getSingleton('adminhtml/session')
                     ->addError(Mage::helper('pagarme')->__('Error create recipient account : '. $e->getMessage()));
-                $this->_redirect("*/*/");
+               return $this->_redirect("*/*/");
             }
         }
 
         try {
 
             $splitRules = Mage::getModel('pagarme/splitrules')->load($this->getRequest()->getParam('entity_id'));
-            $splitRules->addData($data)
-                ->save();
+            $splitRules->addData($data)->save();
 
             Mage::getSingleton('adminhtml/session')
                 ->addSuccess(Mage::helper('pagarme')->__('Success create Split Rule'));
-            $this->_redirect('*/*/');
+            return $this->_redirect('*/*/');
 
         } catch (Exception $e) {
             Mage::getSingleton('adminhtml/session')
                 ->addError(Mage::helper('pagarme')->__('Error create recipient account : '. $e->getMessage()));
-            $this->_redirect("*/*/");
+           return $this->_redirect("*/*/");
         }
     }
 }

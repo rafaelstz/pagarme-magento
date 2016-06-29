@@ -23,7 +23,7 @@ $table = $installer->getConnection()
     ->addColumn('liable', Varien_Db_Ddl_Table::TYPE_BOOLEAN, null, array(
         'nullable'  => true,
     ), 'Sets whether the receiver linked to this rule will be responsible for transaction risk (chargeback)')
-    ->addColumn('percentage', Varien_Db_Ddl_Table::TYPE_VARCHAR, 2, array(
+    ->addColumn('type_amount_charged', Varien_Db_Ddl_Table::TYPE_VARCHAR, 20, array(
         'nullable'  => true,
     ), 'Percentage that the recipient will receive the transaction amount.')
     ->addColumn('amount', Varien_Db_Ddl_Table::TYPE_VARCHAR, 20, array(

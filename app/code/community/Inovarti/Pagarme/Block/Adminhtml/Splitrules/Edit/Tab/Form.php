@@ -34,10 +34,15 @@ class Inovarti_Pagarme_Block_Adminhtml_SplitRules_Edit_Tab_Form
             "options" => Mage::getModel('adminhtml/system_config_source_yesno')->toArray()
         ));
 
-        $fieldset->addField("percentage", "text", array(
+        $fieldset->addField("type_amount_charged", "select", array(
             "label" => Mage::helper("pagarme")->__("Percetage"),
-            "name" => "percentage",
-            "required" => false
+            "name" => "type_amount_charged",
+            "required" => false,
+            "options" => array(
+                'fixed' => 'Fixo',
+                'variable' => 'Variavel (%)'
+
+            )
         ));
 
         $fieldset->addField("amount", "text", array(

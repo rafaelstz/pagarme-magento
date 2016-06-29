@@ -44,9 +44,7 @@ class Inovarti_Pagarme_Block_Adminhtml_Splitrules_Grid
             "header" => Mage::helper("pagarme")->__("Recipient Id"),
             "align" => "right",
             "type" => "varchar",
-            "index" => "recipient_id",
-            "filter" => false,
-            "sortable"  => false
+            "index" => "recipient_id"
         ));
 
         $this->addColumn("charge_processing_fee", array(
@@ -54,8 +52,6 @@ class Inovarti_Pagarme_Block_Adminhtml_Splitrules_Grid
             "align" => "right",
             "type" =>   "options",
             "index" => "charge_processing_fee",
-            "filter" => false,
-            "sortable"  => false,
             "options" => Mage::getModel('adminhtml/system_config_source_yesno')->toArray()
         ));
 
@@ -64,27 +60,25 @@ class Inovarti_Pagarme_Block_Adminhtml_Splitrules_Grid
             "align" => "right",
             "index" => "liable",
             "type" => "options",
-            "filter" => false,
-            "sortable"  => false,
             "options" => Mage::getModel('adminhtml/system_config_source_yesno')->toArray()
         ));
 
-        $this->addColumn("percentage", array(
-            "header" => Mage::helper("pagarme")->__("Percentage"),
+        $this->addColumn("type_amount_charged", array(
+            "header" => Mage::helper("pagarme")->__("Type Amount Charged"),
             "align" => "right",
-            "index" => "percentage",
-            "type" =>   "varchar",
-            "filter" => false,
-            "sortable"  => false
+            "index" => "type_amount_charged",
+            "type" => "options",
+            "options" => array(
+                'fixed' => Mage::helper("pagarme")->__("Fixed"),
+                'variable' => Mage::helper("pagarme")->__("Variable")
+            )
         ));
 
         $this->addColumn("amount", array(
             "header" => Mage::helper("pagarme")->__("Amount"),
             "align" => "right",
             "index" => "amount",
-            "type" =>   "varchar",
-            "filter" => false,
-            "sortable"  => false
+            "type" =>   "varchar"
         ));
 
         $this->addColumn("shipping_charge", array(
@@ -92,8 +86,6 @@ class Inovarti_Pagarme_Block_Adminhtml_Splitrules_Grid
             "align" => "right",
             "index" => "shipping_charge",
             "type" =>   "options",
-            "filter" => false,
-            "sortable"  => false,
             "options" => Mage::getModel('adminhtml/system_config_source_yesno')->toArray()
         ));
 
@@ -101,18 +93,14 @@ class Inovarti_Pagarme_Block_Adminhtml_Splitrules_Grid
             "header" => Mage::helper("pagarme")->__("Created At"),
             "align" => "right",
             "index" => "created_at",
-            "type" =>   "datetime",
-            "filter" => false,
-            "sortable"  => false
+            "type" =>   "datetime"
         ));
 
         $this->addColumn("updated_at", array(
             "header" => Mage::helper("pagarme")->__("Updated At"),
             "align" => "right",
             "index" => "updated_at",
-            "type" =>   "datetime",
-            "filter" => false,
-            "sortable"  => false
+            "type" =>   "datetime"
         ));
 
         return parent::_prepareColumns();

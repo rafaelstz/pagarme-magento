@@ -48,8 +48,8 @@ class Inovarti_Pagarme_Model_Observer
         $order = $invoice->getOrder();
         if ($invoice->getBaseFeeAmount())
         {
-            $order->setFeeAmountInvoiced($order->getFeeAmountInvoiced() + $invoice->getFeeAmount());
-            $order->setBaseFeeAmountInvoiced($order->getBaseFeeAmountInvoiced() + $invoice->getBaseFeeAmount());
+            $order->setFeeAmountInvoiced($order->getGrandTotal() + $invoice->getFeeAmount());
+            $order->setBaseFeeAmountInvoiced($order->getGrandTotal() + $invoice->getBaseFeeAmount());
         }
         $payment_method = $order->getPayment()->getMethod();
         $invoice_email = Mage::getStoreConfig("payment/{$payment_method}/invoice_email");
@@ -120,6 +120,30 @@ class Inovarti_Pagarme_Model_Observer
               Mage::log('status automatically changed to ('.$configOrderStatusPaid.') by setting the module Pagar.me', null, 'pagarme.log');
               return $this;
         }
+    }
+
+    /**
+     * @param Varien_Event_Observer $observer
+     * @return $this
+     */
+    public function setRecipientId(Varien_Event_Observer $observer)
+    {
+        $quoteItem = $observer->getEvent()->getQuoteItem();
+
+        if (!$quoteItem->getSku()) {
+            return $this;
+        }
+
+        $recipientsMenu = Mage::getModel('pagarme/marketplaceMenu')
+            ->getCollection()
+            ->addFieldToFilter('sku', $quoteItem->getSku())
+            ->getFirstItem();
+
+        if ($recipientsMenu->getData()) {
+            $quoteItem->setRecipientId($recipientsMenu->getRecipientId());
+        }
+
+        return $this;
     }
 
     /**

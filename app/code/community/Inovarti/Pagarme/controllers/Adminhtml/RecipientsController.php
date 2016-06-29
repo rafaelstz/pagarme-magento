@@ -70,8 +70,15 @@ class Inovarti_Pagarme_Adminhtml_RecipientsController
 
         unset($data['form_key']);
         if (!$this->getRequest()->getParam('id')) {
-            $recipient = new PagarMe_Recipient($data);
 
+            $transferEnable = ($data['transfer_enabled']) ? true : false;
+
+            if ($data['transfer_enabled']) {
+                $data['transfer_enabled'] = $transferEnable;
+            }
+
+            $recipient = new PagarMe_Recipient($data);
+            
             try {
 
                 $recipient->create();

@@ -45,7 +45,6 @@ class Inovarti_Pagarme_Block_Adminhtml_Marketplacemenu_Grid
             "align" => "right",
             "type" => "varchar",
             "index" => "sku",
-            "filter" => false,
             "sortable"  => false
         ));
 
@@ -54,7 +53,6 @@ class Inovarti_Pagarme_Block_Adminhtml_Marketplacemenu_Grid
             "align" => "right",
             "type" =>   "text",
             "index" => "recipient_id",
-            "filter" => false,
             "sortable"  => false
         ));
 

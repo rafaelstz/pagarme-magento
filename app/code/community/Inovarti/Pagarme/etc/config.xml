@@ -15,7 +15,7 @@
 <config>
     <modules>
         <Inovarti_Pagarme>
-            <version>0.1.3</version>
+            <version>0.1.4</version>
         </Inovarti_Pagarme>
     </modules>
     <global>
@@ -59,6 +59,11 @@
                 <rewrite>
                     <quote_address>Inovarti_Pagarme_Model_Sales_Quote_Address</quote_address>
                 </rewrite>
+                <quote>
+                    <item>
+                        <recipient_id/>
+                    </item>
+                </quote>
             </sales>
     	</models>
     	<resources>
@@ -201,6 +206,14 @@
                     </add_pagarme_library>
                 </observers>
             </controller_front_init_before>
+            <sales_quote_add_item>
+                <observers>
+                    <inchoo_test_log_cart_add>
+                        <class>pagarme/observer</class>
+                        <method>setRecipientId</method>
+                    </inchoo_test_log_cart_add>
+                </observers>
+            </sales_quote_add_item>
         </events>
     </global>
     <frontend>
@@ -229,18 +242,6 @@
                 </pagarme>
             </updates>
         </layout>
-        <!--
-        <events>
-            <core_block_abstract_to_html_after>
-                <observers>
-                    <pagarme_observer>
-                        <class>pagarme/observer</class>
-                        <method>addPagarmeJs</method>
-                    </pagarme_observer>
-                </observers>
-            </core_block_abstract_to_html_after>
-        </events>
-        -->
     </frontend>
     <adminhtml>
         <translate>

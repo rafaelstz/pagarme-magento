@@ -6,7 +6,7 @@
 *  @author     Lucas Santos <lucas.santos@pagar.me>
 */
 abstract class Inovarti_Pagarme_Model_Abstract
-    extends Mage_Payment_Model_Method_Abstract
+    extends Inovarti_Pagarme_Model_Split
 {
     const REQUEST_TYPE_AUTH_CAPTURE = 'AUTH_CAPTURE';
     const REQUEST_TYPE_AUTH_ONLY    = 'AUTH_ONLY';
@@ -34,6 +34,7 @@ abstract class Inovarti_Pagarme_Model_Abstract
         if ($requestType === self::REQUEST_TYPE_AUTH_ONLY || $requestType === self::REQUEST_TYPE_AUTH_CAPTURE) {
             $customer = Mage::helper('pagarme')->getCustomerInfoFromOrder($payment->getOrder());
             $requestParams = $this->prepareRequestParams($payment, $amount, $requestType, $customer, $checkout);
+
             $transaction = $this->charge($requestParams);
 
             $this->prepareTransaction($transaction, $payment, $checkout);
@@ -74,10 +75,17 @@ abstract class Inovarti_Pagarme_Model_Abstract
      */
     private function prepareRequestParams($payment, $amount, $requestType, $customer, $checkout)
     {
+        $splitRules = $this->prepareSplit($payment->getOrder()->getQuote());
         $requestParams = new Varien_Object();
+
         $requestParams->setAmount(Mage::helper('pagarme')->formatAmount($amount))
-             ->setCapture($requestType == self::REQUEST_TYPE_AUTH_CAPTURE)
-             ->setCustomer($customer);
+                ->setCapture($requestType == self::REQUEST_TYPE_AUTH_CAPTURE)
+                ->setCustomer($customer);
+
+
+        if ($splitRules) {
+            $requestParams->setSplitRules($splitRules);
+        }
 
         if ($checkout) {
           $requestParams->setPaymentMethod($payment->getPagarmeCheckoutPaymentMethod());
