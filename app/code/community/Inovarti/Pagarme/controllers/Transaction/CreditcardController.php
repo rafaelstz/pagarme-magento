@@ -18,7 +18,7 @@ class Inovarti_Pagarme_Transaction_CreditcardController
 
             $orderId = Mage::helper('pagarme')->getOrderIdByTransactionId($request->getPost('id'));
             $order = Mage::getModel('sales/order')->load($orderId);
-
+            
             $currentStatus = $request->getPost('current_status');
 
             if ($currentStatus === Inovarti_Pagarme_Model_Api::TRANSACTION_STATUS_PAID) {
