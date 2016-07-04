@@ -33,8 +33,9 @@ class Inovarti_Pagarme_Model_Split extends Inovarti_Pagarme_Model_AbstractSplit
      */
     public function prepareSplit($quote)
     {
-        if (!Mage::getStoreConfig('payment/pagarme_settings/marketplace_is_active')) {
-            return $this;
+        if (!Mage::getStoreConfig('payment/pagarme_settings/marketplace_is_active')
+            || !Mage::getStoreConfig('payment/pagarme_settings/marketplace_recipient_id')) {
+            return false;
         }
 
         $this->marketplaceRecipientId = Mage::getStoreConfig('payment/pagarme_settings/marketplace_recipient_id');
