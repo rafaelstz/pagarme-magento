@@ -297,4 +297,3 @@ class Inovarti_Pagarme_Model_Quote_Address_Total_Fee
     }
 
 }
-
