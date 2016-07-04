@@ -161,6 +161,6 @@ class Inovarti_Pagarme_Model_Observer
      */
     static function init()
     {
-        require_once(Mage::getBaseDir('lib') . DS . 'pagarme' . DS . 'pagarme.php');
+        require_once(Mage::getBaseDir('lib') . DS . 'pagarme' . DS . 'Pagarme.php');
     }
 }
