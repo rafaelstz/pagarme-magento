@@ -134,7 +134,7 @@ class Inovarti_Pagarme_Model_Observer
             return $this;
         }
 
-        $recipientsMenu = Mage::getModel('pagarme/marketplaceMenu')
+        $recipientsMenu = Mage::getModel('pagarme/marketplacemenu')
             ->getCollection()
             ->addFieldToFilter('sku', $quoteItem->getSku())
             ->getFirstItem();
