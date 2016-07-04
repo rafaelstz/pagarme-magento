@@ -39,7 +39,6 @@ class Inovarti_Pagarme_Block_Adminhtml_SplitRules_Edit_Tab_Form
             "name" => "type_amount_charged",
             "required" => false,
             "options" => array(
-                'fixed' => 'Fixo',
                 'variable' => 'Variavel (%)'
 
             )
