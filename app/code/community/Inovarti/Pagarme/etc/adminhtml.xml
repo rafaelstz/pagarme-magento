@@ -16,7 +16,7 @@
                     <action>adminhtml/recipients</action>
                 </recipients>
                 <split_rules module="pagarme">
-                    <title>Manage Split RUles</title>
+                    <title>Manage Split Rules</title>
                     <sort_order>20</sort_order>
                     <action>adminhtml/splitrules</action>
                 </split_rules>

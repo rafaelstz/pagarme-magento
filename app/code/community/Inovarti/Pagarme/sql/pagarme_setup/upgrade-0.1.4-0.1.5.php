@@ -57,6 +57,8 @@ function addFeeColumns ($installer)
             'unsigned' => true,
             'nullable' => false,
             'comment' => 'Fee Amount Invoiced',
+            'SCALE' => 4,
+            'PRECISION' => 12,
         ));
     $installer->getConnection ()
         ->changeColumn ($table, 'base_fee_amount_invoiced', 'base_fee_amount_invoiced', array(
@@ -115,6 +117,8 @@ function addFeeColumns ($installer)
             'unsigned' => true,
             'nullable' => false,
             'comment' => 'Fee Amount',
+            'SCALE' => 4,
+            'PRECISION' => 12,
         ));
     $installer->getConnection ()
         ->changeColumn ($table, 'base_fee_amount', 'base_fee_amount', array(

@@ -12,8 +12,8 @@ class Inovarti_Pagarme_Block_Adminhtml_Banks_Edit
         $this->_objectId = "entity_id";
         $this->_blockGroup = "pagarme";
         $this->_controller = "adminhtml_banks";
-        $this->_updateButton("save", "label", Mage::helper("pagarme")->__("Save Banck Account"));
-        $this->_updateButton("delete", "label", Mage::helper("pagarme")->__("Delete Banck Account"));
+        $this->_updateButton("save", "label", Mage::helper("pagarme")->__("Save Bank Account"));
+        $this->_updateButton("delete", "label", Mage::helper("pagarme")->__("Delete Bank Account"));
         
     }
 
@@ -26,6 +26,6 @@ class Inovarti_Pagarme_Block_Adminhtml_Banks_Edit
             return Mage::helper("pagarme")->__("Edit Banck Account '%s'", $this->htmlEscape(Mage::registry("banks_data")->getEntityId()));
         }
 
-        return Mage::helper("pagarme")->__("Create Banck Account");
+        return Mage::helper("pagarme")->__("Create Bank Account");
     }
 }

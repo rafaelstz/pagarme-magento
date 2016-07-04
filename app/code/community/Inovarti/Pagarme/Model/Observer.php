@@ -48,8 +48,8 @@ class Inovarti_Pagarme_Model_Observer
         $order = $invoice->getOrder();
         if ($invoice->getBaseFeeAmount())
         {
-            $order->setFeeAmountInvoiced($order->getGrandTotal() + $invoice->getFeeAmount());
-            $order->setBaseFeeAmountInvoiced($order->getGrandTotal() + $invoice->getBaseFeeAmount());
+            $order->setFeeAmountInvoiced($order->getGrandTotal());
+            $order->setBaseFeeAmountInvoiced($order->getGrandTotal());
         }
         $payment_method = $order->getPayment()->getMethod();
         $invoice_email = Mage::getStoreConfig("payment/{$payment_method}/invoice_email");

@@ -37,7 +37,7 @@ class Inovarti_Pagarme_Block_Adminhtml_Order_View_Tab_SplitOrder
     /**
      * @return mixed
      */
-    private function getTransactionId()
+    public function getTransactionId()
     {
         return $this->getOrder()->getPayment()->getPagarmeTransactionId();
     }
