@@ -17,10 +17,10 @@ $table = $installer->getConnection()
     ->addColumn('recipient_id', Varien_Db_Ddl_Table::TYPE_VARCHAR, 255, array(
         'nullable'  => false,
     ), 'Recipient id.')
-    ->addColumn('created_at', Varien_Db_Ddl_Table::TYPE_DATETIME, array(
+    ->addColumn('created_at', Varien_Db_Ddl_Table::TYPE_DATETIME, null, array(
         'nullable'  => false,
     ), 'date time created row')
-    ->addColumn('updated_at', Varien_Db_Ddl_Table::TYPE_DATETIME, array(
+    ->addColumn('updated_at', Varien_Db_Ddl_Table::TYPE_DATETIME, null, array(
         'nullable'  => false,
     ), 'date time updated row');
 

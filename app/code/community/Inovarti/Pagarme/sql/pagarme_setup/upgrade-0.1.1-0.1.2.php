@@ -17,26 +17,28 @@ $table = $installer->getConnection()
     ->addColumn('recipient_id', Varien_Db_Ddl_Table::TYPE_VARCHAR, 255, array(
         'nullable'  => false,
     ), 'Recipient id.')
-    ->addColumn('charge_processing_fee', Varien_Db_Ddl_Table::TYPE_BOOLEAN, null, array(
-        'nullable'  => true,
-    ), 'Sets whether the recipient of this rule will be charged at the rate of Pagar.me')
-    ->addColumn('liable', Varien_Db_Ddl_Table::TYPE_BOOLEAN, null, array(
-        'nullable'  => true,
+    ->addColumn('charge_processing_fee', Varien_Db_Ddl_Table::TYPE_BOOLEAN, 1, array(
+        'nullable' => false,
+        'default' => 0,
+    ), 'Status')
+    ->addColumn('liable', Varien_Db_Ddl_Table::TYPE_BOOLEAN, 1, array(
+        'nullable' => false,
+        'default' => 0,
     ), 'Sets whether the receiver linked to this rule will be responsible for transaction risk (chargeback)')
     ->addColumn('type_amount_charged', Varien_Db_Ddl_Table::TYPE_VARCHAR, 20, array(
         'nullable'  => true,
-    ), 'Percentage that the recipient will receive the transaction amount.')
+    ), 'Percentage that the recipient will receive the transaction amount')
     ->addColumn('amount', Varien_Db_Ddl_Table::TYPE_VARCHAR, 20, array(
         'nullable'  => true,
     ), 'Value that the recipient will receive the transaction.')
-    ->addColumn('shipping_charge', Varien_Db_Ddl_Table::TYPE_BOOLEAN, array(
-        'nullable'  => true,
-        'default'   => false,
+    ->addColumn('shipping_charge', Varien_Db_Ddl_Table::TYPE_BOOLEAN, 1, array(
+        'nullable' => false,
+        'default' => 0,
     ), 'Value that the recipient will receive the transaction.')
-    ->addColumn('created_at', Varien_Db_Ddl_Table::TYPE_DATETIME, array(
+    ->addColumn('created_at', Varien_Db_Ddl_Table::TYPE_DATETIME, null, array(
         'nullable'  => false,
     ), 'date time created row')
-    ->addColumn('updated_at', Varien_Db_Ddl_Table::TYPE_DATETIME, array(
+    ->addColumn('updated_at', Varien_Db_Ddl_Table::TYPE_DATETIME, null, array(
         'nullable'  => false,
     ), 'date time updated row');
 
