@@ -33,9 +33,18 @@ class Inovarti_Pagarme_Adminhtml_RecipientsController
 
         $this->getLayout()->getBlock("head")->setCanLoadExtJs(true);
 
-        $this->_addBreadcrumb(Mage::helper("adminhtml")->__("Recipients Manager"), Mage::helper("adminhtml")->__("Recipients Manager"));
-        $this->_addBreadcrumb(Mage::helper("adminhtml")->__("Recipients Description"), Mage::helper("adminhtml")->__("Recipients Description"));
-        $this->_addContent($this->getLayout()->createBlock("pagarme/adminhtml_banks_edit"))->_addLeft($this->getLayout()->createBlock("pagarme/adminhtml_recipients_edit_tabs"));
+        $this->_addBreadcrumb(
+            Mage::helper("adminhtml")->__("Recipients Manager"),
+            Mage::helper("adminhtml")->__("Recipients Manager")
+        );
+
+        $this->_addBreadcrumb(
+            Mage::helper("adminhtml")->__("Recipients Description"),
+            Mage::helper("adminhtml")->__("Recipients Description")
+        );
+
+        $this->_addContent($this->getLayout()->createBlock("pagarme/adminhtml_banks_edit"))
+            ->_addLeft($this->getLayout()->createBlock("pagarme/adminhtml_recipients_edit_tabs"));
 
         $this->renderLayout();
     }
@@ -53,10 +62,18 @@ class Inovarti_Pagarme_Adminhtml_RecipientsController
             Mage::register("recipients_data", $model);
             $this->loadLayout();
             $this->_setActiveMenu("pagarme/recipients");
-            $this->_addBreadcrumb(Mage::helper("adminhtml")->__("Recipient Account Manager"), Mage::helper("adminhtml")->__("Recipient Account Manager"));
-            $this->_addBreadcrumb(Mage::helper("adminhtml")->__("Recipient Account Description"), Mage::helper("adminhtml")->__("Recipient Account Description"));
+            $this->_addBreadcrumb(
+                Mage::helper("adminhtml")->__("Recipient Account Manager"),
+                Mage::helper("adminhtml")->__("Recipient Account Manager")
+            );
+            $this->_addBreadcrumb(
+                Mage::helper("adminhtml")->__("Recipient Account Description"),
+                Mage::helper("adminhtml")->__("Recipient Account Description")
+            );
+
             $this->getLayout()->getBlock("head")->setCanLoadExtJs(true);
-            $this->_addContent($this->getLayout()->createBlock("pagarme/adminhtml_recipients_edit"))->_addLeft($this->getLayout()->createBlock("pagarme/adminhtml_recipients_edit_tabs"));
+            $this->_addContent($this->getLayout()->createBlock("pagarme/adminhtml_recipients_edit"))
+                ->_addLeft($this->getLayout()->createBlock("pagarme/adminhtml_recipients_edit_tabs"));
             $this->renderLayout();
         } else {
             Mage::getSingleton("adminhtml/session")->addError(Mage::helper("pagarme")->__("Item does not exist."));

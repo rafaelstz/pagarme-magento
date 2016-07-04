@@ -33,9 +33,18 @@ class Inovarti_Pagarme_Adminhtml_SplitrulesController
 
         $this->getLayout()->getBlock("head")->setCanLoadExtJs(true);
 
-        $this->_addBreadcrumb(Mage::helper("adminhtml")->__("Split Rules Manager"), Mage::helper("adminhtml")->__("Split Rules Manager"));
-        $this->_addBreadcrumb(Mage::helper("adminhtml")->__("Split Rules Description"), Mage::helper("adminhtml")->__("Split Rules Description"));
-        $this->_addContent($this->getLayout()->createBlock("pagarme/adminhtml_splitrules_edit"))->_addLeft($this->getLayout()->createBlock("pagarme/adminhtml_splitrules_edit_tabs"));
+        $this->_addBreadcrumb(
+            Mage::helper("adminhtml")->__("Split Rules Manager"),
+            Mage::helper("adminhtml")->__("Split Rules Manager")
+        );
+
+        $this->_addBreadcrumb(
+            Mage::helper("adminhtml")->__("Split Rules Description"),
+            Mage::helper("adminhtml")->__("Split Rules Description")
+        );
+
+        $this->_addContent($this->getLayout()->createBlock("pagarme/adminhtml_splitrules_edit"))
+            ->_addLeft($this->getLayout()->createBlock("pagarme/adminhtml_splitrules_edit_tabs"));
 
         $this->renderLayout();
     }
@@ -53,10 +62,17 @@ class Inovarti_Pagarme_Adminhtml_SplitrulesController
             Mage::register("splitrules_data", $model);
             $this->loadLayout();
             $this->_setActiveMenu("pagarme/splitrules");
-            $this->_addBreadcrumb(Mage::helper("adminhtml")->__("Split Rules Manager"), Mage::helper("adminhtml")->__("Split Rules Manager"));
-            $this->_addBreadcrumb(Mage::helper("adminhtml")->__("Split Rules Description"), Mage::helper("adminhtml")->__("Split Rules Description"));
+            $this->_addBreadcrumb(
+                Mage::helper("adminhtml")->__("Split Rules Manager"),
+                Mage::helper("adminhtml")->__("Split Rules Manager")
+            );
+            $this->_addBreadcrumb(
+                Mage::helper("adminhtml")->__("Split Rules Description"),
+                Mage::helper("adminhtml")->__("Split Rules Description")
+            );
             $this->getLayout()->getBlock("head")->setCanLoadExtJs(true);
-            $this->_addContent($this->getLayout()->createBlock("pagarme/adminhtml_splitrules_edit"))->_addLeft($this->getLayout()->createBlock("pagarme/adminhtml_splitrules_edit_tabs"));
+            $this->_addContent($this->getLayout()->createBlock("pagarme/adminhtml_splitrules_edit"))
+                ->_addLeft($this->getLayout()->createBlock("pagarme/adminhtml_splitrules_edit_tabs"));
             $this->renderLayout();
         } else {
             Mage::getSingleton("adminhtml/session")->addError(Mage::helper("pagarme")->__("Item does not exist."));
@@ -102,5 +118,27 @@ class Inovarti_Pagarme_Adminhtml_SplitrulesController
                 ->addError(Mage::helper('pagarme')->__('Error create recipient account : '. $e->getMessage()));
            return $this->_redirect("*/*/");
         }
+    }
+
+    public function deleteAction()
+    {
+        if (!$this->getRequest()->getParam("entity_id")) {
+            Mage::getSingleton("adminhtml/session")->addError('id não existe!');
+            $this->_redirect("*/*/");
+        }
+
+        $id = $this->getRequest()->getParam("entity_id");
+        $marketplaceMenu = Mage::getModel("pagarme/splitrules")->load($id);
+
+        try {
+            $marketplaceMenu->delete();
+            Mage::getSingleton("adminhtml/session")->addSuccess(Mage::helper("adminhtml")->__("Item was successfully deleted"));
+            $this->_redirect("*/*/");
+        } catch (Exception $e) {
+            Mage::getSingleton("adminhtml/session")->addError($e->getMessage());
+            $this->_redirect("*/*/edit", array("entity_id" => $this->getRequest()->getParam("entity_id")));
+        }
+
+        $this->_redirect("*/*/");
     }
 }

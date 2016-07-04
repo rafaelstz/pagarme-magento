@@ -18,8 +18,8 @@ class Inovarti_Pagarme_Adminhtml_MarketplacemenuController
         $this->_title($this->__("Pagarme"));
         $this->_title($this->__("Marketplace Menu"));
         $this->_title($this->__("New produto to menu marketplace"));
-        $id   = $this->getRequest()->getParam("entity_id");
-        $model  = Mage::getModel("pagarme/marketplacemenu");
+        $id = $this->getRequest()->getParam("entity_id");
+        $model = Mage::getModel("pagarme/marketplacemenu");
         $data = Mage::getSingleton("adminhtml/session")->getFormData(true);
 
         if (!empty($data)) {
@@ -33,9 +33,19 @@ class Inovarti_Pagarme_Adminhtml_MarketplacemenuController
 
         $this->getLayout()->getBlock("head")->setCanLoadExtJs(true);
 
-        $this->_addBreadcrumb(Mage::helper("adminhtml")->__("Marketplace Menu Manager"), Mage::helper("adminhtml")->__("Marketplace Menu Manager"));
-        $this->_addBreadcrumb(Mage::helper("adminhtml")->__("Markertplace Menu Description"), Mage::helper("adminhtml")->__("Marketplace Menu Description"));
-        $this->_addContent($this->getLayout()->createBlock("pagarme/adminhtml_marketplacemenu_edit"))->_addLeft($this->getLayout()->createBlock("pagarme/adminhtml_marketplacemenu_edit_tabs"));
+        $this->_addBreadcrumb(
+            Mage::helper("adminhtml")->__("Marketplace Menu Manager"),
+            Mage::helper("adminhtml")->__("Marketplace Menu Manager")
+        );
+
+        $this->_addBreadcrumb(
+            Mage::helper("adminhtml")->__("Markertplace Menu Description"),
+            Mage::helper("adminhtml")->__("Marketplace Menu Description")
+        );
+
+        $this->_addContent(
+            $this->getLayout()->createBlock("pagarme/adminhtml_marketplacemenu_edit"))
+            ->_addLeft($this->getLayout()->createBlock("pagarme/adminhtml_marketplacemenu_edit_tabs"));
 
         $this->renderLayout();
     }
@@ -53,10 +63,22 @@ class Inovarti_Pagarme_Adminhtml_MarketplacemenuController
             Mage::register("marketplacemenu_data", $model);
             $this->loadLayout();
             $this->_setActiveMenu("pagarme/marketplacemenu");
-            $this->_addBreadcrumb(Mage::helper("adminhtml")->__("Marketplace Menu Manager"), Mage::helper("adminhtml")->__("Marketplace Menu Manager"));
-            $this->_addBreadcrumb(Mage::helper("adminhtml")->__("Marketplace Menu Description"), Mage::helper("adminhtml")->__("Marketplace Menu Description"));
+
+            $this->_addBreadcrumb(
+                Mage::helper("adminhtml")->__("Marketplace Menu Manager"),
+                Mage::helper("adminhtml")->__("Marketplace Menu Manager")
+            );
+
+            $this->_addBreadcrumb(
+                Mage::helper("adminhtml")->__("Marketplace Menu Description"),
+                Mage::helper("adminhtml")->__("Marketplace Menu Description")
+            );
+
             $this->getLayout()->getBlock("head")->setCanLoadExtJs(true);
-            $this->_addContent($this->getLayout()->createBlock("pagarme/adminhtml_marketplacemenu_edit"))->_addLeft($this->getLayout()->createBlock("pagarme/adminhtml_marketplacemenu_edit_tabs"));
+            $this->_addContent($this->getLayout()->createBlock("pagarme/adminhtml_marketplacemenu_edit"))
+                ->_addLeft($this->getLayout()->createBlock("pagarme/adminhtml_marketplacemenu_edit_tabs")
+                );
+
             $this->renderLayout();
         } else {
             Mage::getSingleton("adminhtml/session")->addError(Mage::helper("pagarme")->__("Item does not exist."));
@@ -77,12 +99,14 @@ class Inovarti_Pagarme_Adminhtml_MarketplacemenuController
 
                 Mage::getSingleton('adminhtml/session')
                     ->addSuccess(Mage::helper('pagarme')->__('Success create Marketplace Menu'));
-               return $this->_redirect('*/*/');
+                return $this->_redirect('*/*/');
 
             } catch (Exception $e) {
 
                 Mage::getSingleton('adminhtml/session')
-                    ->addError(Mage::helper('pagarme')->__('Error create product to menu in marketplace : '. $e->getMessage()));
+                    ->addError(
+                        Mage::helper('pagarme')->__('Error create product to menu in marketplace : ' . $e->getMessage())
+                    );
                 $this->_redirect("*/*/");
             }
         }
@@ -90,17 +114,41 @@ class Inovarti_Pagarme_Adminhtml_MarketplacemenuController
         try {
 
             $splitRules = Mage::getModel('pagarme/marketplacemenu')->load($this->getRequest()->getParam('entity_id'));
-            $splitRules->addData($data)
-                ->save();
+            $splitRules->addData($data)->save();
 
             Mage::getSingleton('adminhtml/session')
                 ->addSuccess(Mage::helper('pagarme')->__('Success create product to menu in marketplace'));
-          return  $this->_redirect('*/*/');
+
+            return $this->_redirect('*/*/');
 
         } catch (Exception $e) {
             Mage::getSingleton('adminhtml/session')
-                ->addError(Mage::helper('pagarme')->__('Error create product to menu in marketplace : '. $e->getMessage()));
+                ->addError(
+                    Mage::helper('pagarme')->__('Error create product to menu in marketplace : ' . $e->getMessage())
+                );
             $this->_redirect("*/*/");
         }
+    }
+
+    public function deleteAction()
+    {
+        if (!$this->getRequest()->getParam("entity_id")) {
+            Mage::getSingleton("adminhtml/session")->addError('id não existe!');
+            $this->_redirect("*/*/");
+        }
+
+        $id = $this->getRequest()->getParam("entity_id");
+        $marketplaceMenu = Mage::getModel("pagarme/marketplacemenu")->load($id);
+
+        try {
+            $marketplaceMenu->delete();
+            Mage::getSingleton("adminhtml/session")->addSuccess(Mage::helper("adminhtml")->__("Item was successfully deleted"));
+            $this->_redirect("*/*/");
+        } catch (Exception $e) {
+            Mage::getSingleton("adminhtml/session")->addError($e->getMessage());
+            $this->_redirect("*/*/edit", array("entity_id" => $this->getRequest()->getParam("entity_id")));
+        }
+
+        $this->_redirect("*/*/");
     }
 }

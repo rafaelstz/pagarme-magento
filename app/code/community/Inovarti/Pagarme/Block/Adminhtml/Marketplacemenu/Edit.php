@@ -8,12 +8,12 @@ class Inovarti_Pagarme_Block_Adminhtml_Marketplacemenu_Edit
      */
     public function __construct()
     {
-        parent::__construct();
         $this->_objectId = "entity_id";
         $this->_blockGroup = "pagarme";
         $this->_controller = "adminhtml_marketplacemenu";
         $this->_updateButton("save", "label", Mage::helper("pagarme")->__("Save Marketplace Menu"));
         $this->_updateButton("delete", "label", Mage::helper("pagarme")->__("Delete Marketplace Menu"));
+        parent::__construct();
         
     }
 

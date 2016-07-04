@@ -8,13 +8,13 @@ class Inovarti_Pagarme_Block_Adminhtml_Splitrules_Edit
      */
     public function __construct()
     {
-        parent::__construct();
-        $this->_objectId = "entity_Id";
+        $this->_objectId = "entity_id";
         $this->_blockGroup = "pagarme";
         $this->_controller = "adminhtml_splitrules";
         $this->_updateButton("save", "label", Mage::helper("pagarme")->__("Save Split Rule"));
         $this->_updateButton("delete", "label", Mage::helper("pagarme")->__("Delete Split Rule"));
-        
+
+        parent::__construct();
     }
 
     /**
