@@ -18,15 +18,7 @@ class Inovarti_Pagarme_Transaction_CreditcardController
 
             $orderId = Mage::helper('pagarme')->getOrderIdByTransactionId($request->getPost('id'));
             $order = Mage::getModel('sales/order')->load($orderId);
-<<<<<<< HEAD
 
-            if ($order->getState() != Mage_Sales_Model_Order::STATE_NEW) {
-                $order->setState(Mage_Sales_Model_Order::STATE_NEW)->save();
-            }
-
-=======
-            
->>>>>>> marketplace
             $currentStatus = $request->getPost('current_status');
 
             if ($currentStatus === Inovarti_Pagarme_Model_Api::TRANSACTION_STATUS_PAID) {
@@ -53,12 +45,11 @@ class Inovarti_Pagarme_Transaction_CreditcardController
                 return $this->getResponse()->setBody('ok');
             }
 
-            $order->setState(Mage_Sales_Model_Order::STATE_CANCELED, true);
-            $order->setStatus(Mage_Sales_Model_Order::STATE_CANCELED);
+            if (!$order->canCancel()) {
+                Mage::throwException($this->__('Order does not allow to be canceled.'));
+            }
 
-            $order->cancel();
-            $order->save();
-
+            $order->cancel()->save();
             $order->addStatusHistoryComment($this->__('Canceled by Pagarme via Creditcard postback.'))->save();
 
             return $this->getResponse()->setBody('ok');
