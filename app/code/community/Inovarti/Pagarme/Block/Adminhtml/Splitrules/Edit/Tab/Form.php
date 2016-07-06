@@ -35,7 +35,7 @@ class Inovarti_Pagarme_Block_Adminhtml_SplitRules_Edit_Tab_Form
         ));
 
         $fieldset->addField("type_amount_charged", "select", array(
-            "label" => Mage::helper("pagarme")->__("Percetage"),
+            "label" => Mage::helper("pagarme")->__("Split Type"),
             "name" => "type_amount_charged",
             "required" => false,
             "options" => array(

@@ -21,10 +21,16 @@ class Inovarti_Pagarme_Block_Adminhtml_Recipients_Edit_Tab_Form
             "options" => Mage::getModel('adminhtml/system_config_source_yesno')->toArray()
         ));
 
-        $fieldset->addField("transfer_interval", "text", array(
+        $fieldset->addField("transfer_interval", "select", array(
             "label" => Mage::helper("pagarme")->__("Transfer Interval"),
-            "name" => "transfer_interval",
-            "required" => false
+            "name" => "transfer_enabled",
+            "class" => "required-entry",
+            "required" => true,
+            "options" => array(
+                'daily'     => Mage::helper("pagarme")->__("Daily"),
+                'weekly'    => Mage::helper("pagarme")->__("Weekly"),
+                'monthly'   => Mage::helper("pagarme")->__("Monthly")
+            )
         ));
 
         $fieldset->addField("transfer_day", "text", array(
