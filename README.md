@@ -49,6 +49,7 @@
 
 ### Criando Regra de Split
 * Nesta etapa definimos as regras de split para um seller (Vendedor), uma regra de split é criada para fazer a divisão dos valores de um pedido, informando quanto deve ser pago aos sellers (Vendedores) envolvidos neste pedido e o marketplace. Para criar uma regra de split você deve ir há ```Pagar.me - Marketplace > Regras de Split``` e clicar no botão (Adicionar nova regra de split), após clicar no botão você deve preencher todos os campos do formulário:
+
 * Id Recebedor : Recebedor que irá receber os valores descritos nessa regra.
 * Cobrar taxa Pagar.me do recebedor : Define se o recebedor dessa regra irá ser cobrado pela taxa da Pagar.me.
 * Recebedor responsável pelo chargeback : Define se o recebedor vinculado a essa regra irá se responsabilizar pelo risco da transação (chargeback)
