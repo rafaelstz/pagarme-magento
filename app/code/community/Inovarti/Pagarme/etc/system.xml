@@ -94,17 +94,6 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                         </marketplace_is_active>
-                        <marketplace_recipient_id translate="label">
-                            <label>Marketplace Recipient Id</label>
-                            <frontend_type>text</frontend_type>
-                            <sort_order>70</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                            <depends>
-                                <marketplace_is_active>1</marketplace_is_active>
-                            </depends>
-                        </marketplace_recipient_id>
                     </fields>
                 </pagarme_settings>
                 <pagarme_boleto translate="label" module="pagarme">
