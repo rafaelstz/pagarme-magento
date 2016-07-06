@@ -2,6 +2,27 @@
 
 abstract class Inovarti_Pagarme_Model_AbstractSplit extends Mage_Payment_Model_Method_Abstract
 {
+    const API_ADDRESS = 'https://api.pagar.me/1/';
+    const COMPANY_ENDPOINT = 'company';
+
+    /**
+     * @return mixed
+     */
+    protected function getMarketplaceRecipientId()
+    {
+        $api = Mage::getModel('pagarme/api');
+
+        $data = new Varien_Object();
+        $data->setApiKey(Mage::helper('pagarme')->getApiKey());
+
+        $company = $api->request(self::API_ADDRESS.self::COMPANY_ENDPOINT, $data);
+        $defaultRecipientIds = $company->getDefaultRecipientId();
+
+        $mode = Mage::helper('pagarme')->getMode();
+
+        return $defaultRecipientIds[$mode];
+    }
+
     /**
      * @param $recipientCarriers
      * @param $quote
