@@ -134,13 +134,17 @@ class Inovarti_Pagarme_Model_Observer
             return $this;
         }
 
-        $recipientsMenu = Mage::getModel('pagarme/marketplacemenu')
-            ->getCollection()
-            ->addFieldToFilter('sku', $quoteItem->getSku())
-            ->getFirstItem();
+        try {
+            $recipientsMenu = Mage::getModel('pagarme/marketplacemenu')
+                ->getCollection()
+                ->addFieldToFilter('sku', $quoteItem->getSku())
+                ->getFirstItem();
 
-        if ($recipientsMenu->getData()) {
-            $quoteItem->setRecipientId($recipientsMenu->getRecipientId());
+            if ($recipientsMenu->getData()) {
+                $quoteItem->setRecipientId($recipientsMenu->getRecipientId());
+            }
+        } catch (Exception $e) {
+            Mage::log($e->getMessage(), null, 'pagarme.log');
         }
 
         return $this;
