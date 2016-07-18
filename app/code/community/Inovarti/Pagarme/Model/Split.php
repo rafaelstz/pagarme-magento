@@ -114,19 +114,19 @@ class Inovarti_Pagarme_Model_Split extends Inovarti_Pagarme_Model_AbstractSplit
                 $lastedSplitRule    =  $splitRules[$recipientId];
                 $currentAmount      = $splitRule['amount']-$recipientValue;
 
-                $splitRules[$recipientId] = [
+                $splitRules[$recipientId] = array(
                     'seller'                => $lastedSplitRule['seller'] + $recipientValue,
                     'fee_marketplace'       => $lastedSplitRule['fee_marketplace'] + $currentAmount,
                     'charge_processing_fee' => $recipientRule->getChargeProcessingFee(),
                     'liable'                => $recipientRule->getLiable()
-                ];
+                );
                 continue;
             }
 
-            $splitRules[$recipientId] = [
+            $splitRules[$recipientId] = array(
                 'seller' => $recipientValue,
                 'fee_marketplace' => $splitRule['amount']-$recipientValue
-            ];
+            );
         }
 
         return $splitRules[$recipientId];
@@ -160,17 +160,17 @@ class Inovarti_Pagarme_Model_Split extends Inovarti_Pagarme_Model_AbstractSplit
 
             if (isset($splitRules[$recipientId])) {
 
-                $splitRules[$recipientId][] = [
+                $splitRules[$recipientId][] = array(
                     'sku' => $item->getSku(),
                     'amount' => ($item->getPrice() * $item->getQty())
-                ];
+                );
                 continue;
             }
 
-            $splitRules[$recipientId][] = [
+            $splitRules[$recipientId][] = array(
                 'sku' => $item->getSku(),
                 'amount' => ($item->getPrice() * $item->getQty())
-            ];
+            );
         }
 
         $this->setRecipientCarriers($recipientCarriers);
