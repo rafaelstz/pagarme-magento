@@ -12,7 +12,7 @@ class Inovarti_Pagarme_Model_Boleto extends Inovarti_Pagarme_Model_Split
     protected $_infoBlockType = 'pagarme/info_boleto';
 
   	protected $_isGateway                   = true;
-  	protected $_canUseForMultishipping 		= false;
+  	protected $_canUseForMultishipping 		= true;
   	protected $_isInitializeNeeded      	= true;
   	protected $_canManageRecurringProfiles  = false;
 

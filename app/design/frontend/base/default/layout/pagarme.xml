@@ -74,6 +74,10 @@
 		<update handle="pagarme_checkout_handle"/>
 	</firecheckout_index_index>
 
+    <checkout_multishipping_billing>
+        <update handle="pagarme_checkout_handle"/>
+    </checkout_multishipping_billing>
+
     <checkout_onepage_success>
         <reference name="content">
             <block type="pagarme/checkout_success_payment" name="pagarme_checkout_success_payment">
