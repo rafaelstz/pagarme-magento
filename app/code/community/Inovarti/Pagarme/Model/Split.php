@@ -178,9 +178,9 @@ class Inovarti_Pagarme_Model_Split extends Inovarti_Pagarme_Model_AbstractSplit
 
         $this->setOrderFeeAmount($recipientCarriers, $quote);
 
-        return [
+        return array(
             'base_split_rules' => $splitRules,
             'recipent_rules' => $recipientRules
-        ];
+        );
     }
 }
