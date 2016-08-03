@@ -142,6 +142,15 @@ abstract class Inovarti_Pagarme_Model_Abstract
             $payment->setIsTransactionPending(true);
         }
 
+        $payment->setCcOwner($transaction->getCardHolderName())
+            ->setCcLast4($transaction->getCardLastDigits())
+            ->setCcType(Mage::getSingleton('pagarme/source_cctype')->getTypeByBrand($transaction->getCardBrand()))
+            ->setPagarmeTransactionId($transaction->getId())
+            ->setPagarmeAntifraudScore($transaction->getAntifraudScore())
+            ->setTransactionId($transaction->getId())
+            ->setIsTransactionClosed(0)
+            ->setInstallments($transaction->getInstallments());
+
       return $this;
     }
 
@@ -172,7 +181,8 @@ abstract class Inovarti_Pagarme_Model_Abstract
         ->setPagarmeTransactionId($transaction->getId())
         ->setPagarmeAntifraudScore($transaction->getAntifraudScore())
         ->setTransactionId($transaction->getId())
-        ->setIsTransactionClosed(0);
+        ->setIsTransactionClosed(0)
+        ->setInstallments($transaction->getInstallments());
 
       return $payment;
     }

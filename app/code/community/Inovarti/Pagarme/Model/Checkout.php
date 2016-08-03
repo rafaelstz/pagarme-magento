@@ -29,10 +29,10 @@ class Inovarti_Pagarme_Model_Checkout extends Inovarti_Pagarme_Model_Abstract
             $data = new Varien_Object ($data);
         }
 
-        $info = $this->getInfoInstance ();
-        $info->setPagarmeCheckoutInstallments ($data->getPagarmeCheckoutInstallments ())
-            ->setPagarmeCheckoutPaymentMethod ($data->getPagarmeCheckoutPaymentMethod ())
-            ->setPagarmeCheckoutHash ($data->getPagarmeCheckoutHash ());
+        $info = $this->getInfoInstance();
+        $info->setPagarmeCheckoutInstallments($data->getPagarmeCheckoutInstallments ())
+            ->setPagarmeCheckoutPaymentMethod($data->getPagarmeCheckoutPaymentMethod ())
+            ->setPagarmeCheckoutHash ($data->getPagarmeCheckoutHash());
 
         return $this;
     }
