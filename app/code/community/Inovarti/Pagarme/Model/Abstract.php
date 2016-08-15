@@ -35,6 +35,8 @@ abstract class Inovarti_Pagarme_Model_Abstract
             $customer = Mage::helper('pagarme')->getCustomerInfoFromOrder($payment->getOrder());
             $requestParams = $this->prepareRequestParams($payment, $amount, $requestType, $customer, $checkout);
 
+			$incrementId = $payment->getOrder()->getQuote()->getIncrementId();
+			$requestParams->setMetadata(array('order_id' => $incrementId));
             $transaction = $this->charge($requestParams);
 
             $this->prepareTransaction($transaction, $payment, $checkout);
@@ -100,7 +102,9 @@ abstract class Inovarti_Pagarme_Model_Abstract
          if ($this->getConfigData('async')) {
              $requestParams->setAsync(true);
              $requestParams->setPostbackUrl(Mage::getUrl('pagarme/transaction_creditcard/postback'));
-         }
+		 }
+
+		$requestParams->setMetadata(array('order_id' => $incrementId));
 
         return $requestParams;
     }
