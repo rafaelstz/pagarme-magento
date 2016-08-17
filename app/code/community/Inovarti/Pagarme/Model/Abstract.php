@@ -35,8 +35,8 @@ abstract class Inovarti_Pagarme_Model_Abstract
             $customer = Mage::helper('pagarme')->getCustomerInfoFromOrder($payment->getOrder());
             $requestParams = $this->prepareRequestParams($payment, $amount, $requestType, $customer, $checkout);
 
-			$incrementId = $payment->getOrder()->getQuote()->getIncrementId();
-			$requestParams->setMetadata(array('order_id' => $incrementId));
+	          $incrementId = $payment->getOrder()->getQuote()->getIncrementId();
+            $requestParams->setMetadata(array('order_id' => $incrementId));
             $transaction = $this->charge($requestParams);
 
             $this->prepareTransaction($transaction, $payment, $checkout);
@@ -213,7 +213,12 @@ abstract class Inovarti_Pagarme_Model_Abstract
 
         $messages = array();
         foreach ($transaction->getErrors() as $error) {
-          $messages[] = $error->getMessage() . '.';
+
+          if ($error->getMessage() == 'card_hash inválido. Para mais informações, consulte nossa documentação em https://pagar.me/docs.') {
+            $messages[] = 'Dados do cartão inválidos. Por favor preencha novamente os dados do cartão clicando no botão (Preencher dados do cartão)';
+          } else {
+            $messages[] = $error->getMessage() . '.';
+          }
         }
 
         Mage::log(implode("\n", $messages), null, 'pagarme.log');
