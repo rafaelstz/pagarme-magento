@@ -39,9 +39,12 @@ class Inovarti_Pagarme_Model_Quote_Address_Total_Fee
 
         $data = new Varien_Object();
         $data->setAmount(Mage::helper('pagarme')->formatAmount($total))
-            ->setInterestRate($interestRate)
             ->setMaxInstallments($numberInstallments)
             ->setFreeInstallments($freeInstallments);
+
+        if ($interestRate) {
+          $data->setInterestRate($interestRate);
+        }
 
         $post = Mage::app()->getRequest()->getPost();
 
@@ -149,4 +152,3 @@ class Inovarti_Pagarme_Model_Quote_Address_Total_Fee
     }
 
 }
-
