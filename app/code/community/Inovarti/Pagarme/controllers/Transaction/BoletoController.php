@@ -28,6 +28,8 @@ class Inovarti_Pagarme_Transaction_BoletoController extends Mage_Core_Controller
 				->register()
 				->pay();
 
+			$sendEmail = Mage::getStoreConfig('payment/pagarme_boleto/email_status_change');
+
 			$invoice->setEmailSent(true);
 			$invoice->getOrder()->setIsInProcess(true);
 
@@ -36,8 +38,7 @@ class Inovarti_Pagarme_Transaction_BoletoController extends Mage_Core_Controller
 				->addObject($invoice->getOrder())
 				->save();
 
-			$invoice->sendEmail();
-
+			$invoice->sendEmail($sendEmail);
 			$this->getResponse()->setBody('ok');
 			return;
 		}
