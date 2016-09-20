@@ -20,6 +20,13 @@
 * Descompacte o arquivo baixado e copie as pastas ``` app```, ```js``` e ```skin``` para dentro do diretório principal do Magento
 * Limpe a cache em ```Sistema > Gerenciamento de Cache```
 
+## Campo customizado para CPF / Cnpj
+
+* Por padrão o módulo trabalha com o CPF / Cnpj pelo campo taxvat, mais caso você utilize algum campo customizado para estes fields, basta que você configure os campos em ``` sistema > Configuração > Formas de Pagamento > Pagar.me - Configuração``` e informe no campo CPF o name do input customizado de CPF e em CPNJ o name do input customizado do CNPJ.
+
+## Observações
+* Por padrão o modulo utiliza 4 linhas em um endereço(```Sistema > Configuração > Configuração do cliente > Opções de Nome e Endereço``` e o campo ```Número de linhas em um endereço de rua``` com valor ```4```) respectivamente a ```street```, ```street_number```, ```complementary``` e ```neighborhood```.  Mas não se preocupe, caso esteja utilizando diferente do padrão, você pode utilizar o observer ```pagarme_get_customer_info_from_order_after``` e definir os valores de acordo com o seu Magento
+
 ## Configuração
 
 * Configure o modulo em ```Sistema > Configuração > Métodos de Pagamento > Pagar.me - Configuração``` e informe a ```Chave de API``` e a ```Chave de criptografia```, obtidos a partir da sua conta no [Pagar.me](https://pagar.me)
@@ -53,13 +60,11 @@
 * Id Recebedor : Recebedor que irá receber os valores descritos nessa regra.
 * Cobrar taxa Pagar.me do recebedor : Define se o recebedor dessa regra irá ser cobrado pela taxa da Pagar.me.
 * Recebedor responsável pelo chargeback : Define se o recebedor vinculado a essa regra irá se responsabilizar pelo risco da transação (chargeback)
-* Tipo de Split : Hoje só temos disponível no módulo a opção de %. 
-* Valor : Porcentagem que o recebedor vai receber do valor da transação. 
+* Tipo de Split : Hoje só temos disponível no módulo a opção de %.
+* Valor : Porcentagem que o recebedor vai receber do valor da transação.
 * Receber % do frete : Aqui você informa se este recebedor vai receber % da valor do frete, exemplo : se existe um pedido que deve ser dividido entre 2 recebedores com um frete de 100 reais cada recebedor vai receber 50 reais no split dele referente ao valor do frete caso este campo esteja marcado como sim nos dois recebedores
 
 ### Criando menu (Cardápio) de produtos de um seller (Vendedor)
 * Esta opção é aonde você associa produtos a sellers (Vendedores), para associar um produto a um recebedor você deve acessar ```Pagar.me - Marketplace > Associar produtos a recebedores``` em clicar em (Adicionar novo produto a um recebedor), após clicar no botão você deve preencher todos os campos do formulário:
 * Sku : Sku do produto que deseja associar ao recebedor.
 * Id Recebedor : Id do recebedor que você deseja associar o produto.
-
-

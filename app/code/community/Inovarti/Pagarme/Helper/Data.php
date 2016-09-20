@@ -70,8 +70,8 @@ class Inovarti_Pagarme_Helper_Data extends Mage_Core_Helper_Abstract
 		$address->setZipcode(Zend_Filter::filterStatic($billingAddress->getPostcode(), 'Digits'));
 
 		$customer = new Varien_Object();
-		$customer->setName($order->getCustomerName());
-		$customer->setDocumentNumber($order->getCustomerTaxvat());
+		$customer->setName($order->getCustomerName($order));
+		$customer->setDocumentNumber($this->getCustomerCpf($order));
 		$customer->setEmail($order->getCustomerEmail());
 		$customer->setPhone($this->splitTelephone($billingAddress->getTelephone()));
 		$customer->setSex($this->formatGender($order->getCustomerGender())); // optional
@@ -81,6 +81,31 @@ class Inovarti_Pagarme_Helper_Data extends Mage_Core_Helper_Abstract
 
 		return $customer;
 	}
+
+	private function getCustomerCpf($order)
+	{
+			$customCpfField = Mage::getStoreConfig('payment/pagarme_settings/custom_cpf_field');
+			$customCnpjField = Mage::getStoreConfig('payment/pagarme_settings/custom_cnpj_field');
+
+			if (!$customCpfField && !$customCnpjField) {
+					return $order->getCustomerTaxvat();
+			}
+
+			return $this->getCpfOrCnpj($order->getCustomer(), $customCpfField, $customCnpjField);
+	}
+
+	private function getCpfOrCnpj($customer, $customCpfField, $customCnpjField)
+	{
+  		$cpf = preg_replace( '/[^0-9]/', '', $customer->getData($customCpfField));
+			
+			if ($cpf) {
+					return $cpf;
+			}
+
+			$cnpj = preg_replace( '/[^0-9]/', '', $customer->getData($customCnpjField));
+		  return $cnpj;
+	}
+
 
     public function _validateCustomerAddress($address)
     {
@@ -141,10 +166,9 @@ class Inovarti_Pagarme_Helper_Data extends Mage_Core_Helper_Abstract
             return $address->getShippingAmount();
         }
     }
-    
+
     public function getBaseSubtotalWithDiscount ()
     {
         return Mage::getModel('checkout/session')->getQuote()->getBaseSubtotalWithDiscount ();
     }
 }
-
