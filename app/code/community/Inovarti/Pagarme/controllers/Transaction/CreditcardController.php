@@ -45,6 +45,15 @@ class Inovarti_Pagarme_Transaction_CreditcardController
                 return $this->getResponse()->setBody('ok');
             }
 
+            if ($this->isCancel($request)) {
+                foreach ($order->getInvoiceCollection() as $invoice) {
+                    if (!$invoice->canCancel()) {
+                        Mage::throwException($this->__('Invoice does not allow to be canceled.'));
+                    }
+                    $invoice->cancel();
+                }
+            }
+
             if (!$order->canCancel()) {
                 Mage::throwException($this->__('Order does not allow to be canceled.'));
             }
@@ -56,5 +65,16 @@ class Inovarti_Pagarme_Transaction_CreditcardController
         }
 
         $this->_forward('404');
+    }
+
+    protected function isCancel($request)
+    {
+        return in_array(
+            $request->getPost('current_status'),
+            array(
+                Inovarti_Pagarme_Model_Api::TRANSACTION_STATUS_REFUSED,
+                Inovarti_Pagarme_Model_Api::TRANSACTION_STATUS_REFUNDED
+            )
+        );
     }
 }
