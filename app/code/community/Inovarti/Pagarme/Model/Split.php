@@ -54,11 +54,9 @@ class Inovarti_Pagarme_Model_Split extends Inovarti_Pagarme_Model_AbstractSplit
         $splitRuleMarketplace = array();
 
         foreach ($splitRules as $recipientId => $splitData) {
-
             $splitAmount = $this->getAmount($recipientId, $splitData['seller']);
 
             if ($splitAmount) {
-
                 $amount = Mage::helper('pagarme')->formatAmount($splitAmount + $this->orderFeeAmount);
                 $splitRule[] = array(
                     'recipient_id'          => $recipientId,
@@ -69,7 +67,6 @@ class Inovarti_Pagarme_Model_Split extends Inovarti_Pagarme_Model_AbstractSplit
             }
 
             if ($splitRuleMarketplace[$this->marketplaceRecipientId]) {
-
                 $currentAmount  = $splitRuleMarketplace;
                 $amount         = $currentAmount['amount'] + $splitData['fee_marketplace'];
 
@@ -77,13 +74,13 @@ class Inovarti_Pagarme_Model_Split extends Inovarti_Pagarme_Model_AbstractSplit
                 continue;
             }
 
-            $marketplaceAmount = $this->getMarketplaceAmount($recipientId,$splitData);
+            $marketplaceAmount = $this->getMarketplaceAmount($recipientId, $splitData);
 
             $splitRuleMarketplace[$this->marketplaceRecipientId] = array(
                 'recipient_id'          => $this->marketplaceRecipientId,
-                'charge_processing_fee' => $splitData['charge_processing_fee'],
-                'liable'                => $splitData['liable'],
-                'amount' => $marketplaceAmount
+                'charge_processing_fee' => (bool) (Mage::getStoreConfig('payment/pagarme_settings/charge_processing_fee') == true),
+                'liable'                => (bool) (Mage::getStoreConfig('payment/pagarme_settings/liable') == true),
+                'amount'                => $marketplaceAmount
             );
         }
 
@@ -143,11 +140,9 @@ class Inovarti_Pagarme_Model_Split extends Inovarti_Pagarme_Model_AbstractSplit
         $splitRules = array();
 
         foreach ($checkSplitItems as $item) {
-
             $recipientId = $this->prepareRecipientId($item);
 
             if (!$recipientRules[$recipientId]) {
-
                 $recipientRule = $this->getFirstSplitRule($item);
 
                 if ($recipientRule->getShippingCharge()) {
@@ -157,18 +152,11 @@ class Inovarti_Pagarme_Model_Split extends Inovarti_Pagarme_Model_AbstractSplit
                 $recipientRules[$recipientId] = $recipientRule;
             }
 
-            if (isset($splitRules[$recipientId])) {
-
-                $splitRules[$recipientId][] = array(
-                    'sku' => $item->getSku(),
-                    'amount' => ($item->getPrice() * $item->getQty())
-                );
-                continue;
-            }
-
             $splitRules[$recipientId][] = array(
-                'sku' => $item->getSku(),
-                'amount' => ($item->getPrice() * $item->getQty())
+                'sku'                     => $item->getSku(),
+                'amount'                  => ($item->getPrice() * $item->getQty()),
+                'charge_processing_fee'   => (bool) ($recipientRule->getLiable() == true),
+                'liable'                  => (bool) ($recipientRule->getChargeProcessingFee() == true)
             );
         }
 
