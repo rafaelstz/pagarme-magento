@@ -11,11 +11,27 @@ class Inovarti_Pagarme_Model_Marketplacemenu extends Mage_Core_Model_Abstract
     }
 
     /**
+     * @param string $productSku
      * @return boolean
      */
+    public function productIsAssociatedWithASplitRule($productSku) {
+        return Mage::getModel('pagarme/marketplacemenu')
+            ->getCollection()
+            ->addFieldToFilter('sku', $productSku)
+            ->count() > 0;
+    }
 
-    public function isValid()
+    /**
+     * @return boolean
+     */
+    public function validate()
     {
-        return true;
+        $errors = array();
+
+        if($this->productIsAssociatedWithASplitRule($this->getSku())) {
+            $errors[] = 'This product already has an associated split rule.';
+        }
+
+        return $errors;
     }
 }

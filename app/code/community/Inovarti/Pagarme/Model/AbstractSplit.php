@@ -56,11 +56,11 @@ abstract class Inovarti_Pagarme_Model_AbstractSplit extends Mage_Payment_Model_M
      * @param $item
      * @return mixed
      */
-    protected function getFirstSplitRule($item)
+    protected function getSplitRuleByRecipientId($recipientId)
     {
         return Mage::getModel('pagarme/splitrules')
             ->getCollection()
-            ->addFieldToFilter('recipient_id', $item->getRecipientId())
+            ->addFieldToFilter('recipient_id', $recipientId)
             ->getFirstItem();
     }
 

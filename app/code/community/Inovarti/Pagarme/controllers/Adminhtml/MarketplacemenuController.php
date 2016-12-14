@@ -101,13 +101,22 @@ class Inovarti_Pagarme_Adminhtml_MarketplacemenuController
                 $splitRule->setData($data);
             }
 
-            if(!$splitRule->isValid()) {
+            $errors = $splitRule->validate();
+
+            if(count($errors) > 0) {
+                foreach($errors as $error) {
+                    Mage::getSingleton('adminhtml/session')
+                        ->addError(
+                            Mage::helper('pagarme')->__('Error save product to menu in marketplace: ' . $error)
+                        );
+                }
+            } else {
+                $splitRule->save();
+
+                Mage::getSingleton('adminhtml/session')
+                    ->addSuccess(Mage::helper('pagarme')->__('Success save Marketplace Menu'));
             }
 
-            $splitRule->save();
-
-            Mage::getSingleton('adminhtml/session')
-                ->addSuccess(Mage::helper('pagarme')->__('Success save Marketplace Menu'));
             return $this->_redirect('*/*/');
         } catch (Exception $e) {
             Mage::getSingleton('adminhtml/session')

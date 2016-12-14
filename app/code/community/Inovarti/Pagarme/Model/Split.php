@@ -78,8 +78,8 @@ class Inovarti_Pagarme_Model_Split extends Inovarti_Pagarme_Model_AbstractSplit
 
             $splitRuleMarketplace[$this->marketplaceRecipientId] = array(
                 'recipient_id'          => $this->marketplaceRecipientId,
-                'charge_processing_fee' => (bool) (Mage::getStoreConfig('payment/pagarme_settings/charge_processing_fee') == true),
-                'liable'                => (bool) (Mage::getStoreConfig('payment/pagarme_settings/liable') == true),
+                'charge_processing_fee' => (Mage::getStoreConfig('payment/pagarme_settings/charge_processing_fee') == true),
+                'liable'                => (Mage::getStoreConfig('payment/pagarme_settings/liable') == true),
                 'amount'                => $marketplaceAmount
             );
         }
@@ -143,7 +143,7 @@ class Inovarti_Pagarme_Model_Split extends Inovarti_Pagarme_Model_AbstractSplit
             $recipientId = $this->prepareRecipientId($item);
 
             if (!$recipientRules[$recipientId]) {
-                $recipientRule = $this->getFirstSplitRule($item);
+                $recipientRule = $this->getSplitRuleByRecipientId($item->getRecipientId());
 
                 if ($recipientRule->getShippingCharge()) {
                     array_push($recipientCarriers, $item->getRecipientId());
@@ -155,8 +155,8 @@ class Inovarti_Pagarme_Model_Split extends Inovarti_Pagarme_Model_AbstractSplit
             $splitRules[$recipientId][] = array(
                 'sku'                     => $item->getSku(),
                 'amount'                  => ($item->getPrice() * $item->getQty()),
-                'charge_processing_fee'   => (bool) ($recipientRule->getLiable() == true),
-                'liable'                  => (bool) ($recipientRule->getChargeProcessingFee() == true)
+                'charge_processing_fee'   => ($recipientRule->getLiable() == true),
+                'liable'                  => ($recipientRule->getChargeProcessingFee() == true)
             );
         }
 
