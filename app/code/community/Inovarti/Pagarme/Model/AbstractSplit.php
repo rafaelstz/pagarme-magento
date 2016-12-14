@@ -58,7 +58,7 @@ abstract class Inovarti_Pagarme_Model_AbstractSplit extends Mage_Payment_Model_M
      */
     protected function getFirstSplitRule($item)
     {
-        return Mage::getModel('pagarme/splitRules')
+        return Mage::getModel('pagarme/splitrules')
             ->getCollection()
             ->addFieldToFilter('recipient_id', $item->getRecipientId())
             ->getFirstItem();
@@ -163,7 +163,7 @@ abstract class Inovarti_Pagarme_Model_AbstractSplit extends Mage_Payment_Model_M
         if (count($this->recipientCarriers) === 1 && !in_array($recipientId,$this->recipientCarriers)) {
             return $splitData['fee_marketplace'] + $this->carrierSplitAmount;
         }
-        
+
         return $splitData['fee_marketplace'];
     }
 
