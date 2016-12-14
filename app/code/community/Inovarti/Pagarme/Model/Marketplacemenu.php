@@ -9,4 +9,13 @@ class Inovarti_Pagarme_Model_Marketplacemenu extends Mage_Core_Model_Abstract
     {
         return $this->_init('pagarme/marketplacemenu');
     }
+
+    /**
+     * @return boolean
+     */
+
+    public function isValid()
+    {
+        return true;
+    }
 }
