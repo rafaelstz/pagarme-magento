@@ -21,6 +21,23 @@ class Inovarti_Pagarme_Model_Splitrules extends Mage_Core_Model_Abstract
             $errors[] = 'Invalid value for \'amount\'';
         }
 
+        $recipientHasAssociatedProduct = Mage::getModel('pagarme/marketplacemenu')
+            ->getCollection()
+            ->addFieldToFilter('recipient_id', $this->getRecipientId())
+            ->count() > 0;
+
+        if($recipientHasAssociatedProduct) {
+            if(!Mage::getStoreConfig('payment/pagarme_settings/charge_processing_fee')
+                && !$this->getChargeProcessingFee()) {
+                $errors[] = 'At least one recipient must be responsible for the charge processing fee';
+            }
+
+            if(!Mage::getStoreConfig('payment/pagarme_settings/liable')
+                && !$this->getChargeProcessingFee()) {
+                $errors[] = 'At least one recipient must be responsible for the chargeback';
+            }
+        }
+
         return $errors;
     }
 }
