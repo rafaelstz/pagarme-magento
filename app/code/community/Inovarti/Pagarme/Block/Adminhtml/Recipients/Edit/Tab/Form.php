@@ -13,6 +13,13 @@ class Inovarti_Pagarme_Block_Adminhtml_Recipients_Edit_Tab_Form
 
         $fieldset = $form->addFieldset("pagarme_form", array("legend"=>Mage::helper("pagarme")->__("Recipient Details")));
 
+        $fieldset->addField("bank_account_id", "text", array(
+            "label" => Mage::helper("pagarme")->__("Banck Account ID"),
+            "name" => "bank_account_id",
+            "class" => "required-entry",
+            "required" => true
+        ));
+
         $fieldset->addField("transfer_enabled", "select", array(
             "label" => Mage::helper("pagarme")->__("Transfer Enabled"),
             "name" => "transfer_enabled",
@@ -23,10 +30,9 @@ class Inovarti_Pagarme_Block_Adminhtml_Recipients_Edit_Tab_Form
 
         $fieldset->addField("transfer_interval", "select", array(
             "label" => Mage::helper("pagarme")->__("Transfer Interval"),
-            "name" => "transfer_enabled",
-            "class" => "required-entry",
-            "required" => true,
+            "name" => "transfer_interval",
             "options" => array(
+                ''          => Mage::helper("pagarme")->__("Select"),
                 'daily'     => Mage::helper("pagarme")->__("Daily"),
                 'weekly'    => Mage::helper("pagarme")->__("Weekly"),
                 'monthly'   => Mage::helper("pagarme")->__("Monthly")
@@ -35,16 +41,7 @@ class Inovarti_Pagarme_Block_Adminhtml_Recipients_Edit_Tab_Form
 
         $fieldset->addField("transfer_day", "text", array(
             "label" => Mage::helper("pagarme")->__("Transfer Day"),
-            "name" => "transfer_day",
-            "class" => "required-entry",
-            "required" => true
-        ));
-
-        $fieldset->addField("bank_account_id", "text", array(
-            "label" => Mage::helper("pagarme")->__("Banck Account ID"),
-            "name" => "bank_account_id",
-            "class" => "required-entry",
-            "required" => true
+            "name" => "transfer_day"
         ));
 
         if (Mage::getSingleton("adminhtml/session")->getBanksData()) {

@@ -43,6 +43,10 @@ class Inovarti_Pagarme_Model_Banks extends Mage_Core_Model_Abstract
         return $collection;
     }
 
+    public function getCollection() {
+        return PagarMe_Bank_Account::all();
+    }
+
     /**
      * @param $data
      * @return false|Mage_Core_Model_Abstract|mixed

@@ -13,6 +13,20 @@ class Inovarti_Pagarme_Block_Adminhtml_Banks_Edit_Tab_Form
 
         $fieldset = $form->addFieldset("pagarme_form", array("legend"=>Mage::helper("pagarme")->__("Bank Details")));
 
+        $fieldset->addField("legal_name", "text", array(
+            "label" => Mage::helper("pagarme")->__("Legal Name"),
+            "name" => "legal_name",
+            "class" => "required-entry",
+            "required" => true
+        ));
+
+        $fieldset->addField("document_number", "text", array(
+            "label" => Mage::helper("pagarme")->__("Document Number"),
+            "name" => "document_number",
+            "class" => "required-entry",
+            "required" => true
+        ));
+
         $fieldset->addField("bank_code", "text", array(
             "label" => Mage::helper("pagarme")->__("Bank Code"),
             "name" => "bank_code",
@@ -43,20 +57,6 @@ class Inovarti_Pagarme_Block_Adminhtml_Banks_Edit_Tab_Form
         $fieldset->addField("account_dv", "text", array(
             "label" => Mage::helper("pagarme")->__("Account DV"),
             "name" => "account_dv",
-            "class" => "required-entry",
-            "required" => true
-        ));
-
-        $fieldset->addField("document_number", "text", array(
-            "label" => Mage::helper("pagarme")->__("Document Number"),
-            "name" => "document_number",
-            "class" => "required-entry",
-            "required" => true
-        ));
-
-        $fieldset->addField("legal_name", "text", array(
-            "label" => Mage::helper("pagarme")->__("Legal Name"),
-            "name" => "legal_name",
             "class" => "required-entry",
             "required" => true
         ));

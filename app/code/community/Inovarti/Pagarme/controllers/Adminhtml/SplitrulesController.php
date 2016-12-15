@@ -83,40 +83,37 @@ class Inovarti_Pagarme_Adminhtml_SplitrulesController
     public function saveAction()
     {
         $data = $this->getRequest()->getPost();
-
-        if (!$this->getRequest()->getParam('entity_id')) {
-
-            try {
-
-                $splitRules = Mage::getModel('pagarme/splitrules')
-                    ->setData($data)
-                    ->save();
-
-                Mage::getSingleton('adminhtml/session')
-                    ->addSuccess(Mage::helper('pagarme')->__('Success create Split Rule'));
-                return $this->_redirect('*/*/');
-
-            } catch (Exception $e) {
-
-                Mage::getSingleton('adminhtml/session')
-                    ->addError(Mage::helper('pagarme')->__('Error create recipient account : '. $e->getMessage()));
-               return $this->_redirect("*/*/");
-            }
-        }
+        $entityId = $this->getRequest()->getParam('entity_id');
 
         try {
+            $splitRule = Mage::getModel('pagarme/splitrules');
 
-            $splitRules = Mage::getModel('pagarme/splitrules')->load($this->getRequest()->getParam('entity_id'));
-            $splitRules->addData($data)->save();
+            if($entityId != '') {
+                $splitRule->load($entityId)
+                    ->addData($data);
+            } else {
+                $splitRule->setData($data);
+            }
 
-            Mage::getSingleton('adminhtml/session')
-                ->addSuccess(Mage::helper('pagarme')->__('Success create Split Rule'));
-            return $this->_redirect('*/*/');
+            $errors = $splitRule->validate();
 
-        } catch (Exception $e) {
+            if(count($errors) > 0) {
+                foreach($errors as $error) {
+                    Mage::getSingleton('adminhtml/session')
+                        ->addError(Mage::helper('pagarme')->__('Error create recipient account : '. $error));
+                }
+            } else {
+                $splitRule->save();
+                Mage::getSingleton('adminhtml/session')
+                    ->addSuccess(Mage::helper('pagarme')->__('Success create Split Rule'));
+            }
+
+
+            return $this->_redirect("*/*/");
+        } catch(Exception $e) {
             Mage::getSingleton('adminhtml/session')
                 ->addError(Mage::helper('pagarme')->__('Error create recipient account : '. $e->getMessage()));
-           return $this->_redirect("*/*/");
+            return $this->_redirect("*/*/");
         }
     }
 

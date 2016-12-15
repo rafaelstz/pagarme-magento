@@ -16,7 +16,8 @@ class Inovarti_Pagarme_Block_Adminhtml_SplitRules_Edit_Tab_Form
         $fieldset->addField("recipient_id", "text", array(
             "label" => Mage::helper("pagarme")->__("Recipient Id"),
             "name" => "recipient_id",
-            "required" => false
+            "class" => "required-entry",
+            "required" => true
         ));
 
         $fieldset->addField("charge_processing_fee", "select", array(
@@ -30,7 +31,8 @@ class Inovarti_Pagarme_Block_Adminhtml_SplitRules_Edit_Tab_Form
         $fieldset->addField("liable", "select", array(
             "label" => Mage::helper("pagarme")->__("Liable"),
             "name" => "liable",
-            "required" => false,
+            "class" => "required-entry",
+            "required" => true,
             "options" => Mage::getModel('adminhtml/system_config_source_yesno')->toArray()
         ));
 
@@ -40,14 +42,14 @@ class Inovarti_Pagarme_Block_Adminhtml_SplitRules_Edit_Tab_Form
             "required" => false,
             "options" => array(
                 'variable' => 'Variavel (%)'
-
             )
         ));
 
         $fieldset->addField("amount", "text", array(
             "label" => Mage::helper("pagarme")->__("Amount"),
             "name" => "amount",
-            "required" => false
+            "class" => "required-entry",
+            "required" => true
         ));
 
         $fieldset->addField("shipping_charge", "select", array(

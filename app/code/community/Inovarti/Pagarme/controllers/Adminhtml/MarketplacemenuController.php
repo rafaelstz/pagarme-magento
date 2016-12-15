@@ -90,41 +90,38 @@ class Inovarti_Pagarme_Adminhtml_MarketplacemenuController
     {
         $data = $this->getRequest()->getPost();
 
-        if (!$this->getRequest()->getParam('entity_id')) {
-
-            try {
-                $splitRules = Mage::getModel('pagarme/marketplacemenu')
-                    ->setData($data)
-                    ->save();
-
-                Mage::getSingleton('adminhtml/session')
-                    ->addSuccess(Mage::helper('pagarme')->__('Success create Marketplace Menu'));
-                return $this->_redirect('*/*/');
-
-            } catch (Exception $e) {
-
-                Mage::getSingleton('adminhtml/session')
-                    ->addError(
-                        Mage::helper('pagarme')->__('Error create product to menu in marketplace : ' . $e->getMessage())
-                    );
-                $this->_redirect("*/*/");
-            }
-        }
-
         try {
+            $splitRuleId = $this->getRequest()->getParam('entity_id');
+            $splitRule = Mage::getModel('pagarme/marketplacemenu');
 
-            $splitRules = Mage::getModel('pagarme/marketplacemenu')->load($this->getRequest()->getParam('entity_id'));
-            $splitRules->addData($data)->save();
+            if($splitRuleId != null && $splitRuleId != '') {
+                $splitRule->load($splitRuleId)
+                        ->addData($data);
+            } else {
+                $splitRule->setData($data);
+            }
 
-            Mage::getSingleton('adminhtml/session')
-                ->addSuccess(Mage::helper('pagarme')->__('Success create product to menu in marketplace'));
+            $errors = $splitRule->validate();
+
+            if(count($errors) > 0) {
+                foreach($errors as $error) {
+                    Mage::getSingleton('adminhtml/session')
+                        ->addError(
+                            Mage::helper('pagarme')->__('Error save product to menu in marketplace: ' . $error)
+                        );
+                }
+            } else {
+                $splitRule->save();
+
+                Mage::getSingleton('adminhtml/session')
+                    ->addSuccess(Mage::helper('pagarme')->__('Success save Marketplace Menu'));
+            }
 
             return $this->_redirect('*/*/');
-
         } catch (Exception $e) {
             Mage::getSingleton('adminhtml/session')
                 ->addError(
-                    Mage::helper('pagarme')->__('Error create product to menu in marketplace : ' . $e->getMessage())
+                    Mage::helper('pagarme')->__('Error save product to menu in marketplace : ' . $e->getMessage())
                 );
             $this->_redirect("*/*/");
         }
