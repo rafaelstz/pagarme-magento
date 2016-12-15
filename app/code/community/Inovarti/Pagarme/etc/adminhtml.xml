@@ -1,7 +1,34 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <config>
-    <acl>
+    <menu>
+        <pagarme module="pagarme">
+            <title>Pagarme - Marketplace</title>
+            <sort_order>100</sort_order>
+            <children>
+                <banks module="pagarme">
+                    <title>Manage Banks</title>
+                    <sort_order>0</sort_order>
+                    <action>adminhtml/banks</action>
+                </banks>
+                <recipients module="pagarme">
+                    <title>Manage Recipients</title>
+                    <sort_order>10</sort_order>
+                    <action>adminhtml/recipients</action>
+                </recipients>
+                <split_rules module="pagarme">
+                    <title>Manage Split Rules</title>
+                    <sort_order>20</sort_order>
+                    <action>adminhtml/splitrules</action>
+                </split_rules>
+                <marketplace_Menu module="pagarme">
+                    <title>Marketplace Menu</title>
+                    <sort_order>30</sort_order>
+                    <action>adminhtml/marketplacemenu</action>
+                </marketplace_Menu>
+            </children>
+        </pagarme>
     </menu>
+    <acl>
         <resources>
             <all>
                 <title>Allow Everything</title>
