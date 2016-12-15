@@ -26,7 +26,6 @@ class Inovarti_Pagarme_Block_Adminhtml_Recipients_Grid
     {
         $this->pagarmeModel = PagarMe_Recipient::all(20, 0);
         $this->currentModel = Mage::getModel('pagarme/recipients');
-
         $this->prepareCollection($this->pagarmeModel);
         $this->setCollection($this->collection);
         return parent::_prepareCollection();

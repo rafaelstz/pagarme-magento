@@ -84,53 +84,34 @@ class Inovarti_Pagarme_Adminhtml_RecipientsController
     public function saveAction()
     {
         $data = $this->getRequest()->getPost();
-
         unset($data['form_key']);
-        if (!$this->getRequest()->getParam('id')) {
 
-            $transferEnable = ($data['transfer_enabled']) ? true : false;
+        $data['transfer_enabled'] = (bool) $data['transfer_enabled'];
+        $data['transfer_interval'] = $data['transfer_interval'] == '' ? null : $data['transfer_interval'];
+        $data['transfer_day'] = $data['transfer_day'] == '' ? null : $data['transfer_day'];
 
-            if ($data['transfer_enabled']) {
-                $data['transfer_enabled'] = $transferEnable;
-            }
-
-            $recipient = new PagarMe_Recipient($data);
-
-            try {
-
-                $recipient->create();
-                Mage::getSingleton('adminhtml/session')
-                    ->addSuccess(Mage::helper('pagarme')->__('Success create Recipient account'));
-                $this->_redirect('*/*/');
-
-            } catch (Exception $e) {
-                Mage::getSingleton('adminhtml/session')
-                    ->addError(Mage::helper('pagarme')->__('Error create recipient account : '. $e->getMessage()));
-                $this->_redirect("*/*/");
-            }
-        }
-
-        $recipientPagarmeModel = PagarMe_Recipient::findById($this->getRequest()->getParam('id'));
-
-        $transferEnable = ($data['transfer_enabled']) ? true : false;
-
-        $recipientPagarmeModel->setTransferEnabled($transferEnable);
-        $recipientPagarmeModel->setTransferInterval($data['transfer_interval']);
-        $recipientPagarmeModel->setTransferDay($data['transfer_day']);
-        $recipientPagarmeModel->setBankAccountId($data['bank_account_id']);
+        $recipientId = $data['recipientId'];
 
         try {
+            if(!$recipientId) {
+                $recipient = new PagarMe_Recipient($data);
+                $recipient->create();
+            } else {
+                $recipient = PagarMe_Recipient::findById($this->getRequest()->getParam('id'));
+                $recipient->setTransferEnabled($data['transfer_enabled']);
+                $recipient->setTransferInterval($data['transfer_interval']);
+                $recipient->setTransferDay($data['transfer_day']);
+                $recipient->setBankAccountId($data['bank_account_id']);
+                $recipient->save();
+            }
 
-            $recipientPagarmeModel->save();
             Mage::getSingleton('adminhtml/session')
-                ->addSuccess(Mage::helper('pagarme')->__('Success update Recipient account'));
+                ->addSuccess(Mage::helper('pagarme')->__('Success create Recipient account'));
             $this->_redirect('*/*/');
-
-        } catch (Exception $e) {
+        } catch(Exception $e) {
             Mage::getSingleton('adminhtml/session')
-                ->addError(Mage::helper('pagarme')->__('Error update recipient account : '. $e->getMessage()));
+                ->addError(Mage::helper('pagarme')->__('Error create recipient account : '. $e->getMessage()));
             $this->_redirect("*/*/");
-            return;
         }
     }
 }

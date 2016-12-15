@@ -30,7 +30,7 @@ class Inovarti_Pagarme_Block_Adminhtml_Recipients_Edit_Tab_Form
 
         $fieldset->addField("transfer_interval", "select", array(
             "label" => Mage::helper("pagarme")->__("Transfer Interval"),
-            "name" => "transfer_enabled",
+            "name" => "transfer_interval",
             "options" => array(
                 ''          => Mage::helper("pagarme")->__("Select"),
                 'daily'     => Mage::helper("pagarme")->__("Daily"),
