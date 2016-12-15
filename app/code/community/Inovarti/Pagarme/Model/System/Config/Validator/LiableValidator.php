@@ -2,7 +2,7 @@
 
 class Inovarti_Pagarme_Model_System_Config_Validator_LiableValidator extends Mage_Core_Model_Config_Data
 {
-    public function save() {
+    public function _beforeSave() {
         $marketPlaceIsResponsibleForChargeback = $this->getValue();
 
         if(!$marketPlaceIsResponsibleForChargeback) {
@@ -19,7 +19,5 @@ class Inovarti_Pagarme_Model_System_Config_Validator_LiableValidator extends Mag
                 Mage::throwException('More than one recipients are not responsible for chargeback');
             }
         }
-
-        return parent::save();
     }
 }

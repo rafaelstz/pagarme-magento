@@ -2,7 +2,7 @@
 
 class Inovarti_Pagarme_Model_System_Config_Validator_ChargeProcessingFeeValidator extends Mage_Core_Model_Config_Data
 {
-    public function save() {
+    public function _beforeSave() {
         $marketPlaceIsResponsibleForChargeProcessingFee = $this->getValue();
 
         if(!$marketPlaceIsResponsibleForChargeProcessingFee) {
@@ -19,7 +19,5 @@ class Inovarti_Pagarme_Model_System_Config_Validator_ChargeProcessingFeeValidato
                 Mage::throwException('More than one recipients are not responsible for charge processing fee');
             }
         }
-
-        return parent::save();
     }
 }

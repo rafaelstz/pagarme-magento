@@ -33,7 +33,7 @@ class Inovarti_Pagarme_Model_Splitrules extends Mage_Core_Model_Abstract
             }
 
             if(!Mage::getStoreConfig('payment/pagarme_settings/liable')
-                && !$this->getChargeProcessingFee()) {
+                && !$this->getLiable()) {
                 $errors[] = 'At least one recipient must be responsible for the chargeback';
             }
         }
