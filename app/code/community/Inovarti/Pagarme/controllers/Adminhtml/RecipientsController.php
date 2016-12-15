@@ -95,7 +95,7 @@ class Inovarti_Pagarme_Adminhtml_RecipientsController
             }
 
             $recipient = new PagarMe_Recipient($data);
-            
+
             try {
 
                 $recipient->create();

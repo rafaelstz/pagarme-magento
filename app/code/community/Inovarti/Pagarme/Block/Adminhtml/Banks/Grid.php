@@ -29,6 +29,7 @@ class Inovarti_Pagarme_Block_Adminhtml_Banks_Grid
 
         $this->prepareCollection($this->pagarmeModel);
         $this->setCollection($this->collection);
+
         return parent::_prepareCollection();
     }
 
@@ -52,6 +53,15 @@ class Inovarti_Pagarme_Block_Adminhtml_Banks_Grid
             "align" => "right",
             "index" => "legal_name",
             "type" => "varchar",
+            "filter" => false,
+            "sortable"  => false
+        ));
+
+        $this->addColumn("document_number", array(
+            "header" => Mage::helper("pagarme")->__("Document Number"),
+            "align" => "right",
+            "type" => "number",
+            "index" => "document_number",
             "filter" => false,
             "sortable"  => false
         ));
@@ -96,15 +106,6 @@ class Inovarti_Pagarme_Block_Adminhtml_Banks_Grid
             "align" => "right",
             "type" => "number",
             "index" => "account_dv",
-            "filter" => false,
-            "sortable"  => false
-        ));
-
-        $this->addColumn("document_number", array(
-            "header" => Mage::helper("pagarme")->__("Document Number"),
-            "align" => "right",
-            "type" => "number",
-            "index" => "document_number",
             "filter" => false,
             "sortable"  => false
         ));
