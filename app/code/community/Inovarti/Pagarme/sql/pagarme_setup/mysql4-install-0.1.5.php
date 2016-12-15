@@ -1,4 +1,5 @@
 <?php
+
 /**
  *
  * @category   Inovarti
@@ -7,10 +8,9 @@
  *
  * UPDATED:
  *
- * @copyright   Copyright (C) 2016 Gamuza Technologies (http://www.gamuza.com.br/)
+ * @copyright  Copyright (C) 2016 Gamuza Technologies (http://www.gamuza.com.br/)
  * @author     Eneias Ramos de Melo <eneias@gamuza.com.br>
  */
-
 $installer = new Mage_Sales_Model_Resource_Setup('pagarme_setup');
 $installer->startSetup();
 
@@ -149,64 +149,64 @@ $installer->getConnection()
 $table = $installer->getConnection()
     ->newTable($installer->getTable('pagarme_split_rules'))
     ->addColumn('entity_id', Varien_Db_Ddl_Table::TYPE_INTEGER, null, array(
-        'identity'  => true,
-        'unsigned'  => true,
-        'nullable'  => false,
-        'primary'   => true,
-    ), 'Id')
+        'identity' => true,
+        'unsigned' => true,
+        'nullable' => false,
+        'primary' => true,
+            ), 'Id')
     ->addColumn('split_rule_id', Varien_Db_Ddl_Table::TYPE_VARCHAR, 255, array(
-        'nullable'  => false,
-    ), 'Pagarme Split Rule Id')
+        'nullable' => false,
+            ), 'Pagarme Split Rule Id')
     ->addColumn('recipient_id', Varien_Db_Ddl_Table::TYPE_VARCHAR, 255, array(
-        'nullable'  => false,
-    ), 'Recipient id.')
+        'nullable' => false,
+            ), 'Recipient id.')
     ->addColumn('charge_processing_fee', Varien_Db_Ddl_Table::TYPE_BOOLEAN, 1, array(
         'nullable' => false,
         'default' => 0,
-    ), 'Status')
+            ), 'Status')
     ->addColumn('liable', Varien_Db_Ddl_Table::TYPE_BOOLEAN, 1, array(
         'nullable' => false,
         'default' => 0,
-    ), 'Sets whether the receiver linked to this rule will be responsible for transaction risk (chargeback)')
+            ), 'Sets whether the receiver linked to this rule will be responsible for transaction risk (chargeback)')
     ->addColumn('type_amount_charged', Varien_Db_Ddl_Table::TYPE_VARCHAR, 20, array(
-        'nullable'  => true,
-    ), 'Percentage that the recipient will receive the transaction amount')
+        'nullable' => true,
+            ), 'Percentage that the recipient will receive the transaction amount')
     ->addColumn('amount', Varien_Db_Ddl_Table::TYPE_VARCHAR, 20, array(
-        'nullable'  => true,
-    ), 'Value that the recipient will receive the transaction.')
+        'nullable' => true,
+            ), 'Value that the recipient will receive the transaction.')
     ->addColumn('shipping_charge', Varien_Db_Ddl_Table::TYPE_BOOLEAN, 1, array(
         'nullable' => false,
         'default' => 0,
-    ), 'Value that the recipient will receive the transaction.')
+            ), 'Value that the recipient will receive the transaction.')
     ->addColumn('created_at', Varien_Db_Ddl_Table::TYPE_DATETIME, null, array(
-        'nullable'  => false,
-    ), 'date time created row')
+        'nullable' => false,
+            ), 'date time created row')
     ->addColumn('updated_at', Varien_Db_Ddl_Table::TYPE_DATETIME, null, array(
-        'nullable'  => false,
-    ), 'date time updated row');
+        'nullable' => false,
+            ), 'date time updated row');
 
 $installer->getConnection()->createTable($table);
 
 $table = $installer->getConnection()
     ->newTable($installer->getTable('pagarme_marketplace_menu'))
     ->addColumn('entity_id', Varien_Db_Ddl_Table::TYPE_INTEGER, null, array(
-        'identity'  => true,
-        'unsigned'  => true,
-        'nullable'  => false,
-        'primary'   => true,
-    ), 'Id')
+        'identity' => true,
+        'unsigned' => true,
+        'nullable' => false,
+        'primary' => true,
+            ), 'Id')
     ->addColumn('sku', Varien_Db_Ddl_Table::TYPE_VARCHAR, 255, array(
-        'nullable'  => false,
-    ), 'Product Sku')
+        'nullable' => false,
+            ), 'Product Sku')
     ->addColumn('recipient_id', Varien_Db_Ddl_Table::TYPE_VARCHAR, 255, array(
-        'nullable'  => false,
-    ), 'Recipient id.')
+        'nullable' => false,
+            ), 'Recipient id.')
     ->addColumn('created_at', Varien_Db_Ddl_Table::TYPE_DATETIME, null, array(
-        'nullable'  => false,
-    ), 'date time created row')
+        'nullable' => false,
+            ), 'date time created row')
     ->addColumn('updated_at', Varien_Db_Ddl_Table::TYPE_DATETIME, null, array(
-        'nullable'  => false,
-    ), 'date time updated row');
+        'nullable' => false,
+            ), 'date time updated row');
 
 $installer->getConnection()->createTable($table);
 
@@ -217,138 +217,138 @@ $entities = array(
 
 foreach ($entities as $entity) {
     $installer->addAttribute($entity, 'recipient_id', array(
-        'type'     => Varien_Db_Ddl_Table::TYPE_VARCHAR,
-        'visible'  => true,
+        'type' => Varien_Db_Ddl_Table::TYPE_VARCHAR,
+        'visible' => true,
         'required' => false
     ));
 }
 
-    $table = $installer->getTable('sales/quote_address');
+$table = $installer->getTable('sales/quote_address');
 
-    $installer->getConnection()
-        ->changeColumn($table, 'fee_amount', 'fee_amount', array(
-            'type' => Varien_Db_Ddl_Table::TYPE_DECIMAL,
-            'unsigned' => true,
-            'nullable' => false,
-            'comment' => 'Fee Amount',
-            'SCALE' => 4,
-            'PRECISION' => 12,
-        ));
+$installer->getConnection()
+    ->changeColumn($table, 'fee_amount', 'fee_amount', array(
+        'type' => Varien_Db_Ddl_Table::TYPE_DECIMAL,
+        'unsigned' => true,
+        'nullable' => false,
+        'comment' => 'Fee Amount',
+        'SCALE' => 4,
+        'PRECISION' => 12,
+    ));
 
-    $installer->getConnection()
-        ->changeColumn($table, 'base_fee_amount', 'base_fee_amount', array(
-            'type' => Varien_Db_Ddl_Table::TYPE_DECIMAL,
-            'unsigned' => true,
-            'nullable' => false,
-            'comment' => 'Base Fee Amount',
-            'SCALE' => 4,
-            'PRECISION' => 12,
-        ));
+$installer->getConnection()
+    ->changeColumn($table, 'base_fee_amount', 'base_fee_amount', array(
+        'type' => Varien_Db_Ddl_Table::TYPE_DECIMAL,
+        'unsigned' => true,
+        'nullable' => false,
+        'comment' => 'Base Fee Amount',
+        'SCALE' => 4,
+        'PRECISION' => 12,
+    ));
 
-    $table = $installer->getTable('sales/order');
+$table = $installer->getTable('sales/order');
 
-    $installer->getConnection()
-        ->changeColumn($table, 'fee_amount', 'fee_amount', array(
-            'type' => Varien_Db_Ddl_Table::TYPE_DECIMAL,
-            'unsigned' => true,
-            'nullable' => false,
-            'comment' => 'Fee Amount',
-            'SCALE' => 4,
-            'PRECISION' => 12,
-        ));
+$installer->getConnection()
+    ->changeColumn($table, 'fee_amount', 'fee_amount', array(
+        'type' => Varien_Db_Ddl_Table::TYPE_DECIMAL,
+        'unsigned' => true,
+        'nullable' => false,
+        'comment' => 'Fee Amount',
+        'SCALE' => 4,
+        'PRECISION' => 12,
+    ));
 
-    $installer->getConnection()
-        ->changeColumn($table, 'base_fee_amount', 'base_fee_amount', array(
-            'type' => Varien_Db_Ddl_Table::TYPE_DECIMAL,
-            'unsigned' => true,
-            'nullable' => false,
-            'comment' => 'Base Fee Amount',
-            'SCALE' => 4,
-            'PRECISION' => 12,
-        ));
+$installer->getConnection()
+    ->changeColumn($table, 'base_fee_amount', 'base_fee_amount', array(
+        'type' => Varien_Db_Ddl_Table::TYPE_DECIMAL,
+        'unsigned' => true,
+        'nullable' => false,
+        'comment' => 'Base Fee Amount',
+        'SCALE' => 4,
+        'PRECISION' => 12,
+    ));
 
-    $installer->getConnection()
-        ->changeColumn($table, 'fee_amount_invoiced', 'fee_amount_invoiced', array(
-            'type' => Varien_Db_Ddl_Table::TYPE_DECIMAL,
-            'unsigned' => true,
-            'nullable' => false,
-            'comment' => 'Fee Amount Invoiced',
-            'SCALE' => 4,
-            'PRECISION' => 12,
-        ));
+$installer->getConnection()
+    ->changeColumn($table, 'fee_amount_invoiced', 'fee_amount_invoiced', array(
+        'type' => Varien_Db_Ddl_Table::TYPE_DECIMAL,
+        'unsigned' => true,
+        'nullable' => false,
+        'comment' => 'Fee Amount Invoiced',
+        'SCALE' => 4,
+        'PRECISION' => 12,
+    ));
 
-    $installer->getConnection()
-        ->changeColumn($table, 'base_fee_amount_invoiced', 'base_fee_amount_invoiced', array(
-            'type' => Varien_Db_Ddl_Table::TYPE_DECIMAL,
-            'unsigned' => true,
-            'nullable' => false,
-            'comment' => 'Base Fee Amount Invoiced',
-            'SCALE' => 4,
-            'PRECISION' => 12,
-        ));
+$installer->getConnection()
+    ->changeColumn($table, 'base_fee_amount_invoiced', 'base_fee_amount_invoiced', array(
+        'type' => Varien_Db_Ddl_Table::TYPE_DECIMAL,
+        'unsigned' => true,
+        'nullable' => false,
+        'comment' => 'Base Fee Amount Invoiced',
+        'SCALE' => 4,
+        'PRECISION' => 12,
+    ));
 
-    $installer->getConnection()
-        ->changeColumn($table, 'fee_amount_refunded', 'fee_amount_refunded', array(
-            'type' => Varien_Db_Ddl_Table::TYPE_DECIMAL,
-            'unsigned' => true,
-            'nullable' => false,
-            'comment' => 'Fee Amount Refunded',
-            'SCALE' => 4,
-            'PRECISION' => 12,
-        ));
+$installer->getConnection()
+    ->changeColumn($table, 'fee_amount_refunded', 'fee_amount_refunded', array(
+        'type' => Varien_Db_Ddl_Table::TYPE_DECIMAL,
+        'unsigned' => true,
+        'nullable' => false,
+        'comment' => 'Fee Amount Refunded',
+        'SCALE' => 4,
+        'PRECISION' => 12,
+    ));
 
-    $installer->getConnection()
-        ->changeColumn($table, 'base_fee_amount_refunded', 'base_fee_amount_refunded', array(
-            'type' => Varien_Db_Ddl_Table::TYPE_DECIMAL,
-            'unsigned' => true,
-            'nullable' => false,
-            'comment' => 'Base Fee Amount Refunded',
-            'SCALE' => 4,
-            'PRECISION' => 12,
-        ));
+$installer->getConnection()
+    ->changeColumn($table, 'base_fee_amount_refunded', 'base_fee_amount_refunded', array(
+        'type' => Varien_Db_Ddl_Table::TYPE_DECIMAL,
+        'unsigned' => true,
+        'nullable' => false,
+        'comment' => 'Base Fee Amount Refunded',
+        'SCALE' => 4,
+        'PRECISION' => 12,
+    ));
 
-    $table = $installer->getTable('sales/invoice');
+$table = $installer->getTable('sales/invoice');
 
-    $installer->getConnection()
-        ->changeColumn($table, 'fee_amount', 'fee_amount', array(
-            'type' => Varien_Db_Ddl_Table::TYPE_DECIMAL,
-            'unsigned' => true,
-            'nullable' => false,
-            'comment' => 'Fee Amount',
-            'SCALE' => 4,
-            'PRECISION' => 12,
-        ));
+$installer->getConnection()
+    ->changeColumn($table, 'fee_amount', 'fee_amount', array(
+        'type' => Varien_Db_Ddl_Table::TYPE_DECIMAL,
+        'unsigned' => true,
+        'nullable' => false,
+        'comment' => 'Fee Amount',
+        'SCALE' => 4,
+        'PRECISION' => 12,
+    ));
 
-    $installer->getConnection()
-        ->changeColumn($table, 'base_fee_amount', 'base_fee_amount', array(
-            'type' => Varien_Db_Ddl_Table::TYPE_DECIMAL,
-            'unsigned' => true,
-            'nullable' => false,
-            'comment' => 'Base Fee Amount',
-            'SCALE' => 4,
-            'PRECISION' => 12,
-        ));
+$installer->getConnection()
+    ->changeColumn($table, 'base_fee_amount', 'base_fee_amount', array(
+        'type' => Varien_Db_Ddl_Table::TYPE_DECIMAL,
+        'unsigned' => true,
+        'nullable' => false,
+        'comment' => 'Base Fee Amount',
+        'SCALE' => 4,
+        'PRECISION' => 12,
+    ));
 
-    $table = $installer->getTable('sales/creditmemo');
+$table = $installer->getTable('sales/creditmemo');
 
-    $installer->getConnection()
-        ->changeColumn($table, 'fee_amount', 'fee_amount', array(
-            'type' => Varien_Db_Ddl_Table::TYPE_DECIMAL,
-            'unsigned' => true,
-            'nullable' => false,
-            'comment' => 'Fee Amount',
-            'SCALE' => 4,
-            'PRECISION' => 12,
-        ));
+$installer->getConnection()
+    ->changeColumn($table, 'fee_amount', 'fee_amount', array(
+        'type' => Varien_Db_Ddl_Table::TYPE_DECIMAL,
+        'unsigned' => true,
+        'nullable' => false,
+        'comment' => 'Fee Amount',
+        'SCALE' => 4,
+        'PRECISION' => 12,
+    ));
 
-    $installer->getConnection()
-        ->changeColumn($table, 'base_fee_amount', 'base_fee_amount', array(
-            'type' => Varien_Db_Ddl_Table::TYPE_DECIMAL,
-            'unsigned' => true,
-            'nullable' => false,
-            'comment' => 'Base Fee Amount',
-            'SCALE' => 4,
-            'PRECISION' => 12,
-        ));
+$installer->getConnection()
+    ->changeColumn($table, 'base_fee_amount', 'base_fee_amount', array(
+        'type' => Varien_Db_Ddl_Table::TYPE_DECIMAL,
+        'unsigned' => true,
+        'nullable' => false,
+        'comment' => 'Base Fee Amount',
+        'SCALE' => 4,
+        'PRECISION' => 12,
+    ));
 
 $installer->endSetup();
