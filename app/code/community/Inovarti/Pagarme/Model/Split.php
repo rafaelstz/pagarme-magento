@@ -84,7 +84,7 @@ class Inovarti_Pagarme_Model_Split extends Inovarti_Pagarme_Model_AbstractSplit
             );
         }
 
-        $amount = Mage::helper('pagarme')->formatAmount($splitRuleMarketplace[$this->marketplaceRecipientId]['amount'] + $this->orderFeeAmount + $this->getMarketplaceSplitItemsAmount($quote->getId()));
+        $amount = Mage::helper('pagarme')->formatAmount($splitRuleMarketplace[$this->marketplaceRecipientId]['amount'] + $this->orderFeeAmount + $this->getMarketplaceSplitItemsAmount($quote->getId()) + $this->carrierAmount);
 
         $splitRuleMarketplace[$this->marketplaceRecipientId]['amount'] = $amount;
         $splitRule[] = $splitRuleMarketplace[$this->marketplaceRecipientId];
