@@ -49,8 +49,8 @@ class Inovarti_Pagarme_Helper_Data extends Mage_Core_Helper_Abstract
 	public function splitTelephone($telephone)
 	{
 		$telephone = Zend_Filter::filterStatic($telephone, 'Digits');
-		$ddd = $this->_iSubstr($telephone, 10, 2); //$ddd = substr($telephone, 0, 2);
-		$number = $this->_iSubstr($telephone, 8, 8); //$number = substr($telephone, 2);
+		$ddd = substr($telephone, 0, 2);
+		$number = substr($telephone, 2);
 		$data = array(
 			'ddd' => $ddd,
 			'number' => $number
