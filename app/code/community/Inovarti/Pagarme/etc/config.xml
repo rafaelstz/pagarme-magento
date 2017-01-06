@@ -137,10 +137,6 @@
                     <fee>
                         <class>pagarme/quote_address_total_fee</class>
                         <after>grand_total</after>
-                        <renderer>pagarme/checkout_totals_fee</renderer>
-                        <!--
-                        <admin_renderer>pagarme/adminhtml_sales_order_create_totals_fee</admin_renderer>
-                        -->
                     </fee>
                 </totals>
             </quote>
@@ -214,6 +210,15 @@
                     </inchoo_test_log_cart_add>
                 </observers>
             </sales_quote_add_item>
+            <controller_action_postdispatch_checkout_onepage_savePayment>
+                <observers>
+                    <pagarme>
+                        <type>singleton</type>
+                        <class>pagarme/observer</class>
+                        <method>addCreditCardInterestFee</method>
+                    </pagarme>
+                </observers>
+            </controller_action_postdispatch_checkout_onepage_savePayment>
         </events>
     </global>
     <frontend>

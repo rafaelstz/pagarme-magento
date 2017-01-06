@@ -1,4 +1,6 @@
 <?php
+
+
 /**
  *
  * @category   Inovarti
@@ -46,11 +48,12 @@ class Inovarti_Pagarme_Model_Observer
     {
         $invoice = $observer->getEvent()->getInvoice();
         $order = $invoice->getOrder();
-        if ($invoice->getBaseFeeAmount())
-        {
+
+        if ($invoice->getBaseFeeAmount()) {
             $order->setFeeAmountInvoiced($order->getGrandTotal());
             $order->setBaseFeeAmountInvoiced($order->getGrandTotal());
         }
+
         $payment_method = $order->getPayment()->getMethod();
         $invoice_email = Mage::getStoreConfig("payment/{$payment_method}/invoice_email");
         $comment = Mage::helper('sales')->__('Approved the payment online.');
@@ -74,8 +77,7 @@ class Inovarti_Pagarme_Model_Observer
     public function creditmemoRefund(Varien_Event_Observer $observer)
     {
         $creditmemo = $observer->getEvent()->getCreditmemo();
-        if ($creditmemo->getFeeAmount())
-        {
+        if ($creditmemo->getFeeAmount()) {
             $order = $creditmemo->getOrder();
             $order->setFeeAmountRefunded($order->getFeeAmountRefunded() + $creditmemo->getFeeAmount());
             $order->setBaseFeeAmountRefunded($order->getBaseFeeAmountRefunded() + $creditmemo->getBaseFeeAmount());
@@ -105,20 +107,19 @@ class Inovarti_Pagarme_Model_Observer
         }
 
         if (!isset($validatePaymentMethod)) {
-          return $this;
+            return $this;
         }
 
         if ($order->hasInvoices()
             && $order->getState() === Mage_Sales_Model_Order::STATE_PROCESSING
             && $order->getStatus() === $configOrderStatus) {
+            $order->setStatus($configOrderStatusPaid, true);
+            $history = $order->addStatusHistoryComment('status automatically changed to ('.$configOrderStatusPaid.') by setting the module Pagar.me', false);
+            $history->setIsCustomerNotified(true);
+            $order->save();
 
-              $order->setStatus($configOrderStatusPaid, true);
-              $history = $order->addStatusHistoryComment('status automatically changed to ('.$configOrderStatusPaid.') by setting the module Pagar.me', false);
-              $history->setIsCustomerNotified(true);
-              $order->save();
-
-              Mage::log('status automatically changed to ('.$configOrderStatusPaid.') by setting the module Pagar.me', null, 'pagarme.log');
-              return $this;
+            Mage::log('status automatically changed to ('.$configOrderStatusPaid.') by setting the module Pagar.me', null, 'pagarme.log');
+            return $this;
         }
     }
 
@@ -163,8 +164,15 @@ class Inovarti_Pagarme_Model_Observer
     /**
      * Add in auto loader for Elasticsearch components
      */
-    static function init()
+    public static function init()
     {
         require_once(Mage::getBaseDir('lib') . DS . 'pagarme' . DS . 'Pagarme.php');
+    }
+
+    /**
+     * Add interest fee
+     */
+    public function addCreditCardInterestFee(Varien_Event_Observer $observer)
+    {
     }
 }
