@@ -51,4 +51,35 @@ class Inovarti_Pagarme_Model_Cc extends Inovarti_Pagarme_Model_Abstract
         $this->_place($payment, $payment->getBaseAmountAuthorized(), self::REQUEST_TYPE_AUTH_CAPTURE);
         return $this;
     }
+
+    public function calculateInterestFeeAmount($amount, $qtyInstallments, $installmentConfig)
+    {
+        $availableInstallments = $this->getAvailableInstallments($amount, $installmentConfig);
+
+        if(!$availableInstallments)
+            return null;
+
+        $installment = array_shift(array_filter($availableInstallments,
+            function ($availableInstallment) use ($qtyInstallments) {
+                return $availableInstallment->getInstallment() == $qtyInstallments;
+            }
+        ));
+
+        if($installment != null)
+            return (int) $installment->getAmount() - $amount;
+        return 0;
+    }
+
+    private function getAvailableInstallments($amount, $installmentConfig)
+    {
+        $data = new Varien_Object();
+        $data->setMaxInstallments($installmentConfig->getMaxInstallments);
+        $data->setFreeInstallments($installmentConfig->getFreeInstallments);
+        $data->setInterestRate($installmentConfig->getInterestRate());
+        $data->setAmount($amount);
+
+        $api = Mage::getModel('pagarme/api');
+        return $api->calculateInstallmentsAmount($data)
+            ->getInstallments();
+    }
 }
