@@ -30,7 +30,7 @@ class Inovarti_Pagarme_Block_Form_Checkout extends Mage_Payment_Block_Form
 
     public function _getQuote()
     {
-        return Mage::getModel('checkout/session')->getQuote();
+        return Mage::helper('checkout')->getQuote();
     }
 
     public function _getAmount()

@@ -12,7 +12,7 @@
  */
 class Inovarti_Pagarme_Block_Form_Cc extends Mage_Payment_Block_Form_Cc
 {
-	const MIN_INSTALLMENT_VALUE = 5;
+    const MIN_INSTALLMENT_VALUE = 5;
 
     protected function _construct()
     {
@@ -33,33 +33,35 @@ class Inovarti_Pagarme_Block_Form_Cc extends Mage_Payment_Block_Form_Cc
         return $months;
     }
 
-    public function getInstallmentsAvailables(){
-    	$maxInstallments = (int)Mage::getStoreConfig('payment/pagarme_cc/max_installments');
-    	$minInstallmentValue = (float)Mage::getStoreConfig('payment/pagarme_cc/min_installment_value');
+    public function getInstallmentsAvailables()
+    {
+        $maxInstallments = (int)Mage::getStoreConfig('payment/pagarme_cc/max_installments');
+        $minInstallmentValue = (float)Mage::getStoreConfig('payment/pagarme_cc/min_installment_value');
         $interestRate = (float)Mage::getStoreConfig('payment/pagarme_cc/interest_rate');
         $freeInstallments = (int)Mage::getStoreConfig('payment/pagarme_cc/free_installments');
-    	if ($minInstallmentValue < self::MIN_INSTALLMENT_VALUE) {
-    		$minInstallmentValue = self::MIN_INSTALLMENT_VALUE;
-    	}
+        if ($minInstallmentValue < self::MIN_INSTALLMENT_VALUE) {
+            $minInstallmentValue = self::MIN_INSTALLMENT_VALUE;
+        }
 
-    	$quote = Mage::helper('checkout')->getQuote();
-    	$total = Mage::helper('pagarme')->getBaseSubtotalWithDiscount () + Mage::helper ('pagarme')->getShippingAmount();
+        $quote = Mage::helper('checkout')->getQuote();
+        $total = Mage::helper('pagarme')->getBaseSubtotalWithDiscount() + $quote->getShippingAddress()->getShippingAmount();
 
-    	$n = floor($total / $minInstallmentValue);
-    	if ($n > $maxInstallments) {
-    		$n = $maxInstallments;
-    	} elseif ($n < 1) {
-    		$n = 1;
-    	}
+        $n = floor($total / $minInstallmentValue);
+        if ($n > $maxInstallments) {
+            $n = $maxInstallments;
+        } elseif ($n < 1) {
+            $n = 1;
+        }
 
         $data = new Varien_Object();
-        $data->setAmount(Mage::helper('pagarme')->formatAmount($total))
+        $data->setAmount(Mage::helper('pagarme')
+            ->formatAmount($total))
             ->setInterestRate($interestRate)
             ->setMaxInstallments($n)
-            ->setFreeInstallments($freeInstallments) // optional
-            ;
+            ->setFreeInstallments($freeInstallments);
 
-        $response = Mage::getModel('pagarme/api')->calculateInstallmentsAmount($data);
+        $response = Mage::getModel('pagarme/api')
+            ->calculateInstallmentsAmount($data);
         $collection = $response->getInstallments();
 
         $installments = array();
@@ -72,6 +74,6 @@ class Inovarti_Pagarme_Block_Form_Cc extends Mage_Payment_Block_Form_Cc
             }
             $installments[$item->getInstallment()] = $label;
         }
-    	return $installments;
+        return $installments;
     }
 }

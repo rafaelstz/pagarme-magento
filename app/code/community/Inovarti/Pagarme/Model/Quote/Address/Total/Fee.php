@@ -23,21 +23,9 @@ class Inovarti_Pagarme_Model_Quote_Address_Total_Fee extends Mage_Sales_Model_Qu
         $quote = Mage::helper('checkout')->getQuote();
         $paymentMethod = $quote->getPayment()->getMethod();
 
-        if(!$paymentMethod)
-            return $this;
-
         $baseSubtotalWithDiscount = Mage::helper('pagarme')->getBaseSubtotalWithDiscount();
-        $shippingAmount = Mage::helper('pagarme')->getShippingAmount();
+        $shippingAmount = $quote->getShippingAddress()->getShippingAmount();
         $total = $baseSubtotalWithDiscount + $shippingAmount;
-
-        $data = new Varien_Object();
-        $data->setAmount(Mage::helper('pagarme')->formatAmount($total))
-            ->setMaxInstallments($numberInstallments)
-            ->setFreeInstallments($freeInstallments);
-
-        if ($interestRate) {
-            $data->setInterestRate($interestRate);
-        }
 
         $post = Mage::app()->getRequest()->getPost();
 
@@ -47,13 +35,14 @@ class Inovarti_Pagarme_Model_Quote_Address_Total_Fee extends Mage_Sales_Model_Qu
             $payment_installment = $post['payment']['installments'] > 1 ? $post['payment']['installments'] : $payment_installment;
         }
 
-        $installmentConfig = $this->getInstallmentConfig($paymentMethod);
+        if ($this->mustCalculateInterestForPaymentMethod($paymentMethod)) {
+            $installmentConfig = $this->getInstallmentConfig($paymentMethod);
+            $interestFeeAmount = $this->getInterestFeeAmount($total, $payment_installment, $installmentConfig) / 100;
 
-        $interestFeeAmount = $this->getInterestFeeAmount($total, $payment_installment, $installmentConfig) / 100;
-
-        $address->setFeeAmount($interestFeeAmount);
-        $quote->setFeeAmount($interestFeeAmount);
-        $quote->setBaseFeeAmount($total);
+            $address->setFeeAmount($interestFeeAmount);
+            $quote->setFeeAmount($interestFeeAmount);
+            $quote->setBaseFeeAmount($total);
+        }
 
         $address->setGrandTotal($address->getGrandTotal() + $address->getFeeAmount());
         $address->setBaseGrandTotal($address->getBaseGrandTotal() + $address->getBaseFeeAmount());
@@ -82,16 +71,22 @@ class Inovarti_Pagarme_Model_Quote_Address_Total_Fee extends Mage_Sales_Model_Qu
         return $this;
     }
 
+    private function mustCalculateInterestForPaymentMethod($paymentMethod)
+    {
+        return $paymentMethod == 'pagarme_checkout' || $paymentMethod == 'pagarme_cc';
+    }
+
     private function getInstallmentConfig($paymentMethod)
     {
-        if($paymentMethod == 'pagarme_checkout')
+        if ($paymentMethod == 'pagarme_checkout') {
             return $this->getPagarMeCheckoutInstallmentConfig();
-        else if($paymentMethod == 'pagarme_cc')
+        } elseif ($paymentMethod == 'pagarme_cc') {
             return $this->getPagarMeCcInstallmentConfig();
+        }
         return null;
     }
 
-    public function getPagarMeCheckoutInstallmentConfig()
+    private function getPagarMeCheckoutInstallmentConfig()
     {
         $config = new Varien_Object();
         $config->setMaxInstallments((int) Mage::getStoreConfig('payment/pagarme_checkout/max_installments'));
@@ -101,7 +96,7 @@ class Inovarti_Pagarme_Model_Quote_Address_Total_Fee extends Mage_Sales_Model_Qu
         return $config;
     }
 
-    public function getPagarMeCcInstallmentConfig()
+    private function getPagarMeCcInstallmentConfig()
     {
         $config = new Varien_Object();
         $config->setMaxInstallments((int) Mage::getStoreConfig('payment/pagarme_cc/max_installments'));
