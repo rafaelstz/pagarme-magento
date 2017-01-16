@@ -26,8 +26,6 @@ class Inovarti_Pagarme_Model_Cc extends Inovarti_Pagarme_Model_Abstract
 
         $info = $this->getInfoInstance();
 
-        $info->setFeeAmount(10);
-        $info->setBaseFeeAmount(95);
         $info->setInstallments($data->getInstallments())
             ->setInstallmentDescription($data->getInstallmentDescription())
             ->setPagarmeCardHash($data->getPagarmeCardHash());

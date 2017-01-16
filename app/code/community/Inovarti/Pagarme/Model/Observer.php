@@ -169,10 +169,4 @@ class Inovarti_Pagarme_Model_Observer
         require_once(Mage::getBaseDir('lib') . DS . 'pagarme' . DS . 'Pagarme.php');
     }
 
-    /**
-     * Add interest fee
-     */
-    public function addCreditCardInterestFee(Varien_Event_Observer $observer)
-    {
-    }
 }
