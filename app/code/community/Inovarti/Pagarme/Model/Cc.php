@@ -33,20 +33,22 @@ class Inovarti_Pagarme_Model_Cc extends Inovarti_Pagarme_Model_Abstract
         return $this;
     }
 
-    public function authorize(Varien_Object $payment, $amount)
+    public function authorize(Varien_Object $payment)
     {
-        $this->_place($payment, $payment->getBaseAmountOrdered(), self::REQUEST_TYPE_AUTH_ONLY);
+        $this->_place($payment, $this->getGrandTotalFromPayment($payment), self::REQUEST_TYPE_AUTH_ONLY);
         return $this;
     }
 
-    public function capture(Varien_Object $payment, $amount)
+    public function capture(Varien_Object $payment)
     {
+        $amount = $this->getGrandTotalFromPayment($payment);
+
         if ($payment->getPagarmeTransactionId()) {
-            $this->_place($payment, $payment->getBaseAmountAuthorized(), self::REQUEST_TYPE_CAPTURE_ONLY);
+            $this->_place($payment, $amount, self::REQUEST_TYPE_CAPTURE_ONLY);
             return $this;
         }
 
-        $this->_place($payment, $payment->getBaseAmountAuthorized(), self::REQUEST_TYPE_AUTH_CAPTURE);
+        $this->_place($payment, $amount, self::REQUEST_TYPE_AUTH_CAPTURE);
         return $this;
     }
 
@@ -64,15 +66,15 @@ class Inovarti_Pagarme_Model_Cc extends Inovarti_Pagarme_Model_Abstract
         ));
 
         if($installment != null)
-            return (int) $installment->getAmount() - $amount;
+            return Mage::helper('pagarme')->convertCurrencyFromCentsToReal(($installment->getAmount() - $amount));
         return 0;
     }
 
     private function getAvailableInstallments($amount, $installmentConfig)
     {
         $data = new Varien_Object();
-        $data->setMaxInstallments($installmentConfig->getMaxInstallments);
-        $data->setFreeInstallments($installmentConfig->getFreeInstallments);
+        $data->setMaxInstallments($installmentConfig->getMaxInstallments());
+        $data->setFreeInstallments($installmentConfig->getFreeInstallments());
         $data->setInterestRate($installmentConfig->getInterestRate());
         $data->setAmount($amount);
 

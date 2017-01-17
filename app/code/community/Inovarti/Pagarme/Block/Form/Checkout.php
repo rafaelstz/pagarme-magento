@@ -28,6 +28,14 @@ class Inovarti_Pagarme_Block_Form_Checkout extends Mage_Payment_Block_Form
         return $this->escapeHtml(Mage::getStoreConfig("payment/pagarme_checkout/{$field}"));
     }
 
+    public function _getMaxInstallments()
+    {
+        $amount = $this->_getAmount();
+        $checkout = Mage::getModel('pagarme/checkout');
+
+        return $checkout->getMaxInstallmentsBasedOnMinInstallmentValue($amount);
+    }
+
     public function _getQuote()
     {
         return Mage::helper('checkout')->getQuote();
@@ -94,8 +102,9 @@ class Inovarti_Pagarme_Block_Form_Checkout extends Mage_Payment_Block_Form
     protected function _toHtml()
     {
         Mage::dispatchEvent('payment_form_block_to_html_before', array(
-        'block'     => $this
-    ));
+            'block' => $this
+        ));
+
         return parent::_toHtml();
     }
 }

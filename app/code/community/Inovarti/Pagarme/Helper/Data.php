@@ -30,6 +30,11 @@ class Inovarti_Pagarme_Helper_Data extends Mage_Core_Helper_Abstract
 		return number_format($amount, 2, '', '');
 	}
 
+    public function convertCurrencyFromCentsToReal($amount)
+    {
+        return $amount / 100;
+    }
+
 	public function formatGender($gender)
 	{
 		if ($gender == 1) {

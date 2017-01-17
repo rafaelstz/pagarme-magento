@@ -467,7 +467,6 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                         </max_installments>
-                        <!--
                         <min_installment_value translate="label">
                             <label>Minimum Installment Value</label>
                             <frontend_type>text</frontend_type>
@@ -477,7 +476,6 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                         </min_installment_value>
-                        -->
                         <interest_rate translate="label">
                             <label>Interest Rate</label>
                             <frontend_type>text</frontend_type>

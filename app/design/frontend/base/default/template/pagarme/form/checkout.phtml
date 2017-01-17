@@ -51,7 +51,7 @@
             "amount" : "<?php echo $this->_getAmount(); ?>",
             "paymentMethods" : "<?php echo $this->_getInfoData('payment_method'); ?>",
             "cardBrands" : "<?php echo $this->_getCardBrands('cctypes'); ?>",
-            "maxInstallments" : "<?php echo $this->_getInfoData('max_installments'); ?>",
+            "maxInstallments" : "<?php echo $this->_getMaxInstallments(); ?>",
             "interestRate": "<?php echo $this->_getInfoData('interest_rate'); ?>",
             "freeInstallments": "<?php echo $this->_getInfoData('free_installments'); ?>",
             "postbackUrl" : "<?php echo $this->_getPostbackUrl(); ?>",

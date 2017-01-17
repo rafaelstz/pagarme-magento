@@ -37,7 +37,7 @@ class Inovarti_Pagarme_Model_Quote_Address_Total_Fee extends Mage_Sales_Model_Qu
 
         if ($this->mustCalculateInterestForPaymentMethod($paymentMethod)) {
             $installmentConfig = $this->getInstallmentConfig($paymentMethod);
-            $interestFeeAmount = $this->getInterestFeeAmount($total, $payment_installment, $installmentConfig) / 100;
+            $interestFeeAmount = $this->getInterestFeeAmount($total, $payment_installment, $installmentConfig);
 
             $address->setFeeAmount($interestFeeAmount);
             $quote->setFeeAmount($interestFeeAmount);
