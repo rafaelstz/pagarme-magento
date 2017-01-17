@@ -113,12 +113,12 @@ class Inovarti_Pagarme_Model_Quote_Address_Total_Fee extends Mage_Sales_Model_Qu
      * @param $quote
      * @param $address
      */
-    private function getInterestFeeAmount($total, $qtyInstallments, $installmentConfig)
+    private function getInterestFeeAmount($total, $numberOfInstallments, $installmentConfig)
     {
         $total = Mage::helper('pagarme')->formatAmount($total);
         $creditCard = Mage::getModel('pagarme/cc');
 
-        $interestFeeAmount = $creditCard->calculateInterestFeeAmount($total, $qtyInstallments, $installmentConfig);
+        $interestFeeAmount = $creditCard->calculateInterestFeeAmount($total, $numberOfInstallments, $installmentConfig);
 
         return $interestFeeAmount;
     }

@@ -52,7 +52,7 @@ class Inovarti_Pagarme_Model_Cc extends Inovarti_Pagarme_Model_Abstract
         return $this;
     }
 
-    public function calculateInterestFeeAmount($amount, $qtyInstallments, $installmentConfig)
+    public function calculateInterestFeeAmount($amount, $numberOfInstallments, $installmentConfig)
     {
         $availableInstallments = $this->getAvailableInstallments($amount, $installmentConfig);
 
@@ -60,8 +60,8 @@ class Inovarti_Pagarme_Model_Cc extends Inovarti_Pagarme_Model_Abstract
             return null;
 
         $installment = array_shift(array_filter($availableInstallments,
-            function ($availableInstallment) use ($qtyInstallments) {
-                return $availableInstallment->getInstallment() == $qtyInstallments;
+            function ($availableInstallment) use ($numberOfInstallments) {
+                return $availableInstallment->getInstallment() == $numberOfInstallments;
             }
         ));
 

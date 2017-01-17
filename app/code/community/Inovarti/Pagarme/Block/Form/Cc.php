@@ -43,8 +43,10 @@ class Inovarti_Pagarme_Block_Form_Cc extends Mage_Payment_Block_Form_Cc
             $minInstallmentValue = self::MIN_INSTALLMENT_VALUE;
         }
 
+        $pagarmeHelper = Mage::helper('pagarme');
+
         $quote = Mage::helper('checkout')->getQuote();
-        $total = Mage::helper('pagarme')->getBaseSubtotalWithDiscount() + $quote->getShippingAddress()->getShippingAmount();
+        $total = $pagarmeHelper->getBaseSubtotalWithDiscount() + $quote->getShippingAddress()->getShippingAmount();
 
         $n = floor($total / $minInstallmentValue);
         if ($n > $maxInstallments) {
@@ -69,7 +71,8 @@ class Inovarti_Pagarme_Block_Form_Cc extends Mage_Payment_Block_Form_Cc
             if ($item->getInstallment() == 1) {
                 $label = $this->__('Pay in full - %s', $quote->getStore()->formatPrice($total, false));
             } else {
-                $label = $this->__('%sx - %s', $item->getInstallment(), $quote->getStore()->formatPrice($item->getInstallmentAmount()/100, false)) . ' ';
+                $installmentAmountInReal = $pagarmeHelper->convertCurrencyFromCentsToReal($item->getInstallmentAmount());
+                $label = $this->__('%sx - %s', $item->getInstallment(), $quote->getStore()->formatPrice($installmentAmountInReal, false)) . ' ';
                 $label .= $item->getInstallment() > $freeInstallments ? $this->__('monthly interest rate (%s)', $interestRate.'%') : $this->__('interest-free');
             }
             $installments[$item->getInstallment()] = $label;

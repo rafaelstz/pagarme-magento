@@ -86,7 +86,7 @@ class Inovarti_Pagarme_Block_Form_Checkout extends Mage_Payment_Block_Form
 
         $model = Mage::getModel('pagarme/source_cctype');
 
-        $result = null;
+        $result = array();
         foreach ($types as $value) {
             $result [] = $model->getBrandByType($value);
         }
