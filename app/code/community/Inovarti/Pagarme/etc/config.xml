@@ -315,9 +315,7 @@
                 <payment_method>boleto,credit_card</payment_method>
                 <cctypes>VI,MC,AE,DI,JCB,EL,DC,AU,HC</cctypes>
                 <max_installments>12</max_installments>
-                <!--
                 <min_installment_value>20</min_installment_value>
-                -->
                 <interest_rate>1.5</interest_rate>
                 <free_installments>5</free_installments>
                 <!--
