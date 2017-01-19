@@ -26,7 +26,7 @@
 <script type="text/javascript">
     $("pagarme-checkout-button").observe ("click", function (event){
         var checkoutPagarme = new PagarMeCheckout.Checkout({
-            "encryption_key" : "<?php echo $this->_getEncryptionKey (); ?>",
+            "encryption_key" : "<?php echo $this->_getEncryptionKey(); ?>",
             success: function (data){
                 $('pagarme-checkout-hash').value = data ['card_hash'];
                 $('pagarme-checkout-payment-method').value = data ['payment_method'];
@@ -48,20 +48,20 @@
         });
 
         checkoutPagarme.open({
-            "amount" : "<?php echo $this->_getAmount (); ?>",
-            "paymentMethods" : "<?php echo $this->_getInfoData ('payment_method'); ?>",
-            "cardBrands" : "<?php echo $this->_getCardBrands ('cctypes'); ?>",
-            "maxInstallments" : "<?php echo $this->_getInfoData ('max_installments'); ?>",
-            "interestRate": "<?php echo $this->_getInfoData ('interest_rate'); ?>",
-            "freeInstallments": "<?php echo $this->_getInfoData ('free_installments'); ?>",
-            "postbackUrl" : "<?php echo $this->_getPostbackUrl (); ?>",
+            "amount" : "<?php echo $this->_getAmount(); ?>",
+            "paymentMethods" : "<?php echo $this->_getInfoData('payment_method'); ?>",
+            "cardBrands" : "<?php echo $this->_getCardBrands('cctypes'); ?>",
+            "maxInstallments" : "<?php echo $this->_getMaxInstallments(); ?>",
+            "interestRate": "<?php echo $this->_getInfoData('interest_rate'); ?>",
+            "freeInstallments": "<?php echo $this->_getInfoData('free_installments'); ?>",
+            "postbackUrl" : "<?php echo $this->_getPostbackUrl(); ?>",
             "createToken": "false", /* Do not authorize & capture automatically! */
-            "boletoDiscountAmount": "<?php echo $this->_getInfoData ('boleto_discount_amount'); ?>",
-            "boletoDiscountPercentage": "<?php echo $this->_getInfoData ('boleto_discount_percentage'); ?>",
+            "boletoDiscountAmount": "<?php echo $this->_getInfoData('boleto_discount_amount'); ?>",
+            "boletoDiscountPercentage": "<?php echo $this->_getInfoData('boleto_discount_percentage'); ?>",
             "customerData" : "false",
-            "customerName" : "<?php echo $this->_getAddressData ('firstname') . ' ' . $this->_getAddressData ('lastname'); ?>",
-            "customerDocumentNumber" : "<?php echo $this->_getDocumentNumber (); ?>",
-            "customerEmail" : "<?php echo $this->_getAddressData ('email'); ?>"
+            "customerName" : "<?php echo $this->_getAddressData('firstname') . ' ' . $this->_getAddressData('lastname'); ?>",
+            "customerDocumentNumber" : "<?php echo $this->_getDocumentNumber(); ?>",
+            "customerEmail" : "<?php echo $this->_getAddressData('email'); ?>"
         });
     });
 </script>

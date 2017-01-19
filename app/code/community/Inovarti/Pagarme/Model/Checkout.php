@@ -20,37 +20,59 @@ class Inovarti_Pagarme_Model_Checkout extends Inovarti_Pagarme_Model_Abstract
     protected $_canAuthorize                = true;
     protected $_canCapture                  = true;
     protected $_canRefund                   = true;
-    protected $_canUseForMultishipping 		= true;
+    protected $_canUseForMultishipping        = true;
     protected $_canManageRecurringProfiles  = false;
 
     public function assignData($data)
     {
         if (!($data instanceof Varien_Object)) {
-            $data = new Varien_Object ($data);
+            $data = new Varien_Object($data);
         }
 
         $info = $this->getInfoInstance();
-        $info->setPagarmeCheckoutInstallments($data->getPagarmeCheckoutInstallments ())
-            ->setPagarmeCheckoutPaymentMethod($data->getPagarmeCheckoutPaymentMethod ())
-            ->setPagarmeCheckoutHash ($data->getPagarmeCheckoutHash());
+        $info->setPagarmeCheckoutInstallments($data->getPagarmeCheckoutInstallments())
+            ->setPagarmeCheckoutPaymentMethod($data->getPagarmeCheckoutPaymentMethod())
+            ->setPagarmeCheckoutHash($data->getPagarmeCheckoutHash());
 
         return $this;
     }
 
-    public function authorize(Varien_Object $payment, $amount)
+    public function authorize(Varien_Object $payment)
     {
-      	$this->_place($payment, $amount, self::REQUEST_TYPE_AUTH_ONLY, true);
+        $amount = $this->getGrandTotalFromPayment($payment);
+
+        $this->_place($payment, $amount, self::REQUEST_TYPE_AUTH_ONLY, true);
         return $this;
     }
 
-    public function capture(Varien_Object $payment, $amount)
+    public function capture(Varien_Object $payment)
     {
-      	if ($payment->getPagarmeTransactionId()) {
-        		$this->_place($payment, $amount, self::REQUEST_TYPE_CAPTURE_ONLY, true);
+        $amount = $this->getGrandTotalFromPayment($payment);
+
+        if ($payment->getPagarmeTransactionId()) {
+            $this->_place($payment, $amount, self::REQUEST_TYPE_CAPTURE_ONLY, true);
             return $this;
-      	}
+        }
 
-    		$this->_place($payment, $amount, self::REQUEST_TYPE_AUTH_CAPTURE, true);
+        $this->_place($payment, $amount, self::REQUEST_TYPE_AUTH_CAPTURE, true);
         return $this;
+    }
+
+    public function getMaxInstallmentsBasedOnMinInstallmentValue($amount)
+    {
+        $maxInstallments = (int) Mage::getStoreConfig('payment/pagarme_checkout/max_installments');
+        $minInstallmentValue = (int) Mage::getStoreConfig('payment/pagarme_checkout/min_installment_value');
+
+        if ($minInstallmentValue > 0) {
+            $minInstallmentValue = Mage::helper('pagarme')->formatAmount($minInstallmentValue);
+
+            $maxInstallmentsWithMinValue = $amount / $minInstallmentValue;
+
+            if ($maxInstallmentsWithMinValue < $maxInstallments) {
+                return $maxInstallmentsWithMinValue;
+            }
+        }
+
+        return $maxInstallments;
     }
 }

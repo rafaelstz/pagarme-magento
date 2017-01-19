@@ -5,8 +5,7 @@
 *  @copyright   Copyright (C) 2016 Pagar Me (http://www.pagar.me/)
 *  @author     Lucas Santos <lucas.santos@pagar.me>
 */
-abstract class Inovarti_Pagarme_Model_Abstract
-    extends Inovarti_Pagarme_Model_Split
+abstract class Inovarti_Pagarme_Model_Abstract extends Inovarti_Pagarme_Model_Split
 {
     const REQUEST_TYPE_AUTH_CAPTURE = 'AUTH_CAPTURE';
     const REQUEST_TYPE_AUTH_ONLY    = 'AUTH_ONLY';
@@ -33,9 +32,10 @@ abstract class Inovarti_Pagarme_Model_Abstract
     {
         if ($requestType === self::REQUEST_TYPE_AUTH_ONLY || $requestType === self::REQUEST_TYPE_AUTH_CAPTURE) {
             $customer = Mage::helper('pagarme')->getCustomerInfoFromOrder($payment->getOrder());
+
             $requestParams = $this->prepareRequestParams($payment, $amount, $requestType, $customer, $checkout);
 
-	          $incrementId = $payment->getOrder()->getQuote()->getIncrementId();
+            $incrementId = $payment->getOrder()->getQuote()->getIncrementId();
             $requestParams->setMetadata(array('order_id' => $incrementId));
             $transaction = $this->charge($requestParams);
 
@@ -55,7 +55,7 @@ abstract class Inovarti_Pagarme_Model_Abstract
         $this->checkApiErros($transaction);
         $this->prepareTransaction($transaction, $payment);
 
-    	return $this;
+        return $this;
     }
 
     /**
@@ -90,22 +90,22 @@ abstract class Inovarti_Pagarme_Model_Abstract
         }
 
         if ($checkout) {
-          $requestParams->setPaymentMethod($payment->getPagarmeCheckoutPaymentMethod());
-          $requestParams->setCardHash($payment->getPagarmeCheckoutHash());
-          $requestParams->setInstallments($payment->getPagarmeCheckoutInstallments());
+            $requestParams->setPaymentMethod($payment->getPagarmeCheckoutPaymentMethod());
+            $requestParams->setCardHash($payment->getPagarmeCheckoutHash());
+            $requestParams->setInstallments($payment->getPagarmeCheckoutInstallments());
         } else {
-          $requestParams->setPaymentMethod(Inovarti_Pagarme_Model_Api::PAYMENT_METHOD_CREDITCARD);
-          $requestParams->setCardHash($payment->getPagarmeCardHash());
-          $requestParams->setInstallments($payment->getInstallments());
+            $requestParams->setPaymentMethod(Inovarti_Pagarme_Model_Api::PAYMENT_METHOD_CREDITCARD);
+            $requestParams->setCardHash($payment->getPagarmeCardHash());
+            $requestParams->setInstallments($payment->getInstallments());
         }
 
         if ($this->getConfigData('async')) {
-             $requestParams->setAsync(true);
-             $requestParams->setPostbackUrl(Mage::getUrl('pagarme/transaction_creditcard/postback'));
-		    }
+            $requestParams->setAsync(true);
+            $requestParams->setPostbackUrl(Mage::getUrl('pagarme/transaction_creditcard/postback'));
+        }
 
         $incrementId = $payment->getOrder()->getQuote()->getIncrementId();
-		    $requestParams->setMetadata(array('order_id' => $incrementId));
+        $requestParams->setMetadata(array('order_id' => $incrementId));
         return $requestParams;
     }
 
@@ -115,7 +115,7 @@ abstract class Inovarti_Pagarme_Model_Abstract
      * @param $checkout
      * @return $this
      */
-    private function prepareTransaction($transaction,$payment, $checkout)
+    private function prepareTransaction($transaction, $payment, $checkout)
     {
         $this->checkApiErros($transaction);
 
@@ -123,18 +123,18 @@ abstract class Inovarti_Pagarme_Model_Abstract
             $this->refusedStatus($transaction);
         }
 
-        $payment = $this->preparePaymentMethod($payment,$transaction);
+        $payment = $this->preparePaymentMethod($payment, $transaction);
 
         if ($checkout) {
             $payment->setTransactionAdditionalInfo(
                 Mage_Sales_Model_Order_Payment_Transaction::RAW_DETAILS, array(
-                  'status' => $transaction->getStatus (),
-                  'payment_method' => $transaction->getPaymentMethod (),
-                  'boleto_url' => $transaction->getBoletoUrl ()
+                  'status' => $transaction->getStatus(),
+                  'payment_method' => $transaction->getPaymentMethod(),
+                  'boleto_url' => $transaction->getBoletoUrl()
                   )
             );
         } else {
-          $payment->setTransactionAdditionalInfo(
+            $payment->setTransactionAdditionalInfo(
               Mage_Sales_Model_Order_Payment_Transaction::RAW_DETAILS,
               array(
                 'status' => $transaction->getStatus()
@@ -155,7 +155,7 @@ abstract class Inovarti_Pagarme_Model_Abstract
             ->setIsTransactionClosed(0)
             ->setInstallments($transaction->getInstallments());
 
-      return $this;
+        return $this;
     }
 
     /**
@@ -163,32 +163,36 @@ abstract class Inovarti_Pagarme_Model_Abstract
      * @param $transaction
      * @return mixed
      */
-    private function preparePaymentMethod($payment,$transaction)
+    private function preparePaymentMethod($payment, $transaction)
     {
-      if ($payment->getPagarmeTransactionId()) {
+        if ($payment->getPagarmeTransactionId()) {
+            $transactionIdSprintf = '%s-%s';
+            $transactionId = sprintf(
+                $payment->getPagarmeTransactionId(),
+                Mage_Sales_Model_Order_Payment_Transaction::TYPE_CAPTURE
+            );
 
-          $transactionIdSprintf = '%s-%s';
-          $transactionId = sprintf(
-            $payment->getPagarmeTransactionId(),
-            Mage_Sales_Model_Order_Payment_Transaction::TYPE_CAPTURE
-          );
-
-          $payment->setTransactionId($transactionId)
+            $payment->setTransactionId($transactionId)
               ->setParentTransactionId($payment->getParentTransactionId())
               ->setIsTransactionClosed(0);
-          return $payment;
-      }
+            return $payment;
+        }
 
-      $payment->setCcOwner($transaction->getCardHolderName())
-        ->setCcLast4($transaction->getCardLastDigits())
-        ->setCcType(Mage::getSingleton('pagarme/source_cctype')->getTypeByBrand($transaction->getCardBrand()))
-        ->setPagarmeTransactionId($transaction->getId())
-        ->setPagarmeAntifraudScore($transaction->getAntifraudScore())
-        ->setTransactionId($transaction->getId())
-        ->setIsTransactionClosed(0)
-        ->setInstallments($transaction->getInstallments());
+        $payment->setCcOwner($transaction->getCardHolderName())
+            ->setCcLast4($transaction->getCardLastDigits())
+            ->setCcType(Mage::getSingleton('pagarme/source_cctype')->getTypeByBrand($transaction->getCardBrand()))
+            ->setPagarmeTransactionId($transaction->getId())
+            ->setPagarmeAntifraudScore($transaction->getAntifraudScore())
+            ->setTransactionId($transaction->getId())
+            ->setIsTransactionClosed(0)
+            ->setInstallments($transaction->getInstallments());
 
-      return $payment;
+        return $payment;
+    }
+
+    public function getGrandTotalFromPayment(Mage_Sales_Model_Order_Payment $payment)
+    {
+        return $payment->getOrder()->getQuote()->getGrandTotal();
     }
 
     /**
@@ -208,17 +212,16 @@ abstract class Inovarti_Pagarme_Model_Abstract
     private function checkApiErros($transaction)
     {
         if (!$transaction->getErrors()) {
-          return $this;
+            return $this;
         }
 
         $messages = array();
         foreach ($transaction->getErrors() as $error) {
-
-          if ($error->getMessage() == 'card_hash inválido. Para mais informações, consulte nossa documentação em https://pagar.me/docs.') {
-            $messages[] = 'Dados do cartão inválidos. Por favor preencha novamente os dados do cartão clicando no botão (Preencher dados do cartão)';
-          } else {
-            $messages[] = $error->getMessage() . '.';
-          }
+            if ($error->getMessage() == 'card_hash inválido. Para mais informações, consulte nossa documentação em https://pagar.me/docs.') {
+                $messages[] = 'Dados do cartão inválidos. Por favor preencha novamente os dados do cartão clicando no botão (Preencher dados do cartão)';
+            } else {
+                $messages[] = $error->getMessage() . '.';
+            }
         }
 
         Mage::log(implode("\n", $messages), null, 'pagarme.log');
@@ -231,8 +234,7 @@ abstract class Inovarti_Pagarme_Model_Abstract
      */
     protected function _wrapGatewayError($code)
     {
-        switch ($code)
-        {
+        switch ($code) {
         case 'acquirer': { $result = 'Transaction refused by the card company.'; break; }
         case 'antifraud': { $result = 'Transação recusada pelo antifraude.'; break; }
         case 'internal_error': { $result = 'Ocorreu um erro interno ao processar a transação.'; break; }
