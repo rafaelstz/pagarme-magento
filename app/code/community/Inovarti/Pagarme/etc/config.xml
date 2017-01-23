@@ -184,7 +184,7 @@
                     </pagarme_sales_order_creditmemo_refund>
                 </observers>
             </sales_order_creditmemo_refund>
-              <sales_order_place_after>
+            <sales_order_place_after>
                 <observers>
                     <update_order_status_invoiced>
                         <type>singleton</type>
@@ -193,7 +193,7 @@
                     </update_order_status_invoiced>
                 </observers>
             </sales_order_place_after>
-            <controller_front_init_before>
+<!--            <controller_front_init_before>
                 <observers>
                     <add_pagarme_library>
                         <type>singleton</type>
@@ -201,7 +201,7 @@
                         <method>addPagarmeLibrary</method>
                     </add_pagarme_library>
                 </observers>
-            </controller_front_init_before>
+            </controller_front_init_before>-->
             <sales_quote_add_item>
                 <observers>
                     <inchoo_test_log_cart_add>
