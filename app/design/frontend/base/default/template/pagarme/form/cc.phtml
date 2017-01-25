@@ -104,7 +104,6 @@ Event.observe($('<?php echo $_code ?>_cc_cid'), 'keyup', function(){
 <script type="text/javascript">
 //<![CDATA[
     pagarmeValidateFields = function() {
-
         pagarmeCardNumber          = (document.getElementById( '<?php echo $_code ?>_cc_number' ).value);
         pagarmeCardInstallments    = (document.getElementById( '<?php echo $_code ?>_installments' ).value);
         pagarmeCardOwner           = (document.getElementById( '<?php echo $_code ?>_cc_owner' ).value);
@@ -112,8 +111,7 @@ Event.observe($('<?php echo $_code ?>_cc_cid'), 'keyup', function(){
         pagarmeCardExpirationYr    = (document.getElementById( '<?php echo $_code ?>_expiration_yr' ).value);
         pagarmeCardCid             = (document.getElementById( '<?php echo $_code ?>_cc_cid' ).value);
 
-        if (!pagarmeCardNumber || !pagarmeCardInstallments || !pagarmeCardOwner || !pagarmeCardExpiration
-            || !pagarmeCardExpirationYr || !pagarmeCardCid) {
+        if (!pagarmeCardNumber || !pagarmeCardInstallments || !pagarmeCardOwner || !pagarmeCardExpiration || !pagarmeCardExpirationYr || !pagarmeCardCid) {
             return false;
         }
 
@@ -132,7 +130,6 @@ Event.observe($('<?php echo $_code ?>_cc_cid'), 'keyup', function(){
         for(var field in fieldErrors) { hasErrors = true; break; }
 
         if (hasErrors) {
-            console.log(fieldErrors);
             return false;
         }
 
@@ -140,6 +137,22 @@ Event.observe($('<?php echo $_code ?>_cc_cid'), 'keyup', function(){
             $("<?php echo $_code ?>_pagarme_card_hash").setValue(cardHash);
         });
     };
+
+    function convertBrandToMagentoIdentifier(brand) {
+        switch (brand) {
+            case 'visa': return 'VI';
+            case 'mastercard': return 'MC';
+            case 'amex': return 'AE';
+            case 'aura': return 'AU';
+            case 'jcb': return 'JCB';
+            case 'diners': return 'DC';
+            case 'discover': return 'DI';
+            case 'hipercard': return 'HC';
+            case 'elo': return 'EL';
+        }
+
+        return null
+    }
 
     $(document).on('click','#onestepcheckout-place-order-button',function(){
         pagarmeValidateFields();
@@ -176,15 +189,9 @@ Event.observe($('<?php echo $_code ?>_cc_cid'), 'keyup', function(){
         var ccNumber = this.value;
         var ccType;
 
-        if (ccNumber.length >= 6) {
-            Validation.creditCartTypes.each(function (pair) {
-                if (pair.value[3] && ccNumber.match(pair.value[3])) {
-                    ccType = pair.key;
-                    throw $break;
-                }
-            });
-        }
-        ccTypeContainer.value = ccType ? ccType : '';
+        var brand = PagarMe.Validator.getCardBrand(ccNumber)
+        ccType = convertBrandToMagentoIdentifier(brand) || '';
+        ccTypeContainer.value = ccType;
 
         if (ccNumber) {
             typesContainer.select('li').invoke('removeClassName', 'on');
