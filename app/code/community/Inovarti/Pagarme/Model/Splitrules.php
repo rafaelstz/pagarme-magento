@@ -11,7 +11,7 @@ class Inovarti_Pagarme_Model_Splitrules extends Mage_Core_Model_Abstract
     }
 
     public function validate() {
-        $errors = [];
+        $errors = array();
 
         $amount = $this->getAmount();
 
