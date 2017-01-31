@@ -16,6 +16,18 @@ class CheckoutModuleTest extends PHPUnit_Framework_TestCase
      */
     public function mustHaveBeenInstalled()
     {
-        $this->assertTrue(true);
+        $modules = (array) Mage::getConfig()
+            ->getNode('modules')
+            ->children();
+
+        $this->assertTrue(isset($modules[self::MODULE_NAME]));
+    }
+
+    /**
+     * @test
+     */
+    public function mustBeActive()
+    {
+        $this->assertTrue(Mage::helper('core')->isModuleEnabled(self::MODULE_NAME));
     }
 }
