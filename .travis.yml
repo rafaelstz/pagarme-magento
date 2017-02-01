@@ -10,11 +10,12 @@ services:
 
 before_install:
   - mysql -e 'CREATE DATABASE magento;'
+  - echo "USE mysql;\nUPDATE user SET password=PASSWORD('root') WHERE user='root';\nFLUSH PRIVILEGES;\n" | mysql -u root
 
 install:
   - wget -O mage-install.sh http://sys.sonassi.com/mage-install.sh
   - chmod +x mage-install.sh
-  - bash mage-install.sh -r 1.9.1.0 -l 127.0.0.1 -u travis -p -n magento -s -w http://127.0.0.1 -e admin@admin.com
+  - bash mage-install.sh -r 1.9.1.0 -l 127.0.0.1 -u root -p root -n magento -s -w http://127.0.0.1 -e admin@admin.com
   - curl -s http://getcomposer.org/installer | php
   - php composer.phar install --dev --no-interaction
 
