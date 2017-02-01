@@ -11,9 +11,15 @@ services:
 install:
   - curl -s http://getcomposer.org/installer | php
   - php composer.phar install --dev --no-interaction
+
+before_script:
+  - wget -O mage-install.sh http://sys.sonassi.com/mage-install.sh
+  - chmod +x mage-install.sh
+  - bash mage-install.sh -r 1.9.1.0 -l 127.0.0.1 -u root -p root -n magento -s -w http://127.0.0.1 -e admin@admin.com
+
 script:
   - mkdir -p build/logs
   - vendor/bin/phpunit -c phpunit.xml
 
 after_success:
-- travis_retry php vendor/bin/coveralls
+  - travis_retry php vendor/bin/coveralls
