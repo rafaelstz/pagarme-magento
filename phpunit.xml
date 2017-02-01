@@ -10,7 +10,7 @@
 	stopOnFailure="false"
 	stopOnIncomplete="false"
 	stopOnSkipped="false"
-        bootstrap="tests/unit/bootstrap.php">
+        bootstrap="tests/bootstrap.php">
     <testsuites>
         <testsuite name="My Test Suite">
             <directory>./tests/unit/</directory>

@@ -1,7 +1,7 @@
 <?php
 
-require_once 'vendor/autoload.php';
-require_once 'app/Mage.php';
+require_once __DIR__ . '/../vendor/autoload.php';
+require_once __DIR__ . '/../app/Mage.php';
 
 spl_autoload_unregister(array(\Varien_Autoload::instance(), 'autoload'));
 
