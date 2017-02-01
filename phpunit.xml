@@ -20,8 +20,9 @@
         <whitelist>
             <directory>./app/code/community/PagarMe/</directory>
             <exclude>
+                <directory>./app</directory>
+                <directory>./lib</directory>
                 <directory>./tests</directory>
-                <directory>./vendor</directory>
             </exclude>
         </whitelist>
     </filter>
