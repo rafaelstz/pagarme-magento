@@ -27,7 +27,7 @@
 - [Docker Compose](https://docs.docker.com/compose/)
 
 
-### Executando os testes
+### Executando os testes unitários
 
 1. Execute o comando `docker-compose up -d` para iniciar os containers
 2. Execute o comando `docker-compose exec magento install` para executar a instalação do Magento. Caso queira alguma configuração específica, verifique o arquivo `.env`.
