@@ -21,21 +21,36 @@
     <global>
         <fieldsets>
             <sales_convert_quote_payment>
-                <installments><to_order_payment>*</to_order_payment></installments>
-                <installment_description><to_order_payment>*</to_order_payment></installment_description>
-                <pagarme_card_hash><to_order_payment>*</to_order_payment></pagarme_card_hash>
-
-                <pagarme_checkout_installments><to_order_payment>*</to_order_payment></pagarme_checkout_installments>
-                <pagarme_checkout_payment_method><to_order_payment>*</to_order_payment></pagarme_checkout_payment_method>
-                <pagarme_checkout_hash><to_order_payment>*</to_order_payment></pagarme_checkout_hash>
+                <installments>
+                    <to_order_payment>*</to_order_payment>
+                </installments>
+                <installment_description>
+                    <to_order_payment>*</to_order_payment>
+                </installment_description>
+                <pagarme_card_hash>
+                    <to_order_payment>*</to_order_payment>
+                </pagarme_card_hash>
+                <pagarme_checkout_installments>
+                    <to_order_payment>*</to_order_payment>
+                </pagarme_checkout_installments>
+                <pagarme_checkout_payment_method>
+                    <to_order_payment>*</to_order_payment>
+                </pagarme_checkout_payment_method>
+                <pagarme_checkout_hash>
+                    <to_order_payment>*</to_order_payment>
+                </pagarme_checkout_hash>
             </sales_convert_quote_payment>
             <sales_convert_quote_address>
-                <fee_amount><to_order>*</to_order></fee_amount>
-                <base_fee_amount><to_order>*</to_order></base_fee_amount>
+                <fee_amount>
+                    <to_order>*</to_order>
+                </fee_amount>
+                <base_fee_amount>
+                    <to_order>*</to_order>
+                </base_fee_amount>
             </sales_convert_quote_address>
         </fieldsets>
     	<models>
-    		<pagarme>
+            <pagarme>
                 <class>Inovarti_Pagarme_Model</class>
                 <resourceModel>pagarme_resource</resourceModel>
             </pagarme>
@@ -103,31 +118,31 @@
             </checkout>
         </helpers>
         <payment>
-        	<cc>
-        		<types>
-        			<EL>
-						<code>EL</code>
-						<name>Elo</name>
-						<order>55</order>
-					</EL>
-	        		<DC>
-						<code>DC</code>
-						<name>Diners Club</name>
-						<order>60</order>
-					</DC>
-					<AU>
-						<code>AU</code>
-						<name>Aura</name>
-						<order>65</order>
-					</AU>
-					<HC>
-						<code>HC</code>
-						<name>Hipercard</name>
-						<order>70</order>
-					</HC>
-				</types>
-        	</cc>
-        	<groups>
+            <cc>
+                <types>
+                    <EL>
+                        <code>EL</code>
+                        <name>Elo</name>
+                        <order>55</order>
+                    </EL>
+                    <DC>
+                        <code>DC</code>
+                        <name>Diners Club</name>
+                        <order>60</order>
+                    </DC>
+                    <AU>
+                        <code>AU</code>
+                        <name>Aura</name>
+                        <order>65</order>
+                    </AU>
+                    <HC>
+                        <code>HC</code>
+                        <name>Hipercard</name>
+                        <order>70</order>
+                    </HC>
+                </types>
+            </cc>
+            <groups>
                 <pagarme>Pagar.me</pagarme>
             </groups>
         </payment>
@@ -184,7 +199,7 @@
                     </pagarme_sales_order_creditmemo_refund>
                 </observers>
             </sales_order_creditmemo_refund>
-              <sales_order_place_after>
+            <sales_order_place_after>
                 <observers>
                     <update_order_status_invoiced>
                         <type>singleton</type>
@@ -193,15 +208,6 @@
                     </update_order_status_invoiced>
                 </observers>
             </sales_order_place_after>
-            <controller_front_init_before>
-                <observers>
-                    <add_pagarme_library>
-                        <type>singleton</type>
-                        <class>pagarme/observer</class>
-                        <method>addPagarmeLibrary</method>
-                    </add_pagarme_library>
-                </observers>
-            </controller_front_init_before>
             <sales_quote_add_item>
                 <observers>
                     <inchoo_test_log_cart_add>
@@ -279,11 +285,11 @@
     </admin>
     <default>
         <payment>
-        	<pagarme_settings>
-            	<mode>test</mode>
+            <pagarme_settings>
+                <mode>test</mode>
             </pagarme_settings>
             <pagarme_boleto>
-            	<active>0</active>
+                <active>0</active>
                 <model>pagarme/boleto</model>
                 <title>Boleto Bancário</title>
                 <days_to_expire>5</days_to_expire>

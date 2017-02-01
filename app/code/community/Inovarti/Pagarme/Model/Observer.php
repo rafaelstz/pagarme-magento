@@ -1,8 +1,6 @@
 <?php
 
-
 /**
- *
  * @category   Inovarti
  * @package    Inovarti_Pagarme
  * @author     Suporte <suporte@inovarti.com.br>
@@ -22,21 +20,25 @@ class Inovarti_Pagarme_Model_Observer
      */
     public function addPagarmeJs(Varien_Event_Observer $observer)
     {
-        $block = $observer->getEvent()->getBlock();
-        $blockType = $block->getType();
-        $targetBlocks = array(
-            'checkout/onepage_payment',
-            'aw_onestepcheckout/onestep_form_paymentmethod',
-            'onestepcheckout/onestep_form_paymentmethod',
-        );
-        if (in_array($blockType, $targetBlocks) && Mage::getStoreConfig('payment/pagarme_cc/active')) {
-            $transport = $observer->getTransport();
-            $html = $transport->getHtml();
-            $preHtml = $block->getLayout()
-                ->createBlock('core/template')
-                ->setTemplate('pagarme/checkout/payment/js.phtml')
-                ->toHtml();
-            $transport->setHtml($preHtml . $html);
+        if (true === (boolean)Mage::helper('core')->isModuleEnabled(Inovarti_Pagarme_Block_About::MODULE_NAME)) {
+            $block = $observer->getEvent()->getBlock();
+            $blockType = $block->getType();
+            $targetBlocks = array(
+                'checkout/onepage_payment',
+                'aw_onestepcheckout/onestep_form_paymentmethod',
+                'onestepcheckout/onestep_form_paymentmethod',
+            );
+
+            if (in_array($blockType, $targetBlocks) && Mage::getStoreConfig('payment/pagarme_cc/active')) {
+                $transport = $observer->getTransport();
+                $html = $transport->getHtml();
+                $preHtml = $block->getLayout()
+                    ->createBlock('core/template')
+                    ->setTemplate('pagarme/checkout/payment/js.phtml')
+                    ->toHtml();
+
+                $transport->setHtml($preHtml . $html);
+            }
         }
     }
 
@@ -57,16 +59,16 @@ class Inovarti_Pagarme_Model_Observer
         $payment_method = $order->getPayment()->getMethod();
         $invoice_email = Mage::getStoreConfig("payment/{$payment_method}/invoice_email");
         $comment = Mage::helper('sales')->__('Approved the payment online.');
+
         switch ($invoice_email) {
-        case '1': {
-            $invoice->sendEmail(true, $comment);
-            break;
+            case '1':
+                $invoice->sendEmail(true, $comment);
+                break;
+            case '2':
+                $invoice->sendUpdateEmail(true, $comment);
+                break;
         }
-        case '2': {
-            $invoice->sendUpdateEmail(true, $comment);
-            break;
-        }
-        };
+
         return $this;
     }
 
@@ -77,11 +79,13 @@ class Inovarti_Pagarme_Model_Observer
     public function creditmemoRefund(Varien_Event_Observer $observer)
     {
         $creditmemo = $observer->getEvent()->getCreditmemo();
+
         if ($creditmemo->getFeeAmount()) {
             $order = $creditmemo->getOrder();
             $order->setFeeAmountRefunded($order->getFeeAmountRefunded() + $creditmemo->getFeeAmount());
             $order->setBaseFeeAmountRefunded($order->getBaseFeeAmountRefunded() + $creditmemo->getBaseFeeAmount());
         }
+
         return $this;
     }
 
@@ -110,15 +114,25 @@ class Inovarti_Pagarme_Model_Observer
             return $this;
         }
 
-        if ($order->hasInvoices()
-            && $order->getState() === Mage_Sales_Model_Order::STATE_PROCESSING
-            && $order->getStatus() === $configOrderStatus) {
+        if ($order->hasInvoices() &&
+            $order->getState() === Mage_Sales_Model_Order::STATE_PROCESSING &&
+            $order->getStatus() === $configOrderStatus
+        ) {
             $order->setStatus($configOrderStatusPaid, true);
-            $history = $order->addStatusHistoryComment('status automatically changed to ('.$configOrderStatusPaid.') by setting the module Pagar.me', false);
+            $history = $order->addStatusHistoryComment(
+                'status automatically changed to ('.$configOrderStatusPaid.') by setting the module Pagar.me',
+                false
+            );
+
             $history->setIsCustomerNotified(true);
             $order->save();
 
-            Mage::log('status automatically changed to ('.$configOrderStatusPaid.') by setting the module Pagar.me', null, 'pagarme.log');
+            Mage::log(
+                'status automatically changed to ('.$configOrderStatusPaid.') by setting the module Pagar.me',
+                null,
+                'pagarme.log'
+            );
+
             return $this;
         }
     }
@@ -144,7 +158,7 @@ class Inovarti_Pagarme_Model_Observer
             if ($recipientsMenu->getData()) {
                 $quoteItem->setRecipientId($recipientsMenu->getRecipientId());
             }
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             Mage::log($e->getMessage(), null, 'pagarme.log');
         }
 
@@ -158,7 +172,9 @@ class Inovarti_Pagarme_Model_Observer
      */
     public function addPagarmeLibrary(Varien_Event_Observer $event)
     {
-        self::init();
+        if (true === (boolean)Mage::helper('core')->isModuleEnabled(Inovarti_Pagarme_Block_About::MODULE_NAME)) {
+            self::init();
+        }
     }
 
     /**
@@ -168,5 +184,4 @@ class Inovarti_Pagarme_Model_Observer
     {
         require_once(Mage::getBaseDir('lib') . DS . 'pagarme' . DS . 'Pagarme.php');
     }
-
 }
