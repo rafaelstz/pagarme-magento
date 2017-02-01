@@ -8,14 +8,15 @@ php:
 services:
   - mysql
 
-install:
-  - curl -s http://getcomposer.org/installer | php
-  - php composer.phar install --dev --no-interaction
+before_install:
+  - mysql -e 'CREATE DATABASE magento;'
 
-before_script:
+install:
   - wget -O mage-install.sh http://sys.sonassi.com/mage-install.sh
   - chmod +x mage-install.sh
-  - bash mage-install.sh -r 1.9.1.0 -l 127.0.0.1 -u root -p root -n magento -s -w http://127.0.0.1 -e admin@admin.com
+  - bash mage-install.sh -r 1.9.1.0 -l 127.0.0.1 -u travis -p -n magento -s -w http://127.0.0.1 -e admin@admin.com
+  - curl -s http://getcomposer.org/installer | php
+  - php composer.phar install --dev --no-interaction
 
 script:
   - mkdir -p build/logs
