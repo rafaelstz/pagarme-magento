@@ -10,15 +10,15 @@
 	stopOnFailure="false"
 	stopOnIncomplete="false"
 	stopOnSkipped="false"
-    bootstrap="tests/unit/bootstrap.php">
-	<testsuites>
-		<testsuite name="My Test Suite">
-			<directory>./tests</directory>
-		</testsuite>
+        bootstrap="tests/unit/bootstrap.php">
+    <testsuites>
+        <testsuite name="My Test Suite">
+            <directory>./tests/unit/</directory>
+	</testsuite>
     </testsuites>
     <filter>
         <whitelist>
-            <directory>./app</directory>
+            <directory>./app/code/community/PagarMe/</directory>
             <exclude>
                 <directory>./tests</directory>
                 <directory>./vendor</directory>
