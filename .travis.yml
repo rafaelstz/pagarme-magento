@@ -1,9 +1,5 @@
 language: php
 sudo: required
-addons:
-  hosts:
-    - pagarme-magento.dev
-
 php:
   - '5.4'
   - '5.5'

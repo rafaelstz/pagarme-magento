@@ -92,7 +92,7 @@ class CheckoutContext extends MinkContext
     public function iAccessTheStorePage()
     {
         $session = $this->getSession();
-        $session->visit('http://magento/');
+        $session->visit('http://127.0.0.1/');
     }
 
     /**
