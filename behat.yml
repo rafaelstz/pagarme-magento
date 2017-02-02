@@ -4,7 +4,7 @@ default:
     - %paths.base%/tests/acceptance/
   extensions:
     Behat\MinkExtension:
-      base_url: http://127.0.0.1/
+      base_url: http://pagarme-magento.dev/
       default_session: goutte
       browser_name: firefox
       goutte: ~
