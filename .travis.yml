@@ -1,8 +1,6 @@
 language: php
 sudo: required
 addons:
-  apt:
-    - net-tools
   hosts:
     - pagarme-magento.dev
 
