@@ -4,11 +4,15 @@ default:
     - %paths.base%/tests/acceptance/
   extensions:
     Behat\MinkExtension:
-      base_url: http://127.0.0.1:8080/
-      sessions:
-        default_session:
-          selenium2:
-            wd_host: http://172.25.0.1:4444/wd/hub
+      base_url: http://127.0.0.1/
+      default_session: selenium2
+      browser_name: firefox
+      goutte: ~
+      selenium2:
+        wd_host: 127.0.0.1:4444/wd/hub
+        capabilities:
+          browser: firefox
+          browserName: firefox
   suites:
     checkout:
       paths:

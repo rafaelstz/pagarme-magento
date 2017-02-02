@@ -18,12 +18,19 @@ install:
   - bash mage-install.sh -f -r 1.9.1.0 -l 127.0.0.1 -u root -p root -n magento -s -w http://127.0.0.1 -e admin@admin.com
 
 before_script:
+  - "export DISPLAY=:99.0"
+  - "sh -e /etc/init.d/xvfb start"
+  - sleep 3
+  - rackup
+  - sleep 3
   - mkdir -p build/logs
   - composer require phpunit/phpunit:4.8
   - composer require satooshi/php-coveralls:* --dev
 
 script:
+  - composer install --dev --no-interaction
   - vendor/bin/phpunit -c phpunit.xml
+  - vendor/bin/behat
 
 after_success:
   - travis_retry php vendor/bin/coveralls

@@ -1,7 +1,7 @@
 <?php
 
-use Behat\Behat\Tester\Exception\PendingException;
 use Behat\MinkExtension\Context\MinkContext;
+use Behat\Behat\Tester\Exception\PendingException;
 use Behat\Mink\Driver\GoutteDriver;
 use Behat\Mink\Session;
 
@@ -10,7 +10,6 @@ require_once __DIR__ . '/../../vendor/autoload.php';
 
 class CheckoutContext extends MinkContext
 {
-
     private $customer;
 
     private $address;
@@ -23,10 +22,6 @@ class CheckoutContext extends MinkContext
         Mage::init();
         Mage::app()
             ->setCurrentStore(Mage_Core_Model_App::ADMIN_STORE_ID);
-
-        $driver = new GoutteDriver();
-        $this->session = new Session($driver);
-        $this->session->start();
     }
 
     /**
@@ -96,7 +91,8 @@ class CheckoutContext extends MinkContext
      */
     public function iAccessTheStorePage()
     {
-        $this->getSession()->visit('http://127.0.0.1:8080');
+        $session = $this->getSession();
+        $session->visit('http://magento/');
     }
 
     /**
@@ -136,6 +132,6 @@ class CheckoutContext extends MinkContext
      */
     public function tearDown()
     {
-        $this->customer->delete();
+        //$this->customer->delete();
     }
 }
