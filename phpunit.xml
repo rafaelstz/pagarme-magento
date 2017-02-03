@@ -18,12 +18,7 @@
     </testsuites>
     <filter>
         <whitelist>
-            <directory>./app/code/community/PagarMe/</directory>
-            <exclude>
-                <directory>./app</directory>
-                <directory>./lib</directory>
-                <directory>./tests</directory>
-            </exclude>
+            <directory suffix=".php">./app/code/community/PagarMe/</directory>
         </whitelist>
     </filter>
     <logging>

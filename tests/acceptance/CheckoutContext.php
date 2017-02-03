@@ -14,6 +14,8 @@ class CheckoutContext extends MinkContext
 
     private $address;
 
+    private $session;
+
     /**
      * @BeforeScenario
      */
@@ -22,6 +24,8 @@ class CheckoutContext extends MinkContext
         Mage::init();
         Mage::app()
             ->setCurrentStore(Mage_Core_Model_App::ADMIN_STORE_ID);
+
+        $this->session = $this->getSession();
     }
 
     /**
@@ -91,8 +95,7 @@ class CheckoutContext extends MinkContext
      */
     public function iAccessTheStorePage()
     {
-        $session = $this->getSession();
-        $session->visit('http://127.0.0.1/');
+        $this->session->visit('index.php');
     }
 
     /**
