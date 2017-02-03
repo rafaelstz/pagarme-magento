@@ -26,10 +26,21 @@
 
 - [Docker Compose](https://docs.docker.com/compose/)
 
-
-### Executando os testes unitários
+### Instalando o Magento Community 1.x
 
 1. Execute o comando `docker-compose up -d` para iniciar os containers
 2. Execute o comando `docker-compose exec magento install` para executar a instalação do Magento. Caso queira alguma configuração específica, verifique o arquivo `.env`.
-3. Execute o comando `docker-compose exec magento install-modules` para instalar o módulo **Pagar.me para Magento 1.x**
-4. Execute o comando `docker-compose exec magento php vendor/bin/phpunit` para iniciar os testes
+
+### Instalando o módulo Pagar.me para Magento
+
+Execute o comando `docker-compose exec magento install-modules` para instalar o módulo **Pagar.me para Magento 1.x**
+
+### Executando os testes unitários
+
+Execute o comando `docker-compose exec magento php vendor/bin/phpunit` para iniciar os testes
+
+### Executando os testes de comportamento
+
+Execute o comando `docker-compose exec magento php vendor/bin/behat` para iniciar os testes
+
+### Acompanhando a execução dos testes de comportamento

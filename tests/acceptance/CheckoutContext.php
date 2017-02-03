@@ -95,7 +95,7 @@ class CheckoutContext extends MinkContext
      */
     public function iAccessTheStorePage()
     {
-        $this->session->visit('index.php');
+        $this->session->visit(getenv('MAGENTO_URL'));
     }
 
     /**
@@ -103,7 +103,7 @@ class CheckoutContext extends MinkContext
      */
     public function addAnyProductToBasket()
     {
-        throw new PendingException();
+        $page = $this->session->getPage();
     }
 
     /**
@@ -135,6 +135,6 @@ class CheckoutContext extends MinkContext
      */
     public function tearDown()
     {
-        //$this->customer->delete();
+        $this->customer->delete();
     }
 }
