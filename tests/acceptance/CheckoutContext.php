@@ -2,8 +2,6 @@
 
 use Behat\MinkExtension\Context\MinkContext;
 use Behat\Behat\Tester\Exception\PendingException;
-use Behat\Mink\Driver\GoutteDriver;
-use Behat\Mink\Session;
 
 require_once __DIR__ . '/../bootstrap.php';
 require_once __DIR__ . '/../../vendor/autoload.php';
@@ -12,71 +10,21 @@ class CheckoutContext extends MinkContext
 {
     private $customer;
 
-    private $address;
-
     private $session;
-
-    /**
-     * @BeforeScenario
-     */
-    public function setUp()
-    {
-        Mage::init();
-        Mage::app()
-            ->setCurrentStore(Mage_Core_Model_App::ADMIN_STORE_ID);
-
-        $this->session = $this->getSession();
-    }
 
     /**
      * @Given a registered user
      */
     public function aRegisteredUser()
     {
-        $websiteId = Mage::app()
-            ->getWebsite()
-            ->getId();
+        $this->customer = FeatureContext::getCustomer();
+    }
 
-        $store = Mage::app()
-            ->getStore();
-
-        $this->customer = Mage::getModel('customer/customer')
-            ->setWebsiteId($websiteId)
-            ->setStore($store)
-            ->setFirstname('Lívia Nina')
-            ->setLastname('Isabelle Freitas')
-            ->setTaxvat('41.724.895-7')
-            ->setDob('03/12/1980')
-            ->setEmail('livia_nina@arganet.com.br')
-            ->setPassword('q6Cyxg4TMM');
-
-        $this->customer->save();
-
-        $this->address = Mage::getModel('customer/address')
-            ->setData(
-                array(
-                    'firstname'  => 'Lívia Nina',
-                    'lastname'   => 'Isabelle Freitas',
-                    'street'     => array(
-                        '0' => 'Rua Siqueira Campos',
-                        '1' => '515',
-                        '2' => '',
-                        '3' => 'Jacintinho'
-                    ),
-                    'city'       => 'Maceió',
-                    'region_id'  => '',
-                    'region'     => 'SP',
-                    'postcode'   => '57040460',
-                    'country_id' => 'BR',
-                    'telephone'  => '(82) 99672-3631'
-                )
-            )
-            ->setCustomerId($this->customer->getId())
-            ->setIsDefaultBilling('1')
-            ->setIsDefaultShipping('1')
-            ->setSaveInAddressBook('1');
-
-        $this->address->save();
+    /**
+     * @Given any product
+     */
+    public function anyProduct()
+    {
     }
 
     /**
@@ -84,10 +32,6 @@ class CheckoutContext extends MinkContext
      */
     public function aValidCreditCard()
     {
-        $this->creditCard = array(
-            'number' => '4111111111111111',
-            'cvv'    => '123'
-        );
     }
 
     /**
@@ -95,7 +39,8 @@ class CheckoutContext extends MinkContext
      */
     public function iAccessTheStorePage()
     {
-        $this->session->visit(getenv('MAGENTO_URL'));
+        $this->getSession()
+            ->visit(getenv('MAGENTO_URL'));
     }
 
     /**
@@ -103,7 +48,10 @@ class CheckoutContext extends MinkContext
      */
     public function addAnyProductToBasket()
     {
-        $page = $this->session->getPage();
+        $page = $this->getSession()
+            ->getPage();
+
+        $page->pressButton('Add to Cart');
     }
 
     /**
@@ -111,7 +59,77 @@ class CheckoutContext extends MinkContext
      */
     public function iGoToCheckoutPage()
     {
-        throw new PendingException();
+        $page = $this->getSession()
+            ->getPage();
+
+        $page->pressButton('Proceed to Checkout');
+    }
+
+    /**
+     * @When login with registered user
+     */
+    public function loginWithRegisteredUser()
+    {
+        $page = $this->getSession()
+            ->getPage();
+
+        $inputEmail = $page->find('named', array('id', 'login-email'));
+        $inputEmail->setValue($this->customer->getEmail());
+
+        $inputPassword = $page->find('named', array('id', 'login-password'));
+        $inputPassword->setValue($this->customer->getPassword());
+
+        $page->pressButton('Login');
+    }
+
+    /**
+     * @When confirm billing information
+     */
+    public function confirmBillingInformation()
+    {
+        $session = $this->getSession();
+        $page = $session->getPage();
+        $page->find('css', '#billing-buttons-container button')->press();
+    }
+
+    /**
+     * @When select shipping method
+     */
+    public function selectShippingMethod()
+    {
+        $session = $this->getSession();
+        $session->wait(
+            5000,
+            "document.querySelector('#checkout-step-shipping_method').style.display != 'none'"
+        );
+        $page = $session->getPage();
+        $page->find('css', '#shipping-method-buttons-container button')->press();
+    }
+
+    /**
+     * @When select payment method
+     */
+    public function selectPaymentMethod()
+    {
+        $session = $this->getSession();
+        $session->wait(
+            5000,
+            "document.querySelector('#checkout-step-payment').style.display != 'none'"
+        );
+
+        $page = $session->getPage();
+        $page->find(
+            'named',
+            array(
+                'radio',
+                'Pagarme Checkout'
+            )
+        )->check();
+
+        $page->find(
+            'css',
+            '#payment-buttons-container button'
+        )->press();
     }
 
     /**
@@ -128,13 +146,5 @@ class CheckoutContext extends MinkContext
     public function thePurchaseMustBePaidWithSuccess()
     {
         throw new PendingException();
-    }
-
-    /**
-     * @AfterScenario
-     */
-    public function tearDown()
-    {
-        $this->customer->delete();
     }
 }
