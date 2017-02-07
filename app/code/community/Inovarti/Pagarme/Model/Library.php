@@ -7,6 +7,10 @@ class Inovarti_Pagarme_Model_Library extends Mage_Core_Model_Abstract
         $apiMode = Mage::getStoreConfig('payment/pagarme_settings/mode');
         $apiKey = Mage::getStoreConfig('payment/pagarme_settings/apikey_' . $apiMode);
 
-        Pagarme::setApiKey($apiKey);
+        if (false === (boolean)class_exists('PagarMe')) {
+            require_once(Mage::getBaseDir('lib') . DS . 'pagarme' . DS . 'Pagarme.php');
+        }
+
+        PagarMe::setApiKey($apiKey);
     }
 }
