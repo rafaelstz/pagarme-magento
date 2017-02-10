@@ -19,8 +19,6 @@ class FeatureContext implements Context
      */
     public static function setup(BeforeSuiteScope $scope)
     {
-        Mage::init();
-
         self::$websiteId = Mage::app()
             ->getWebsite()
             ->getId();

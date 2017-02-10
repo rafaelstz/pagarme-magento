@@ -5,4 +5,21 @@
             <version>2.0.0</version>
         </PagarMe_Checkout>
     </modules>
+    <global>
+        <models>
+            <pagarme_checkout>
+                <class>PagarMe_Checkout_Model</class>
+            </pagarme_checkout>
+        </models>
+        <helpers>
+            <pagarme_checkout>
+                <class>PagarMe_Checkout_Helper</class>
+            </pagarme_checkout>
+        </helpers>
+        <blocks>
+            <pagarme_checkout>
+                <class>PagarMe_Checkout_Block</class>
+            </pagarme_checkout>
+        </blocks>
+    </global>
 </config>
