@@ -22,4 +22,13 @@
             </pagarme_checkout>
         </blocks>
     </global>
+    <frontend>
+        <layout>
+            <updates>
+                <pagarme_checkout>
+                    <file>pagarme/pagarme_checkout.xml</file>
+                </pagarme_checkout>
+            </updates>
+        </layout>
+    </frontend>
 </config>

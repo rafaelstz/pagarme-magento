@@ -112,6 +112,7 @@ class CheckoutContext extends MinkContext
     public function selectPaymentMethod()
     {
         $session = $this->getSession();
+
         $session->wait(
             5000,
             "document.querySelector('#checkout-step-payment').style.display != 'none'"
@@ -121,15 +122,18 @@ class CheckoutContext extends MinkContext
         $page->find(
             'named',
             array(
-                'radio',
-                'Pagarme Checkout'
+                'id',
+                'p_method_pagarme_checkout'
             )
-        )->check();
+        )->click();
 
-        $page->find(
-            'css',
-            '#payment-buttons-container button'
-        )->press();
+        $page->pressButton(Mage::helper('pagarme_checkout')->__('Fill in the card data'));
+
+        $session->wait(
+            1000,
+            "document.querySelector('#pagarme-checkout-ui') != null"
+        );    
+
     }
 
     /**
@@ -137,7 +141,141 @@ class CheckoutContext extends MinkContext
      */
     public function iUseAValidCreditCardToPay()
     {
-        throw new PendingException();
+        $session = $this->getSession();
+
+        $page = $session->getPage();
+
+        $session->switchToIframe($page->find('css' ,'iframe')->getAttribute('name'));
+
+        $pagarMeCheckout = $session->getPage();
+        
+        $pagarMeCheckout->pressButton('Cartão de crédito');
+
+        $session->wait(
+            1000,
+            "document.querySelector('#pagarme-modal-box-step-buyer-information').style.display != 'none'"
+        );
+
+        $pagarMeCheckout->find(
+            'css', 
+            '#pagarme-modal-box-buyer-name'
+        )->setValue($this->customer->getName());
+
+        $pagarMeCheckout->find(
+            'css', 
+            '#pagarme-modal-box-buyer-email'
+        )->setValue($this->customer->getEmail());
+
+        $pagarMeCheckout->find(
+            'css',
+            '#pagarme-modal-box-buyer-document-number'
+        )->setValue($this->customer->getTaxvat());
+
+        $pagarMeCheckout->find(
+            'css',
+            '#pagarme-modal-box-buyer-ddd'
+        )->setValue('11');
+
+        $pagarMeCheckout->find(
+            'css',
+            '#pagarme-modal-box-buyer-number'
+        )->setValue('995551668');
+
+        $pagarMeCheckout->find(
+            'css', 
+            '#pagarme-modal-box-step-buyer-information .pagarme-modal-box-next-step'
+        )->click();
+
+        $session->wait(
+            1000,
+            "document.querySelector('#pagarme-modal-box-step-customer-address-information').style.display != 'none'"
+        );
+
+        $billingAddress = FeatureContext::getCustomerAddress();
+
+        $pagarMeCheckout->find(
+            'css', 
+            '#pagarme-modal-box-customer-address-zipcode'
+        )->setValue($billingAddress->getPostcode());
+
+        $pagarMeCheckout->find(
+            'css', 
+            '#pagarme-modal-box-customer-address-street'
+        )->setValue($billingAddress->getStreet()[0]);
+
+        $pagarMeCheckout->find(
+            'css', 
+            '#pagarme-modal-box-customer-address-number'
+        )->setValue($billingAddress->getStreet()[1]);
+
+        $pagarMeCheckout->find(
+            'css', 
+            '#pagarme-modal-box-customer-address-complementary'
+        )->setValue($billingAddress->getStreet()[2]);
+
+        $pagarMeCheckout->find(
+            'css', 
+            '#pagarme-modal-box-customer-address-neighborhood'
+        )->setValue($billingAddress->getStreet()[3]);
+
+        $pagarMeCheckout->find(
+            'css', 
+            '#pagarme-modal-box-customer-address-city'
+        )->setValue($billingAddress->getCity());
+
+        $pagarMeCheckout->find(
+            'css', 
+            '#pagarme-modal-box-customer-address-state'
+        )->setValue($billingAddress->getState());
+
+        $pagarMeCheckout->find(
+            'css', 
+            '#pagarme-modal-box-step-customer-address-information .pagarme-modal-box-next-step'
+        )->click();
+
+        $session->wait(
+            1000,
+            "document.querySelector('#pagarme-modal-box-step-credit-card-information').style.display != 'none'"
+        );
+
+        $pagarMeCheckout->find(
+            'css',
+            '#pagarme-modal-box-credit-card-number'
+        )->setValue('4242424242424242');
+
+        $pagarMeCheckout->find(
+            'css',
+            '#pagarme-modal-box-credit-card-name'
+        )->setValue($this->customer->getName());
+
+        $pagarMeCheckout->find(
+            'css',
+            '#pagarme-modal-box-credit-card-expiration'
+        )->setValue('1020');
+
+        $pagarMeCheckout->find(
+            'css',
+            '#pagarme-modal-box-credit-card-cvv'
+        )->setValue('123');
+
+        $pagarMeCheckout->find(
+            'css', 
+            '#pagarme-modal-box-step-credit-card-information .pagarme-modal-box-next-step'
+        )->click();
+
+        $session->switchToIframe();
+
+        $session->wait(
+            5000,
+            "document.querySelector('#pagarme-checkout-container').style.display == 'none'"
+        );
+
+        $page->find(
+            'css',
+            '#payment-buttons-container button'
+        )->press();
+
+        $session->wait(10000);
     }
 
     /**

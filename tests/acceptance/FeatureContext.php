@@ -12,6 +12,8 @@ class FeatureContext implements Context
 
     public static $customer;
 
+    public static $address;
+
     public static $product;
 
     /**
@@ -56,7 +58,7 @@ class FeatureContext implements Context
             ->setStore(self::$store)
             ->setFirstname('Lívia Nina')
             ->setLastname('Isabelle Freitas')
-            ->setTaxvat('41.724.895-7')
+            ->setTaxvat('332.840.319-10')
             ->setDob('03/12/1980')
             ->setEmail(mktime() . 'livia_nina@arganet.com.br')
             ->setPassword('q6Cyxg4TMM');
@@ -90,12 +92,17 @@ class FeatureContext implements Context
         $address->save();
 
         self::$customer = $customer;
-
+        self::$address = $address;
     }
 
     public static function getCustomer()
     {
         return self::$customer;
+    }
+
+    public static function getCustomerAddress()
+    {
+        return self::$address;
     }
 
     public static function createAProduct()
