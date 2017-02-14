@@ -18,15 +18,20 @@ class CheckoutContext extends MinkContext
     /**
      * @BeforeScenario
      */
-    public function setUp() 
+    public function setUp()
     {
         $this->magentoUrl = getenv('MAGENTO_URL');
         $this->session = $this->getSession();
         $this->product = $this->getProduct();
         $this->product->save();
+
+        $stock = $this->getProductStock();
+        $stock->assignProduct($this->product);
+        $stock->save();
     }
 
-    public function waitForElement($element, $timeout) {
+    public function waitForElement($element, $timeout)
+    {
         $this->session->wait(
             $timeout,
             "document.querySelector('${element}').style.display != 'none'"
@@ -100,12 +105,12 @@ class CheckoutContext extends MinkContext
         $page = $this->session->getPage();
 
         $this->fillField(
-            Mage::helper('pagarme_checkout')->__('Email Address'), 
+            Mage::helper('pagarme_checkout')->__('Email Address'),
             $this->customer->getEmail()
         );
-        
+
         $this->fillField(
-            Mage::helper('pagarme_checkout')->__('Password'), 
+            Mage::helper('pagarme_checkout')->__('Password'),
             $this->customer->getPassword()
         );
 
@@ -145,7 +150,7 @@ class CheckoutContext extends MinkContext
         );
 
         $pagarMeCheckout = $this->session->getPage();
-        
+
         $pagarMeCheckout->pressButton('Cartão de crédito');
 
         $this->waitForElement(
@@ -159,7 +164,7 @@ class CheckoutContext extends MinkContext
         );
 
         $this->fillField(
-            'pagarme-modal-box-buyer-email', 
+            'pagarme-modal-box-buyer-email',
             $this->customer->getEmail()
         );
 
@@ -169,17 +174,17 @@ class CheckoutContext extends MinkContext
         );
 
         $this->fillField(
-            'pagarme-modal-box-buyer-ddd', 
+            'pagarme-modal-box-buyer-ddd',
             '11'
         );
 
         $this->fillField(
-            'pagarme-modal-box-buyer-number', 
+            'pagarme-modal-box-buyer-number',
             '995551668'
         );
 
         $pagarMeCheckout->find(
-            'css', 
+            'css',
             '#pagarme-modal-box-step-buyer-information .pagarme-modal-box-next-step'
         )->click();
 
@@ -224,7 +229,7 @@ class CheckoutContext extends MinkContext
         );
 
         $pagarMeCheckout->find(
-            'css', 
+            'css',
             '#pagarme-modal-box-step-customer-address-information .pagarme-modal-box-next-step'
         )->click();
 
@@ -254,7 +259,7 @@ class CheckoutContext extends MinkContext
         );
 
         $pagarMeCheckout->find(
-            'css', 
+            'css',
             '#pagarme-modal-box-step-credit-card-information .pagarme-modal-box-next-step'
         )->click();
 
@@ -264,7 +269,7 @@ class CheckoutContext extends MinkContext
             5000,
             "document.querySelector('#pagarme-checkout-container').style.display == 'none'"
         );
-        
+
         $page->find(
             'css',
             '#payment-buttons-container button'
@@ -288,14 +293,14 @@ class CheckoutContext extends MinkContext
             ->getText();
 
         \PHPUnit_Framework_TestCase::assertEquals(
-            getenv('MAGENTO_URL') . 'index.php/checkout/onepage/success/', 
+            getenv('MAGENTO_URL') . 'index.php/checkout/onepage/success/',
             $this->session->getCurrentUrl()
         );
 
         \PHPUnit_Framework_TestCase::assertEquals(
             Mage::helper(
                 'pagarme_checkout')->__('Your order has been received.'
-            ), 
+            ),
             $successMsg
         );
     }

@@ -12,7 +12,6 @@
             </pagarme_core>
         </helpers>
     </global>
-
     <default>
         <payment>
             <pagarme_checkout>

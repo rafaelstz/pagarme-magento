@@ -2,10 +2,11 @@
 
 namespace PagarMe\Magento\Test\Helper;
 
-trait ProductDataProvider 
+trait ProductDataProvider
 {
-	public function getProduct() {
-		$attributeSetId = \Mage::getSingleton('eav/config')
+    public function getProduct()
+    {
+        $attributeSetId = \Mage::getSingleton('eav/config')
             ->getEntityType(\Mage_Catalog_Model_Product::ENTITY)
             ->getDefaultAttributeSetId();
 
@@ -40,6 +41,18 @@ trait ProductDataProvider
             ->setShortDescription('This is a short description')
             ->setCategoryIds(array(1));
 
-       	return $product;
-	}
+        return $product;
+    }
+
+    public function getProductStock()
+    {
+        $stock = \Mage::getModel('cataloginventory/stock_item');
+        $stock->setData('stock_id', 1)
+            ->setData('store_id', 2)
+            ->setData('manage_stock', 1)
+            ->setData('is_in_stock', 1)
+            ->setData('qty', 999);
+
+        return $stock;
+    }
 }
