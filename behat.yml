@@ -19,5 +19,4 @@ default:
       paths:
         - %paths.base%/tests/acceptance/features/checkout.feature
       contexts:
-        - FeatureContext
         - CheckoutContext

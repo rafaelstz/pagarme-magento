@@ -8,6 +8,9 @@ require_once __DIR__ . '/../../vendor/autoload.php';
 
 class CheckoutContext extends MinkContext
 {
+    use PagarMe\Magento\Test\Helper\CustomerDataProvider;
+    use PagarMe\Magento\Test\Helper\ProductDataProvider;
+
     private $customer;
 
     private $session;
@@ -19,6 +22,8 @@ class CheckoutContext extends MinkContext
     {
         $this->magentoUrl = getenv('MAGENTO_URL');
         $this->session = $this->getSession();
+        $this->product = $this->getProduct();
+        $this->product->save();
     }
 
     public function waitForElement($element, $timeout) {
@@ -33,7 +38,12 @@ class CheckoutContext extends MinkContext
      */
     public function aRegisteredUser()
     {
-        $this->customer = FeatureContext::getCustomer();
+        $this->customer = $this->getCustomer();
+        $this->customer->save();
+
+        $this->customerAddress = $this->getCustomerAddress();
+        $this->customerAddress->setCustomerId($this->customer->getId());
+        $this->customerAddress->save();
     }
 
     /**
@@ -178,41 +188,39 @@ class CheckoutContext extends MinkContext
             1000
         );
 
-        $billingAddress = FeatureContext::getCustomerAddress();
-
         $this->fillField(
             'pagarme-modal-box-customer-address-zipcode',
-            $billingAddress->getPostcode()
+            $this->customerAddress->getPostcode()
         );
 
         $this->fillField(
             'pagarme-modal-box-customer-address-street',
-            $billingAddress->getStreet()[0]
+            $this->customerAddress->getStreet()[0]
         );
 
         $this->fillField(
             'pagarme-modal-box-customer-address-number',
-            $billingAddress->getStreet()[1]
+            $this->customerAddress->getStreet()[1]
         );
 
         $this->fillField(
             'pagarme-modal-box-customer-address-complementary',
-            $billingAddress->getStreet()[2]
+            $this->customerAddress->getStreet()[2]
         );
 
         $this->fillField(
             'pagarme-modal-box-customer-address-neighborhood',
-            $billingAddress->getStreet()[3]
+            $this->customerAddress->getStreet()[3]
         );
 
         $this->fillField(
             'pagarme-modal-box-customer-address-city',
-            $billingAddress->getCity()
+            $this->customerAddress->getCity()
         );
 
         $this->fillField(
             'pagarme-modal-box-customer-address-state',
-            $billingAddress->getState()
+            $this->customerAddress->getState()
         );
 
         $pagarMeCheckout->find(
@@ -290,5 +298,13 @@ class CheckoutContext extends MinkContext
             ), 
             $successMsg
         );
+    }
+
+    /**
+     * @AfterScenario
+     */
+    public function tearDown() {
+        $this->customer->delete();
+        $this->product->delete();
     }
 }
