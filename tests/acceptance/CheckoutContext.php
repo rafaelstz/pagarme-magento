@@ -269,13 +269,18 @@ class CheckoutContext extends MinkContext
             5000,
             "document.querySelector('#pagarme-checkout-container').style.display == 'none'"
         );
-
+        
         $page->find(
             'css',
             '#payment-buttons-container button'
         )->press();
 
-        $session->wait(10000);
+        $session->wait(
+            2000,
+            "document.querySelector('#checkout-step-review').style.display != 'none'"
+        );
+
+        $page->pressButton(Mage::helper('pagarme_checkout')->__('Place Order'));
     }
 
     /**
@@ -283,6 +288,15 @@ class CheckoutContext extends MinkContext
      */
     public function thePurchaseMustBePaidWithSuccess()
     {
-        throw new PendingException();
+        $session = $this->getSession();
+        $session->wait(5000);
+
+        $page = $session->getPage();
+
+        $successMsg = $page->find('css', 'h1')
+            ->getText();
+
+        \PHPUnit_Framework_TestCase::assertEquals(getenv('MAGENTO_URL') . 'index.php/checkout/onepage/success/', $session->getCurrentUrl());
+        \PHPUnit_Framework_TestCase::assertEquals(Mage::helper('pagarme_checkout')->__('Your order has been received.'), $successMsg);
     }
 }
