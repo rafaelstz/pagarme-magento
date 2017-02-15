@@ -1,0 +1,11 @@
+<?php
+
+if ($this->isBoletoPayment()) {
+    $boletoUrl = 'https://pagar.me/boleto';
+
+    echo  sprintf(
+        'Para imprimir o boleto <a href="%s">clique aqui</a>',
+        $boletoUrl
+    );
+}
+?>
