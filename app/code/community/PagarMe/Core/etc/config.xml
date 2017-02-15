@@ -6,11 +6,26 @@
         </PagarMe_Core>
     </modules>
     <global>
+        <models>
+            <pagarme_core>
+                <class>PagarMe_Core_Model</class>
+            </pagarme_core>
+        </models>
         <helpers>
             <pagarme_core>
                 <class>PagarMe_Core_Helper</class>
             </pagarme_core>
         </helpers>
+        <events>
+            <add_spl_autoloader>
+                <observers>
+                    <pagarme_core>
+                        <class>PagarMe_Core_Model_Observer_Autoloader</class>
+                        <method>registerSplAutoloader</method>
+                    </pagarme_core>
+                </observers>
+            </add_spl_autoloader>
+        </events>
     </global>
     <default>
         <payment>

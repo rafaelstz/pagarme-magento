@@ -26,8 +26,16 @@ class PagarMe_Checkout_Model_Checkout extends Mage_Payment_Model_Method_Abstract
     /** @var string */
     protected $_infoBlockType          = 'pagarme_checkout/info_checkout';
 
+    /**
+     * @codeCoverageIgnore
+     */
     public function assignData($data)
     {
+        if (!$data instanceof Varien_Object) {
+            $data = new Varien_Object($data);
+        }
+
+        return $this;
     }
 
     /**
