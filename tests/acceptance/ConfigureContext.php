@@ -79,6 +79,12 @@ class ConfigureContext extends MinkContext
         $session = $this->getSession();
         $page = $session->getPage();
 
+        $popup = $page->find('css', '.message-popup-head a');
+
+        if ($popup instanceof \Behat\Mink\Element\NodeElement) {
+            $popup->click();
+        }
+
         $page->find('named', array('link', 'System'))
             ->mouseOver();
 
