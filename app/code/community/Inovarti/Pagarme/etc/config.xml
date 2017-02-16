@@ -225,6 +225,15 @@
                     </pagarme>
                 </observers>
             </controller_action_postdispatch_checkout_onepage_savePayment>
+            <controller_front_init_before>
+                <observers>
+                    <add_pagarme_library>
+                        <type>singleton</type>
+                        <class>pagarme/observer</class>
+                        <method>addPagarmeLibrary</method>
+                    </add_pagarme_library>
+                </observers>
+            </controller_front_init_before>
         </events>
     </global>
     <frontend>
