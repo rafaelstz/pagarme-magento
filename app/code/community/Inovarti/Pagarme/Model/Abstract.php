@@ -35,7 +35,7 @@ abstract class Inovarti_Pagarme_Model_Abstract extends Inovarti_Pagarme_Model_Sp
 
             $requestParams = $this->prepareRequestParams($payment, $amount, $requestType, $customer, $checkout);
 
-            $incrementId = $payment->getOrder()->getQuote()->getIncrementId();
+            $incrementId = $payment->getOrder()->getIncrementId();
             $requestParams->setMetadata(array('order_id' => $incrementId));
             $transaction = $this->charge($requestParams);
 
