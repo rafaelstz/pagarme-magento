@@ -15,6 +15,7 @@ class CheckoutContext extends MinkContext
 
     private $session;
 
+    private $pagarMeCheckout;
     /**
      * @BeforeScenario
      */
@@ -138,10 +139,10 @@ class CheckoutContext extends MinkContext
         );
     }
 
-    /**
-     * @When I use a valid credit card to pay
+     /**
+     * @When choose pay with pagar me checkout using :paymentMethod
      */
-    public function iUseAValidCreditCardToPay()
+    public function choosePayWithPagarMeCheckoutUsing($paymentMethod)
     {
         $page = $this->session->getPage();
 
@@ -149,9 +150,16 @@ class CheckoutContext extends MinkContext
             $page->find('css' ,'iframe')->getAttribute('name')
         );
 
-        $pagarMeCheckout = $this->session->getPage();
+        $this->pagarMeCheckout = $this->session->getPage();
 
-        $pagarMeCheckout->pressButton('Cartão de crédito');
+        $this->pagarMeCheckout->pressButton($paymentMethod);
+    }
+
+     /**
+     * @When I provide personal information
+     */
+    public function iProvidePersonalInformation()
+    {
 
         $this->waitForElement(
             '#pagarme-modal-box-step-buyer-information',
@@ -183,7 +191,7 @@ class CheckoutContext extends MinkContext
             '995551668'
         );
 
-        $pagarMeCheckout->find(
+        $this->pagarMeCheckout->find(
             'css',
             '#pagarme-modal-box-step-buyer-information .pagarme-modal-box-next-step'
         )->click();
@@ -228,11 +236,17 @@ class CheckoutContext extends MinkContext
             $this->customerAddress->getState()
         );
 
-        $pagarMeCheckout->find(
+        $this->pagarMeCheckout->find(
             'css',
             '#pagarme-modal-box-step-customer-address-information .pagarme-modal-box-next-step'
         )->click();
 
+    }
+    /**
+     * @When I use a valid credit card to pay
+     */
+    public function iUseAValidCreditCardToPay()
+    {
         $this->waitForElement(
             '#pagarme-modal-box-step-credit-card-information',
             1000
@@ -243,32 +257,40 @@ class CheckoutContext extends MinkContext
             $this->creditCard['number']
         );
 
-        $pagarMeCheckout->fillField(
+        $this->fillField(
             'pagarme-modal-box-credit-card-name',
             $this->creditCard['customer_name']
         );
 
-        $pagarMeCheckout->fillField(
+        $this->fillField(
             'pagarme-modal-box-credit-card-expiration',
             $this->creditCard['expiration_date']
         );
 
-        $pagarMeCheckout->fillField(
+        $this->fillField(
             'pagarme-modal-box-credit-card-cvv',
             $this->creditCard['cvv']
         );
 
-        $pagarMeCheckout->find(
+        $this->pagarMeCheckout->find(
             'css',
             '#pagarme-modal-box-step-credit-card-information .pagarme-modal-box-next-step'
         )->click();
+    }
 
+    /**
+     * @Then finish purchase
+     */
+    public function finishPurchase()
+    {
         $this->session->switchToIframe();
 
         $this->session->wait(
             5000,
             "document.querySelector('#pagarme-checkout-container').style.display == 'none'"
         );
+
+        $page = $this->session->getPage();
 
         $page->find(
             'css',
@@ -280,16 +302,16 @@ class CheckoutContext extends MinkContext
         $page->pressButton(Mage::helper('pagarme_checkout')->__('Place Order'));
     }
 
-    /**
-     * @Then the purchase must be paid with success
+     /**
+     * @Then the purchase must be created success
      */
-    public function thePurchaseMustBePaidWithSuccess()
+    public function thePurchaseMustBeCreatedWithSuccess()
     {
         $this->session->wait(5000);
 
         $page = $this->session->getPage();
 
-        $successMsg = $page->find('css', 'h1')
+        $successMessage = $page->find('css', 'h1')
             ->getText();
 
         \PHPUnit_Framework_TestCase::assertEquals(
@@ -301,9 +323,31 @@ class CheckoutContext extends MinkContext
             Mage::helper(
                 'pagarme_checkout')->__('Your order has been received.'
             ),
-            $successMsg
+            $successMessage
         );
     }
+
+    /**
+     * @Then a link to boleto must be provided
+     */
+    public function aLinkToBoletoMustBeProvided()
+    {
+        $page = $this->session->getPage();
+
+         \PHPUnit_Framework_TestCase::assertContains(
+            'Para imprimir o boleto',
+            $page ->find('css', '.pagarme_info_boleto')->getText()
+        );
+
+        \PHPUnit_Framework_TestCase::assertContains(
+            'https://pagar.me',
+            $page ->find(
+                'css',
+                '.pagarme_info_boleto a'
+            )->getAttribute('href')
+        );
+    }
+
 
     /**
      * @AfterScenario

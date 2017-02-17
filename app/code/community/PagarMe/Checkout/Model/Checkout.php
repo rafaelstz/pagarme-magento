@@ -28,6 +28,12 @@ class PagarMe_Checkout_Model_Checkout extends Mage_Payment_Model_Method_Abstract
 
     public function assignData($data)
     {
+        $info = $this->getInfoInstance();
+
+        $info->setAdditionalInformation(
+            'payment_method',
+            $data['pagarme_checkout_payment_method']
+        );
     }
 
     /**
