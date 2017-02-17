@@ -1,30 +1,32 @@
-## Context
+## Contexto
 
-[provide more detailed introduction to the issue itself and why it is relevant]
+[Faça uma descrição detalhada da implementação ou alteração que você está propondo. Deixe claro se o problema é um bug, um aprimoramento ou apenas uma pergunta]
 
-## Process
+## Processo
 
-[ordered list the process to finding and recreating the issue, example below]
+[lista organizada de processos para reproduzir a issue, por exemplo:]
 
-1. User goes to delete a dataset (to save space or whatever)
-2. User gets popup modal warning
-3. User deletes and it's lost forever
+1. Acesse o painel administrativo do Magento
+2. Clique em `Sistema > Configurações > Métodos de Pagamento`
+3. Encontre a sessão `PagarMe - Configurações`
+4. Informe uma API KEY e uma Encryption Key
+5. Salve a configuração
 
-## Expected result
+## Resultado esperado
 
-[describe what you would expect to have resulted from this process]
+[descreva o resultado esperado para a execução do processo]
 
-## Current result
+## Resultado atual
 
-[describe what you you currently experience from this process, and thereby explain the bug]
+[descreva o que atualmente está ocorrendo com a execução do processo e explique o problema]
 
-## Possible Fix
+## Posssível correção
 
-[not obligatory, but suggest fixes or reasons for the bug]
+[opcional, mas você pode sugerir possíveis correções para este problema]
 
-* Modal tells the user what dataset is being deleted, like “You are about to delete this dataset: car_crashes_2014.”
-* A temporary "Trashcan" where you can recover a just deleted dataset if you mess up (maybe it's only good for a few hours, and then it cleans the cache assuming you made the right decision).
+* Exibir uma mensagem após o usuário tentar salvar informando que a API Key informada é inválida.
+* Ao preencher o campo de API Key, marcá-lo com a borda em vermelho para o usuário.
 
-## `name of issue` screenshot
+## `nome da issue` screenshot
 
-[if relevant, include a screenshot]
+[se for relevante, inclua uma screenshot]
