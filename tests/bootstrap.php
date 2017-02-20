@@ -24,3 +24,6 @@ Mage::getModel('cms/page')
     ->load(2)
     ->setData('content', '{{block type="catalog/product_list" name="home.catalog.product.list" alias="products_homepage" category_id="9" template="catalog/product/list.phtml"}}')
     ->save();
+
+Mage::getModel('pagarme_core/observer_autoloader')
+    ->registerSplAutoloader(new Varien_Event_Observer());

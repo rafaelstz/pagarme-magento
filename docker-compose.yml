@@ -23,10 +23,10 @@ services:
         env_file: .env
 
     magento:
-        image: ricardotulio/magento:${MAGENTO_VERSION}
+        image: magento:${MAGENTO_VERSION}
         env_file: .env
         volumes:
-            - .:/docker-magento-modules/pagarme/
+            - .:/docker-magento-module/
         working_dir: /var/www
         ports:
             - "80:80"

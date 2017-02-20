@@ -26,14 +26,17 @@ class PagarMe_Checkout_Model_Checkout extends Mage_Payment_Model_Method_Abstract
     /** @var string */
     protected $_infoBlockType          = 'pagarme_checkout/info_checkout';
 
+    public function getPagarMeSdk()
+    {
+        return Mage::getModel('pagarme_core/sdk_adapter')
+            ->getPagarMeSdk();
+    }
+
+    /**
+     * @codeCoverageIgnore
+     */
     public function assignData($data)
     {
-        $info = $this->getInfoInstance();
-
-        $info->setAdditionalInformation(
-            'payment_method',
-            $data['pagarme_checkout_payment_method']
-        );
     }
 
     /**
@@ -45,6 +48,7 @@ class PagarMe_Checkout_Model_Checkout extends Mage_Payment_Model_Method_Abstract
      */
     public function authorize(Varien_Object $payment)
     {
+        $this->getPagarMeSdk()->transaction()->createTransaction();
     }
 
     /**
