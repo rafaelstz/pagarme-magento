@@ -353,7 +353,7 @@ class CheckoutContext extends MinkContext
      * @AfterScenario
      */
     public function tearDown() {
-        $this->customer->delete();
-        $this->product->delete();
+        // $this->customer->delete();
+        // $this->product->delete();
     }
 }

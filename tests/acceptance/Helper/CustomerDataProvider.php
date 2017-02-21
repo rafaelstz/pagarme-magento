@@ -27,7 +27,7 @@ trait CustomerDataProvider
             ->setTaxvat('332.840.319-10')
             ->setDob('03/12/1980')
             ->setEmail(mktime() . 'livia_nina@arganet.com.br')
-            ->setPassword('q6Cyxg4TMM');
+            ->setPassword('123456');
 
        	return $customer;
 	}

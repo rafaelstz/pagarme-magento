@@ -27,3 +27,4 @@ Mage::getModel('cms/page')
 
 Mage::getModel('pagarme_core/observer_autoloader')
     ->registerSplAutoloader(new Varien_Event_Observer());
+

@@ -17,8 +17,8 @@ class PagarMe_Core_Model_Observer_Autoloader extends Varien_Event_Observer
             if(!file_exists($classFilePath)) {
                 return false;
             }
-            
-            require_once $libDir . $classFilePath;
+
+            require_once $classFilePath;
         });
     }
 
@@ -27,7 +27,7 @@ class PagarMe_Core_Model_Observer_Autoloader extends Varien_Event_Observer
 
         $regExp = '/^\\\\?PagarMe\\\\/';
 
-        return preg_match($regExp, $class);
+        return (bool) preg_match($regExp, $class);
     }
 
     public function getClassFilePath($class)

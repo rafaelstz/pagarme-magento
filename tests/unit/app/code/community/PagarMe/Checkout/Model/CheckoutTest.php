@@ -10,6 +10,34 @@ class PagarMe_Checkout_Model_CheckoutTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     */
+    public function mustBeCreateCustomerAtAssignData()
+    {
+        $data = [
+            'pagarme_checkout_customer_name' => 'João',
+            'pagarme_checkout_customer_born_at' => null,
+            'pagarme_checkout_customer_document_number' => '385.581.581-58',
+            'pagarme_checkout_customer_document_type' => 'cpf',
+            'pagarme_checkout_customer_phone_ddd' => '11',
+            'pagarme_checkout_customer_phone_ddd' => '11',
+            'pagarme_checkout_customer_address' => 'joao@joao.com',
+            'pagarme_checkout_customer_gender' => null,
+        ];
+
+        $infoInstanceMock = $this->getMockBuilder('Mage_Payment_Model_Info')
+            ->getMock();
+
+        $infoInstanceMock->expects($this->once())
+            ->method('setCustomer')
+            ->with(
+                $this->isInstanceOf('PagarMe\Sdk\Customer\Customer')
+            );
+
+        $this->checkoutModel->setInfoInstance($infoInstanceMock);
+        $this->checkoutModel->assignData($data);
+    }
+
+    /**
      * @test
      */
     public function mustCreateBoletoTransaction()
@@ -29,34 +57,31 @@ class PagarMe_Checkout_Model_CheckoutTest extends PHPUnit_Framework_TestCase
         $sdkMock->method('getPagarMeSdk')
             ->willReturn($sdkMock);
 
-        $installments = 1;
-        $cardhash = 'skdjafçsldjfasçlkdfjasldfjsdlkaf';
-        $amount = 10.0;
+        $paymentData = [
+            'pagarme_checkout_payment_method'       => 'boleto',
+            'pagarme_checkout_payment_installments' => 1,
+            'pagarme_checkout_payment_amount'       => 10.0
+        ];
 
-        $this->checkoutModel
-            ->assignData(
-                [
-                    'installments' => $installments,
-                    'card_hash'    => $cardhash,
-                ]
-            );
-
-        $payment = $this->getMockBuilder('Varien_Object')
+        $paymentMock = $this->getMockBuilder('Mage_Sales_Model_Order_Payment')
             ->getMock();
 
-        $payment->method('getAmount')
-            ->willReturn($amount);
+        $infoInstance = Mage::getModel('payment/info');
+        $infoInstance->setCustomer(new \PagarMe\Sdk\Customer\Customer());
 
         $transactionHandlerMock->expects($this->once())
             ->method('boletoTransaction')
             ->with(
-                [
-                    $this->equalTo($amount),
-                    $this->anything(),
-                    $this->anything()
-                ]
+                $this->equalTo($paymentData['pagarme_checkout_payment_amount']),
+                $this->isInstanceOf('PagarMe\Sdk\Customer\Customer'),
+                $this->anything()
             );
 
-        //$this->checkoutModel->authorize($payment);
+        $this->checkoutModel->setPagarMeSdk($pagarMeMock);
+        $this->checkoutModel->setInfoInstance($infoInstance);
+        $this->checkoutModel->authorize(
+            $paymentMock,
+            $paymentData['pagarme_checkout_payment_amount']
+        );
     }
 }
