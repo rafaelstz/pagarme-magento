@@ -4,6 +4,9 @@ class PagarMe_Checkout_Model_CheckoutTest extends PHPUnit_Framework_TestCase
 {
     protected $checkoutModel;
 
+    const PAYMENT_AMOUNT_FLOAT   = 13.37;
+    const PAYMENT_AMOUNT_INTEGER = 1337;
+
     public function setUp()
     {
         $this->checkoutModel = Mage::getModel('pagarme_checkout/checkout');
@@ -60,19 +63,19 @@ class PagarMe_Checkout_Model_CheckoutTest extends PHPUnit_Framework_TestCase
         $paymentData = [
             'pagarme_checkout_payment_method'       => 'boleto',
             'pagarme_checkout_payment_installments' => 1,
-            'pagarme_checkout_payment_amount'       => 10.0
+            'pagarme_checkout_payment_amount'       => self::PAYMENT_AMOUNT_FLOAT
         ];
 
         $paymentMock = $this->getMockBuilder('Mage_Sales_Model_Order_Payment')
             ->getMock();
 
         $infoInstance = Mage::getModel('payment/info');
-        $infoInstance->setCustomer(new \PagarMe\Sdk\Customer\Customer());
+        $infoInstance->setAdditionalInformation(['customer' => $customer]);
 
         $transactionHandlerMock->expects($this->once())
             ->method('boletoTransaction')
             ->with(
-                $this->equalTo($paymentData['pagarme_checkout_payment_amount']),
+                $this->equalTo(self::PAYMENT_AMOUNT_INTEGER),
                 $this->isInstanceOf('PagarMe\Sdk\Customer\Customer'),
                 $this->anything()
             );

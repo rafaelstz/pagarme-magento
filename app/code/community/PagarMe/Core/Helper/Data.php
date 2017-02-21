@@ -26,24 +26,13 @@ class PagarMe_Core_Helper_Data extends Mage_Core_Helper_Abstract
                     'country'       => $data['pagarme_checkout_customer_address_country'],
                 ]
             ],
-            'phones'          =>  [
-                $this->preparePhoneNumber($data['pagarme_checkout_customer_phone'])
+            'phones'          => [
+                (object) [
+                    'ddd' => $data['pagarme_checkout_customer_phone_ddd'],
+                    'number' => $data['pagarme_checkout_customer_phone_number'],
+                ],
             ],
             'gender'          => $data['pagarme_checkout_customer_gender']
-        ];
-    }
-
-    public function preparePhoneNumber($phoneNumber)
-    {
-        $filteredPhoneNumber = Zend_Filter::filterStatic($phoneNumber, 'Digits');
-
-        $ddd = substr($filteredPhoneNumber, 0, 2);
-        $number = substr($filteredPhoneNumber, 2);
-
-        return (object) [
-            'ddi' => null,
-            'ddd' => $ddd,
-            'number' => $number
         ];
     }
 

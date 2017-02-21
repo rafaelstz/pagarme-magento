@@ -51,18 +51,16 @@ class PagarMe_Checkout_Model_Checkout extends Mage_Payment_Model_Method_Abstract
     {
         $info = $this->getInfoInstance();
 
-        $info->setAdditionalInformation(
-            [
-                'pagarme_checkout_payment_method' => $data['pagarme_checkout_payment_method']
-            ]
-        );
-
         $customerData = Mage::helper('pagarme_core')
             ->prepareCustomerData($data);
-
         $customer = Mage::helper('pagarme_core')->buildCustomer($customerData);
 
-        $info->setCustomer($customer);
+        $info->setAdditionalInformation(
+            [
+                'payment_method' => $data['pagarme_checkout_payment_method'],
+                'customer' => $customer
+            ]
+        );
 
         return $this;
     }
@@ -76,17 +74,27 @@ class PagarMe_Checkout_Model_Checkout extends Mage_Payment_Model_Method_Abstract
      */
     public function authorize(Varien_Object $payment, $amount)
     {
-
         $infoInstance = $this->getInfoInstance();
-        $customer = $infoInstance->getCustomer();
-        $this->getPagarMeSdk()
+        $customer = $infoInstance->getAdditionalInformation('customer');
+
+
+        $transaction = $this->getPagarMeSdk()
             ->transaction()
             ->boletoTransaction(
-                $amount,
+                intval($amount * 100),
                 $customer,
                 Mage::getUrl('pagarme/transaction_boleto/postback')
             );
-        return true;
+
+        $infoInstance->unsAdditionalInformation('customer');
+        $infoInstance->setAdditionalInformation(
+            array_merge(
+                $infoInstance->getAdditionalInformation(),
+                ['pagarme_transaction_id' => $transaction->getId()]
+            )
+        );
+
+        return $this;
     }
 
     /**

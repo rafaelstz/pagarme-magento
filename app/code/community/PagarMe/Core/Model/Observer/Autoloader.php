@@ -1,5 +1,7 @@
 <?php
 
+
+
 class PagarMe_Core_Model_Observer_Autoloader extends Varien_Event_Observer
 {
     /**
@@ -7,36 +9,6 @@ class PagarMe_Core_Model_Observer_Autoloader extends Varien_Event_Observer
      */
     public function registerSplAutoloader($event)
     {
-        spl_autoload_register(function ($class) {
-            if (!$this->isPagarMeClass($class)) {
-                return false;
-            }
-
-            $classFilePath = $this->getClassFilePath($class);
-
-            if(!file_exists($classFilePath)) {
-                return false;
-            }
-
-            require_once $classFilePath;
-        });
-    }
-
-    public function isPagarMeClass($class)
-    {
-
-        $regExp = '/^\\\\?PagarMe\\\\/';
-
-        return (bool) preg_match($regExp, $class);
-    }
-
-    public function getClassFilePath($class)
-    {
-        $libDir = Mage::getBaseDir('lib') . '/pagarme/lib/';
-
-        $classWithoutVendorName = str_replace('PagarMe\\Sdk\\', '', $class);
-        $classFile = str_replace('\\', '/', $classWithoutVendorName) . '.php';
-
-        return $libDir . $classFile;
+        require_once Mage::getBaseDir() . '/vendor/autoload.php';
     }
 }
