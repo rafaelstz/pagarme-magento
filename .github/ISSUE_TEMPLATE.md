@@ -1,6 +1,16 @@
 ## Contexto
 
-[Faça uma descrição detalhada da implementação ou alteração que você está propondo. Deixe claro se o problema é um bug, um aprimoramento ou apenas uma pergunta]
+[faça uma descrição detalhada da implementação ou alteração que você está propondo e lembre-se de deixar claro se o problema é um bug, um aprimoramento ou apenas uma pergunta]
+
+## Ambiente
+
+[caso essa issue se trate de um bug, descreva como é o ambiente que ele ocorre, por exemplo:]
+
+* Servidor Linux
+* PHP 5.2
+* Apache 2.2
+* MySQL 5.6
+* Qualquer outra característica a ser considerada
 
 ## Processo
 
