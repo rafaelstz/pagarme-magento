@@ -2,8 +2,6 @@
 
 class PagarMe_Checkout_Model_Checkout extends Mage_Payment_Model_Method_Abstract
 {
-    use \PagarMe\Sdk\Customer\CustomerBuilder;
-
     /** @var string */
     protected $_code                   = 'pagarme_checkout';
 
@@ -62,7 +60,7 @@ class PagarMe_Checkout_Model_Checkout extends Mage_Payment_Model_Method_Abstract
         $customerData = Mage::helper('pagarme_core')
             ->prepareCustomerData($data);
 
-        $customer = $this->buildCutomer($customerData);
+        $customer = Mage::helper('pagarme_core')->buildCustomer($customerData);
 
         $info->setCustomer($customer);
 
@@ -78,18 +76,17 @@ class PagarMe_Checkout_Model_Checkout extends Mage_Payment_Model_Method_Abstract
      */
     public function authorize(Varien_Object $payment, $amount)
     {
-        parent::authorize($payment, $amount);
 
         $infoInstance = $this->getInfoInstance();
         $customer = $infoInstance->getCustomer();
-
         $this->getPagarMeSdk()
             ->transaction()
             ->boletoTransaction(
                 $amount,
                 $customer,
-                $postBackUrl
+                Mage::getUrl('pagarme/transaction_boleto/postback')
             );
+        return true;
     }
 
     /**

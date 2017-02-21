@@ -2,6 +2,10 @@
 
 class PagarMe_Core_Helper_Data extends Mage_Core_Helper_Abstract
 {
+    use \PagarMe\Sdk\Customer\CustomerBuilder {
+        \PagarMe\Sdk\Customer\CustomerBuilder::buildCustomer as _buildCustomer;
+    }
+
     public function prepareCustomerData($data)
     {
         return (object) [
@@ -41,5 +45,9 @@ class PagarMe_Core_Helper_Data extends Mage_Core_Helper_Abstract
             'ddd' => $ddd,
             'number' => $number
         ];
+    }
+
+    public function buildCustomer($array) {
+        return $this->_buildCustomer($array);
     }
 }

@@ -16,8 +16,8 @@ Feature: Checkout Pagar.me
         And I use a valid credit card to pay
         And finish purchase
         Then the purchase must be created success
-
-Scenario: Make a purchase by boleto
+    @only
+    Scenario: Make a purchase by boleto
         Given a registered user
         When I access the store page
         And add any product to basket
