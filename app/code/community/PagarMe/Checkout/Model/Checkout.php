@@ -57,7 +57,7 @@ class PagarMe_Checkout_Model_Checkout extends Mage_Payment_Model_Method_Abstract
 
         $info->setAdditionalInformation(
             [
-                'payment_method' => $data['pagarme_checkout_payment_method'],
+                'pagarme_payment_method' => $this->_code . '_' . $data['pagarme_checkout_payment_method'],
                 'customer' => $customer
             ]
         );
@@ -77,7 +77,6 @@ class PagarMe_Checkout_Model_Checkout extends Mage_Payment_Model_Method_Abstract
         $infoInstance = $this->getInfoInstance();
         $customer = $infoInstance->getAdditionalInformation('customer');
 
-
         $transaction = $this->getPagarMeSdk()
             ->transaction()
             ->boletoTransaction(
@@ -90,7 +89,10 @@ class PagarMe_Checkout_Model_Checkout extends Mage_Payment_Model_Method_Abstract
         $infoInstance->setAdditionalInformation(
             array_merge(
                 $infoInstance->getAdditionalInformation(),
-                ['pagarme_transaction_id' => $transaction->getId()]
+                [
+                    'pagarme_transaction_id' => $transaction->getId(),
+                    'pagarme_boleto_url'     => $transaction->getBoletoUrl()
+                ]
             )
         );
 

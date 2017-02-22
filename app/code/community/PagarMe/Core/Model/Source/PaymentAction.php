@@ -2,6 +2,10 @@
 
 class PagarMe_Core_Model_Source_PaymentAction
 {
+
+    /**
+     * @codeCoverageIgnore
+     */
     public function toOptionArray()
     {
         return array(
