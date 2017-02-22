@@ -26,7 +26,9 @@ class PagarMe_Core_Model_Postback_Boleto extends Mage_Core_Model_Abstract
     public function processPostback(Mage_Sales_Model_Order $order, $currentStatus)
     {
         if(!$this->canProceedWithPostback($order, $currentStatus)) {
-            // throw exception
+            throw new Exception(
+                Mage::helper('pagarme_core')->__('Can\'t proccess postback.')
+            );
         }
 
         $invoice = $this->getInvoiceService()
