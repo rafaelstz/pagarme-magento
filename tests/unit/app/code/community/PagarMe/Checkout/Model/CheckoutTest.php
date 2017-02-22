@@ -45,8 +45,19 @@ class PagarMe_Checkout_Model_CheckoutTest extends PHPUnit_Framework_TestCase
      */
     public function mustCreateBoletoTransaction()
     {
+        $boletoTransactionMock = $this->getMockBuilder('PagarMe\\Sdk\\Transaction\\BoletoTransaction')
+            ->getMock();
+
+        $boletoTransactionMock->expects($this->once())
+            ->method('getId')
+            ->willReturn('10');
+
         $transactionHandlerMock = $this->getMockBuilder('PagarMe\\Sdk\\Transaction\\TransactionHandler')
             ->getMock();
+
+        $transactionHandlerMock->expects($this->once())
+            ->method('boletoTransaction')
+            ->willReturn($boletoTransactionMock);
 
         $pagarMeMock = $this->getMockBuilder('PagarMe\\Sdk\\PagarMe')
             ->getMock();
@@ -69,8 +80,15 @@ class PagarMe_Checkout_Model_CheckoutTest extends PHPUnit_Framework_TestCase
         $paymentMock = $this->getMockBuilder('Mage_Sales_Model_Order_Payment')
             ->getMock();
 
+        $customerMock = $this->getMockBuilder('PagarMe\Sdk\Customer\Customer')
+            ->getMock();
+
         $infoInstance = Mage::getModel('payment/info');
-        $infoInstance->setAdditionalInformation(['customer' => $customer]);
+        $infoInstance->setAdditionalInformation(
+            [
+                'customer' => $customerMock
+            ]
+        );
 
         $transactionHandlerMock->expects($this->once())
             ->method('boletoTransaction')
