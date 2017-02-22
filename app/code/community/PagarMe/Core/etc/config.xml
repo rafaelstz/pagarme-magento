@@ -27,6 +27,17 @@
             </resource_get_tablename>
         </events>
     </global>
+    <frontend>
+        <routers>
+            <pagarme_core>
+                <use>standard</use>
+                <args>
+                    <module>PagarMe_Core</module>
+                    <frontName>pagarme</frontName>
+                </args>
+            </pagarme_core>
+        </routers>
+    </frontend>
     <default>
         <payment>
             <pagarme_checkout>
