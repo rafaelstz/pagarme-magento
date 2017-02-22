@@ -10,7 +10,7 @@ class PagarMe_Checkout_Block_Success extends Mage_Checkout_Block_Onepage_Success
 
         $additionalInfo = $order->getPayment()->getAdditionalInformation();
 
-        if ($additionalInfo['pagarme_payment_method'] === 'pagarme_checkout_boleto') {
+        if ($additionalInfo['pagarme_payment_method'] === PagarMe_Checkout_Model_Checkout::PAGARME_CHECKOUT_BOLETO) {
             return true;
         }
 

@@ -7,7 +7,9 @@ class PagarMe_Core_Model_Sdk_Adapter extends Mage_Core_Model_Abstract
     public function _construct()
     {
         parent::_construct();
-        $this->pagarMeSdk = new \PagarMe\Sdk\PagarMe('ak_test_fEdp850tlXjulV60cGxnUtD3hLtl7C');
+
+        $apiKey =  Mage::getStoreConfig('payment/pagarme_settings/api_key');
+        $this->pagarMeSdk = new \PagarMe\Sdk\PagarMe($apiKey);
     }
 
     public function getPagarMeSdk()

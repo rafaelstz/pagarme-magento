@@ -2,6 +2,8 @@
 
 class PagarMe_Checkout_Model_Checkout extends Mage_Payment_Model_Method_Abstract
 {
+    const PAGARME_CHECKOUT_BOLETO = 'pagarme_checkout_boleto';
+
     /** @var string */
     protected $_code                   = 'pagarme_checkout';
 
@@ -53,6 +55,7 @@ class PagarMe_Checkout_Model_Checkout extends Mage_Payment_Model_Method_Abstract
 
         $customerData = Mage::helper('pagarme_core')
             ->prepareCustomerData($data);
+
         $customer = Mage::helper('pagarme_core')->buildCustomer($customerData);
 
         $info->setAdditionalInformation(

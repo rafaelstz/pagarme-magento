@@ -6,7 +6,7 @@ Feature: Configuration Form
     Scenario: Inserting the API_KEY and EK_KEY
         Given a admin user
         And a api key
-        And a enryption key
+        And a encryption key
         When I access the admin
         And go to system configuration page
         And insert an API key

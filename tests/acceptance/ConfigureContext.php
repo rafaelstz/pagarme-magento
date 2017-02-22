@@ -41,15 +41,15 @@ class ConfigureContext extends MinkContext
      */
     public function aApiKey()
     {
-        $this->apiKey = 'ak_test_xpto';
+        $this->apiKey = PAGARME_API_KEY;
     }
 
     /**
-     * @Given a enryption key
+     * @Given a encryption key
      */
-    public function aEnryptionKey()
+    public function aEncryptionKey()
     {
-        $this->encryptionKey = 'ek_test_xpto';
+        $this->encryptionKey = PAGARME_ENCRYPTION_KEY;
     }
 
     /**
@@ -122,7 +122,7 @@ class ConfigureContext extends MinkContext
                 'id',
                 'payment_pagarme_settings_api_key'
             )
-        )->setValue('ak_test_');
+        )->setValue($this->apiKey);
     }
 
     /**
@@ -139,7 +139,7 @@ class ConfigureContext extends MinkContext
                 'id',
                 'payment_pagarme_settings_encryption_key'
             )
-        )->setValue('ek_test_');
+        )->setValue($this->encryptionKey);
     }
 
     /**

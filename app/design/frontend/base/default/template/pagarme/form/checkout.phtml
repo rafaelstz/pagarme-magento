@@ -31,9 +31,8 @@
 <script type="text/javascript">
     $("pagarme-checkout-fill-info-button").observe("click", function (event){
         var checkoutPagarme = new PagarMeCheckout.Checkout({
-            "encryption_key" : "ek_test_q5vZGIkmbWJHcdYbN8NatCFaEuWSQX",
+            "encryption_key" : "<?= $this->getEncryptionKey() ?>",
             success: function (response) {
-                console.log(response);
                 $('pagarme-checkout-hash').value = response['card_hash'];
                 $('pagarme-checkout-payment-method').value = response['payment_method'];
                 $('pagarme_checkout_customer_name').value = response['customer']['name'];
