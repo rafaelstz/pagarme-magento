@@ -33,6 +33,7 @@
         var checkoutPagarme = new PagarMeCheckout.Checkout({
             "encryption_key" : "<?= $this->getEncryptionKey() ?>",
             success: function (response) {
+                console.log(response);
                 $('pagarme-checkout-hash').value = response['card_hash'];
                 $('pagarme-checkout-payment-method').value = response['payment_method'];
                 $('pagarme_checkout_customer_name').value = response['customer']['name'];
@@ -51,9 +52,6 @@
             }
         });
 
-        checkoutPagarme.open({
-            "amount" : "10000",
-            "createToken": "false"
-        });
+        checkoutPagarme.open(<?= $this->getCheckoutConfig() ?>);
     });
 </script>

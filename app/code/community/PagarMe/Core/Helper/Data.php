@@ -39,4 +39,21 @@ class PagarMe_Core_Helper_Data extends Mage_Core_Helper_Abstract
     public function buildCustomer($array) {
         return $this->_buildCustomer($array);
     }
+
+    public function parseAmountToInteger($amount)
+    {
+        return intval($amount * 100);
+    }
+
+    public function getDddFromPhoneNumber($phone)
+    {
+        return substr(Zend_Filter::filterStatic($phone, 'Digits'), 0, 2);
+    }
+
+    public function getPhoneWithoutDdd($phone)
+    {
+        return substr(Zend_Filter::filterStatic($phone, 'Digits'), 2);
+    }
+
+
 }
