@@ -12,7 +12,7 @@ Feature: Checkout Pagar.me
         And login with registered user
         And confirm billing and shipping address information
         And choose pay with pagar me checkout using "Cartão de crédito"
-        And I provide personal information
+        And I confirm my personal data
         And I use a valid credit card to pay
         And finish purchase
         Then the purchase must be created success
@@ -25,7 +25,7 @@ Feature: Checkout Pagar.me
         And login with registered user
         And confirm billing and shipping address information
         And choose pay with pagar me checkout using "Boleto"
-        And I provide personal information
+        And I confirm my personal data
         And finish purchase
         Then the purchase must be created success
         And a link to boleto must be provided

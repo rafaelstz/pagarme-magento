@@ -155,40 +155,15 @@ class CheckoutContext extends MinkContext
         $this->pagarMeCheckout->pressButton($paymentMethod);
     }
 
-     /**
-     * @When I provide personal information
+    /**
+     * @When I confirm my personal data
      */
-    public function iProvidePersonalInformation()
+    public function iConfirmMyPersonalData()
     {
 
         $this->waitForElement(
             '#pagarme-modal-box-step-buyer-information',
             1000
-        );
-
-        $this->fillField(
-            'pagarme-modal-box-buyer-name',
-            $this->customer->getName()
-        );
-
-        $this->fillField(
-            'pagarme-modal-box-buyer-email',
-            $this->customer->getEmail()
-        );
-
-        $this->fillField(
-            'pagarme-modal-box-buyer-document-number',
-            $this->customer->getTaxvat()
-        );
-
-        $this->fillField(
-            'pagarme-modal-box-buyer-ddd',
-            '11'
-        );
-
-        $this->fillField(
-            'pagarme-modal-box-buyer-number',
-            '995551668'
         );
 
         $this->pagarMeCheckout->find(
@@ -201,47 +176,13 @@ class CheckoutContext extends MinkContext
             1000
         );
 
-        $this->fillField(
-            'pagarme-modal-box-customer-address-zipcode',
-            $this->customerAddress->getPostcode()
-        );
-
-        $this->fillField(
-            'pagarme-modal-box-customer-address-street',
-            $this->customerAddress->getStreet()[0]
-        );
-
-        $this->fillField(
-            'pagarme-modal-box-customer-address-number',
-            $this->customerAddress->getStreet()[1]
-        );
-
-        $this->fillField(
-            'pagarme-modal-box-customer-address-complementary',
-            $this->customerAddress->getStreet()[2]
-        );
-
-        $this->fillField(
-            'pagarme-modal-box-customer-address-neighborhood',
-            $this->customerAddress->getStreet()[3]
-        );
-
-        $this->fillField(
-            'pagarme-modal-box-customer-address-city',
-            $this->customerAddress->getCity()
-        );
-
-        $this->fillField(
-            'pagarme-modal-box-customer-address-state',
-            $this->customerAddress->getState()
-        );
-
         $this->pagarMeCheckout->find(
             'css',
             '#pagarme-modal-box-step-customer-address-information .pagarme-modal-box-next-step'
         )->click();
 
     }
+
     /**
      * @When I use a valid credit card to pay
      */
