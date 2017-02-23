@@ -56,7 +56,16 @@ class PagarMe_Core_Model_Postback_BoletoTest extends \PHPUnit_Framework_TestCase
         $orderServiceMock = $this->getMockBuilder('PagarMe_Core_Model_Service_Order')
             ->getMock();
 
-        $orderServiceMock->method('getOrderByTransactionId')
+        $orderServiceMock->expects($this->once())
+            ->method('getOrderByTransactionId')
+            ->with($transactionId)
+            ->willReturn($orderMock);
+
+        $orderServiceMock = $this->getMockBuilder('PagarMe_Core_Model_Service_Order')
+            ->getMock();
+
+        $orderServiceMock->expects($this->once())
+            ->method('getOrderByTransactionId')
             ->with($transactionId)
             ->willReturn($orderMock);
 
