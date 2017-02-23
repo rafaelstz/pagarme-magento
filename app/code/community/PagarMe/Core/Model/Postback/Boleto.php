@@ -9,6 +9,14 @@ class PagarMe_Core_Model_Postback_Boleto extends Mage_Core_Model_Abstract
         return $order->canInvoice() && $currentStatus == "paid";
     }
 
+    private function getOrderFromTransactionId($transactionId)
+    {
+        $orderId = Mage::getModel('pagarme_core/service_order')
+            ->getOrderIdFromTransactionId($transactionId);
+
+        return Mage::getModel('sales/order')->load($orderId);
+    }
+
     public function getInvoiceService()
     {
         if(is_null($this->invoiceService)) {
@@ -23,8 +31,10 @@ class PagarMe_Core_Model_Postback_Boleto extends Mage_Core_Model_Abstract
         $this->invoiceService = $invoiceService;
     }
 
-    public function processPostback(Mage_Sales_Model_Order $order, $currentStatus)
+    public function processPostback($transactionId, $currentStatus)
     {
+        $order = $this->getOrderFromTransactionId($transactionId);
+
         if(!$this->canProceedWithPostback($order, $currentStatus)) {
             throw new Exception(
                 Mage::helper('pagarme_core')->__('Can\'t proccess postback.')
