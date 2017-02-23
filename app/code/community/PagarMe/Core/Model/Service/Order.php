@@ -4,11 +4,12 @@ class PagarMe_Core_Model_Service_Order
 {
     public function getOrderByTransactionId($transactionId)
     {
-        $orderId = Mage::getModel('pagarme_core/transaction')
-            ->loadByTransactionId($transactionId)
-            ->getOrderId();
+        $transaction = Mage::getModel('pagarme_core/transaction')
+            ->load($transactionId, 'transaction_id');
 
-        return Mage::getModel('sales/order')
-            ->load($orderId);
+        $order = Mage::getModel('sales/order')
+            ->load($transaction['order_id']);
+
+        return $order;
     }
 }
