@@ -33,6 +33,8 @@ class PagarMe_Core_Model_Postback_BoletoTest extends \PHPUnit_Framework_TestCase
             ->method('createInvoiceFromOrder')
             ->willReturn($invoiceMock);
 
+        $transactionId = 120;
+
         $orderMock = $this->getMockBuilder('Mage_Sales_Model_Order')
             ->getMock();
 
@@ -51,8 +53,16 @@ class PagarMe_Core_Model_Postback_BoletoTest extends \PHPUnit_Framework_TestCase
         $orderMock->method('canInvoice')
             ->willReturn(true);
 
+        $orderServiceMock = $this->getMockBuilder('PagarMe_Core_Model_Service_Order')
+            ->getMock();
+
+        $orderServiceMock->method('getOrderByTransactionId')
+            ->with($transactionId)
+            ->willReturn($orderMock);
+
         $postback = Mage::getModel('PagarMe_Core_Model_Postback_Boleto');
+        $postback->setOrderService($orderServiceMock);
         $postback->setInvoiceService($invoiceServiceMock);
-        $postback->processPostback($orderMock, "paid");
+        $postback->processPostback($transactionId, "paid");
     }
 }

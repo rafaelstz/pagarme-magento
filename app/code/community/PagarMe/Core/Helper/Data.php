@@ -32,7 +32,8 @@ class PagarMe_Core_Helper_Data extends Mage_Core_Helper_Abstract
                     'number' => $data['pagarme_checkout_customer_phone_number'],
                 ],
             ],
-            'gender'          => $data['pagarme_checkout_customer_gender']
+            'gender'          => $data['pagarme_checkout_customer_gender'],
+            'date_created'    => null
         ];
     }
 
