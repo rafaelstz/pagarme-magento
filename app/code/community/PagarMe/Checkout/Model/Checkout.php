@@ -104,7 +104,7 @@ class PagarMe_Checkout_Model_Checkout extends Mage_Payment_Model_Method_Abstract
         );
 
         $transaction = Mage::getModel('pagarme_core/transaction')
-            ->setTransactionId($transactionId)
+            ->setTransactionId($transaction->getId())
             ->setOrderId($order->getId())
             ->save();
 
