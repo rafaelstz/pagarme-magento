@@ -35,7 +35,7 @@ class PagarMe_Core_Helper_DataTest extends \PHPUnit_Framework_TestCase
 
         $customerData = $this->helper->prepareCustomerData($plainData);
 
-        $customerTemplate = '{"document_number":"25123317171","document_type":"cpf","name":"John Doe","email":"john@test.com","born_at":null,"gender":null,"addresses":[{"street":"Rua Teste","complementary":null,"street_number":"123","neighborhood":"Centro","city":null,"state":null,"zipcode":"01034020","country":null}],"phones":[{"ddd":"11","number":"44445555"}]}';
+        $customerTemplate = '{"document_number":"25123317171","document_type":"cpf","name":"John Doe","email":"john@test.com","born_at":null,"gender":null,"date_created": null, "addresses":[{"street":"Rua Teste","complementary":null,"street_number":"123","neighborhood":"Centro","city":null,"state":null,"zipcode":"01034020","country":null}],"phones":[{"ddd":"11","number":"44445555"}]}';
 
         $this->assertEquals(json_decode($customerTemplate), $customerData);
     }
