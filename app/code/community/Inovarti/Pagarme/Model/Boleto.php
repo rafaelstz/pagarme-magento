@@ -48,6 +48,10 @@ class Inovarti_Pagarme_Model_Boleto extends Inovarti_Pagarme_Model_Split
             ->setBoletoExpirationDate($this->_generateExpirationDate())
             ->setCustomer($customer)
             ->setPostbackUrl(Mage::getUrl('pagarme/transaction_boleto/postback'));
+        
+        $incrementId = $order->getIncrementId();
+        
+        $requestParams->setMetadata(array('order_id' => $incrementId));
 
         if ($splitRules) {
             $requestParams->setSplitRules($splitRules);
