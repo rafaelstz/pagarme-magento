@@ -2,6 +2,11 @@
 
 class PagarMe_Core_Model_Service_Order
 {
+    /**
+     * @param int $transactionId
+     *
+     * @return type
+     */
     public function getOrderByTransactionId($transactionId)
     {
         $transaction = Mage::getModel('pagarme_core/transaction')

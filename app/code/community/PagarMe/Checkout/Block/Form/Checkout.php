@@ -7,14 +7,21 @@ class PagarMe_Checkout_Block_Form_Checkout extends Mage_Payment_Block_Form
     protected function _construct()
     {
         parent::_construct();
+
         $this->setTemplate(self::TEMPLATE);
     }
 
+    /**
+     * @return string
+     */
     public function getEncryptionKey()
     {
         return Mage::getStoreConfig('payment/pagarme_settings/encryption_key');
     }
 
+    /**
+     * @return string
+     */
     public function getCheckoutConfig()
     {
         $order = Mage::getSingleton('checkout/session')->getQuote();

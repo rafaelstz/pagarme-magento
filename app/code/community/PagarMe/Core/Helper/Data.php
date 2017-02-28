@@ -6,10 +6,15 @@ class PagarMe_Core_Helper_Data extends Mage_Core_Helper_Abstract
         \PagarMe\Sdk\Customer\CustomerBuilder::buildCustomer as _buildCustomer;
     }
 
+    /**
+     * @param array $data
+     *
+     * @return \stdClass
+     */
     public function prepareCustomerData($data)
     {
         return (object) [
-            'document_number' =>  Zend_Filter::filterStatic($data['pagarme_checkout_customer_document_number'], 'Digits'),
+            'document_number' => Zend_Filter::filterStatic($data['pagarme_checkout_customer_document_number'], 'Digits'),
             'document_type'   => $data['pagarme_checkout_customer_document_type'],
             'name'            => $data['pagarme_checkout_customer_name'],
             'email'           => $data['pagarme_checkout_customer_email'],
@@ -37,20 +42,40 @@ class PagarMe_Core_Helper_Data extends Mage_Core_Helper_Abstract
         ];
     }
 
+    /**
+     * @param array $array
+     *
+     * @return \PagarMe\Sdk\Customer\Customer
+     */
     public function buildCustomer($array) {
         return $this->_buildCustomer($array);
     }
 
+    /**
+     * @param int $amount
+     *
+     * @return int
+     */
     public function parseAmountToInteger($amount)
     {
         return intval($amount * 100);
     }
 
+    /**
+     * @param string $phone
+     *
+     * @return string
+     */
     public function getDddFromPhoneNumber($phone)
     {
         return substr(Zend_Filter::filterStatic($phone, 'Digits'), 0, 2);
     }
 
+    /**
+     * @param string $phone
+     *
+     * @return string
+     */
     public function getPhoneWithoutDdd($phone)
     {
         return substr(Zend_Filter::filterStatic($phone, 'Digits'), 2);

@@ -2,6 +2,9 @@
 
 class PagarMe_Checkout_Block_Success extends Mage_Checkout_Block_Onepage_Success
 {
+    /**
+     * @return bool
+     */
     public function isBoletoPayment()
     {
         $order = Mage::getModel('sales/order')->loadByIncrementId(
@@ -17,6 +20,9 @@ class PagarMe_Checkout_Block_Success extends Mage_Checkout_Block_Onepage_Success
         return false;
     }
 
+    /**
+     * @return string
+     */
     public function getBoletoUrl()
     {
         $order = Mage::getModel('sales/order')->loadByIncrementId(

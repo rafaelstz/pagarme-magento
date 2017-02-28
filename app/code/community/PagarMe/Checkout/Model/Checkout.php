@@ -31,6 +31,9 @@ class PagarMe_Checkout_Model_Checkout extends Mage_Payment_Model_Method_Abstract
     /** @var string */
     protected $_infoBlockType          = 'pagarme_checkout/info_checkout';
 
+    /**
+     * @return \PagarMe\Sdk\PagarMe
+     */
     public function getPagarMeSdk()
     {
         if(is_null($this->pagarMeSdk)) {
@@ -41,6 +44,9 @@ class PagarMe_Checkout_Model_Checkout extends Mage_Payment_Model_Method_Abstract
         return $this->pagarMeSdk;
     }
 
+    /**
+     * @param \PagarMe\Sdk\PagarMe $pagarMeSdk
+     */
     public function setPagarMeSdk(\PagarMe\Sdk\PagarMe $pagarMeSdk)
     {
         $this->pagarMeSdk = $pagarMeSdk;
@@ -48,6 +54,10 @@ class PagarMe_Checkout_Model_Checkout extends Mage_Payment_Model_Method_Abstract
 
     /**
      * @codeCoverageIgnore
+     *
+     * @param array $data
+     *
+     * @return PagarMe_Checkout_Model_Checkout
      */
     public function assignData($data)
     {
@@ -73,7 +83,7 @@ class PagarMe_Checkout_Model_Checkout extends Mage_Payment_Model_Method_Abstract
      *
      * @param Varien_Object
      *
-     * @return void
+     * @return PagarMe_Checkout_Model_Checkout
      */
     public function authorize(Varien_Object $payment, $amount)
     {
@@ -114,9 +124,8 @@ class PagarMe_Checkout_Model_Checkout extends Mage_Payment_Model_Method_Abstract
     /**
      * Capture payment
      *
-     * @param Varien_Object
-     *
-     * @return void
+     * @param Varien_Object $payment
+     * @param int $amount
      */
     public function capture(Varien_Object $payment, $amount)
     {

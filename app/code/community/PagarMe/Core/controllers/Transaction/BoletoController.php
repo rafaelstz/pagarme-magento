@@ -2,6 +2,9 @@
 
 class PagarMe_Core_Transaction_BoletoController extends Mage_Core_Controller_Front_Action
 {
+    /**
+     * @return type
+     */
     public function postbackAction()
     {
         $request = $this->getRequest();
@@ -32,6 +35,11 @@ class PagarMe_Core_Transaction_BoletoController extends Mage_Core_Controller_Fro
         }
     }
 
+    /**
+     * @param Mage_Core_Controller_Request_Http $request
+     *
+     * @return bool
+     */
     private function isValidRequest(Mage_Core_Controller_Request_Http $request)
     {
         if ($request->getPost('id') == null) {
@@ -55,6 +63,12 @@ class PagarMe_Core_Transaction_BoletoController extends Mage_Core_Controller_Fro
         return true;
     }
 
+    /**
+     * @param Mage_Core_Controller_Request_Http $request
+     * @param string $signature
+     *
+     * @return bool
+     */
     private function isAuthenticRequest(
         Mage_Core_Controller_Request_Http $request,
         $signature
