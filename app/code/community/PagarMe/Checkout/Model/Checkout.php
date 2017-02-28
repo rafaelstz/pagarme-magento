@@ -32,6 +32,7 @@ class PagarMe_Checkout_Model_Checkout extends Mage_Payment_Model_Method_Abstract
     protected $_infoBlockType          = 'pagarme_checkout/info_checkout';
 
     /**
+     * @codeCoverageIgnore
      * @return \PagarMe\Sdk\PagarMe
      */
     public function getPagarMeSdk()
@@ -93,7 +94,7 @@ class PagarMe_Checkout_Model_Checkout extends Mage_Payment_Model_Method_Abstract
         $transaction = $this->getPagarMeSdk()
             ->transaction()
             ->boletoTransaction(
-                intval($amount * 100),
+                Mage::helper('pagarme_core')->parseAmountToInteger($amount),
                 $customer,
                 Mage::getUrl('pagarme/transaction_boleto/postback')
             );
@@ -119,15 +120,5 @@ class PagarMe_Checkout_Model_Checkout extends Mage_Payment_Model_Method_Abstract
             ->save();
 
         return $this;
-    }
-
-    /**
-     * Capture payment
-     *
-     * @param Varien_Object $payment
-     * @param int $amount
-     */
-    public function capture(Varien_Object $payment, $amount)
-    {
     }
 }

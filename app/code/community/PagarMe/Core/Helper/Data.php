@@ -28,7 +28,7 @@ class PagarMe_Core_Helper_Data extends Mage_Core_Helper_Abstract
                     'city'          => $data['pagarme_checkout_customer_address_city'],
                     'state'         => $data['pagarme_checkout_customer_address_state'],
                     'zipcode'       => $data['pagarme_checkout_customer_address_zipcode'],
-                    'country'       => $data['pagarme_checkout_customer_address_country'],
+                    'country'       => $data['pagarme_checkout_customer_address_country']
                 ]
             ],
             'phones'          => [
@@ -43,6 +43,7 @@ class PagarMe_Core_Helper_Data extends Mage_Core_Helper_Abstract
     }
 
     /**
+     * @codeCoverageIgnore
      * @param array $array
      *
      * @return \PagarMe\Sdk\Customer\Customer

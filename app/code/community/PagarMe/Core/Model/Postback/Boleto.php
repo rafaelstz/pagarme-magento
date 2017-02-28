@@ -19,6 +19,7 @@ class PagarMe_Core_Model_Postback_Boleto extends Mage_Core_Model_Abstract
     }
 
     /**
+     * @codeCoverageIgnore
      * @return PagarMe_Core_Model_Service_Order
      */
     public function getOrderService()
@@ -31,6 +32,7 @@ class PagarMe_Core_Model_Postback_Boleto extends Mage_Core_Model_Abstract
     }
 
     /**
+     * @codeCoverageIgnore
      * @param PagarMe_Core_Model_Service_Order $orderService
      */
     public function setOrderService(PagarMe_Core_Model_Service_Order $orderService)
@@ -39,6 +41,7 @@ class PagarMe_Core_Model_Postback_Boleto extends Mage_Core_Model_Abstract
     }
 
     /**
+     * @codeCoverageIgnore
      * @return PagarMe_Core_Model_Service_Invoice
      */
     public function getInvoiceService()
@@ -51,6 +54,7 @@ class PagarMe_Core_Model_Postback_Boleto extends Mage_Core_Model_Abstract
     }
 
     /**
+     * @codeCoverageIgnore
      * @param PagarMe_Core_Model_Service_Invoice $invoiceService
      */
     public function setInvoiceService(PagarMe_Core_Model_Service_Invoice $invoiceService)

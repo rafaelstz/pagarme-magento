@@ -39,4 +39,26 @@ class PagarMe_Core_Helper_DataTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(json_decode($customerTemplate), $customerData);
     }
+
+    /**
+     * @test
+     */
+    public function mustReturnDddFromPhoneNumber()
+    {
+        $expected = '15';
+        $phone = '(15) 5485-5444';
+
+        $this->assertEquals($expected, $this->helper->getDddFromPhoneNumber($phone));
+    }
+
+    /**
+     * @test
+     */
+    public function mustReturnPhoneWithoutDdd()
+    {
+        $expected = '51115849';
+        $phone = '11 5111-5849';
+
+        $this->assertEquals($expected, $this->helper->getPhoneWithoutDdd($phone));
+    }
 }
