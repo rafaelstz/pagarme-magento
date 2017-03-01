@@ -134,7 +134,7 @@ class CheckoutContext extends MinkContext
         $page = $this->session->getPage();
 
         $this->session->switchToIframe(
-            $page->find('css' ,'iframe')->getAttribute('name')
+            $page->find('css', 'iframe')->getAttribute('name')
         );
 
         $this->pagarMeCheckout = $this->session->getPage();
@@ -167,7 +167,6 @@ class CheckoutContext extends MinkContext
             'css',
             '#pagarme-modal-box-step-customer-address-information .pagarme-modal-box-next-step'
         )->click();
-
     }
 
     /**
@@ -213,8 +212,8 @@ class CheckoutContext extends MinkContext
 
         \PHPUnit_Framework_TestCase::assertEquals(
             Mage::helper(
-                'pagarme_checkout')->__('Your order has been received.'
-            ),
+                'pagarme_checkout'
+            )->__('Your order has been received.'),
             $successMessage
         );
     }
@@ -226,9 +225,12 @@ class CheckoutContext extends MinkContext
     {
         $page = $this->session->getPage();
 
-         \PHPUnit_Framework_TestCase::assertContains(
+        \PHPUnit_Framework_TestCase::assertContains(
             'Para imprimir o boleto',
-            $page ->find('css', '.pagarme_info_boleto')->getText()
+            $page->find(
+                'css',
+                '.pagarme_info_boleto'
+            )->getText()
         );
 
         \PHPUnit_Framework_TestCase::assertContains(
@@ -243,7 +245,8 @@ class CheckoutContext extends MinkContext
     /**
      * @AfterScenario
      */
-    public function tearDown() {
+    public function tearDown()
+    {
         $this->customer->delete();
         $this->product->delete();
     }

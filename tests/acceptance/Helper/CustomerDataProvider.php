@@ -2,14 +2,14 @@
 
 namespace PagarMe\Magento\Test\Helper;
 
-trait CustomerDataProvider 
+trait CustomerDataProvider
 {
-	public function getCustomer() 
-	{
+    public function getCustomer()
+    {
         \Mage::app()
             ->setCurrentStore(1);
 
-		$websiteId = \Mage::app()
+        $websiteId = \Mage::app()
             ->getWebsite()
             ->getId();
 
@@ -29,12 +29,12 @@ trait CustomerDataProvider
             ->setEmail(mktime() . 'livia_nina@arganet.com.br')
             ->setPassword('123456');
 
-       	return $customer;
-	}
+        return $customer;
+    }
 
-	public function getCustomerAddress() 
-	{
-		$address = \Mage::getModel('customer/address')
+    public function getCustomerAddress()
+    {
+        $address = \Mage::getModel('customer/address')
             ->setData(
                 array(
                     'firstname'  => 'Lívia Nina',
@@ -57,6 +57,6 @@ trait CustomerDataProvider
             ->setIsDefaultShipping('1')
             ->setSaveInAddressBook('1');
 
-       	return $address;
-	}
+        return $address;
+    }
 }

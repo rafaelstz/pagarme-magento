@@ -67,7 +67,9 @@ class PagarMe_Core_Model_Postback_BoletoTest extends \PHPUnit_Framework_TestCase
         $orderMock->expects($this->once())
             ->method('setState')
             ->with(
-                Mage_Sales_Model_Order::STATE_PROCESSING, true, "pago"
+                Mage_Sales_Model_Order::STATE_PROCESSING,
+                true,
+                "pago"
             );
 
         $orderMock->expects($this->once())
