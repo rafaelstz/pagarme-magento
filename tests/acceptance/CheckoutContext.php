@@ -53,19 +53,6 @@ class CheckoutContext extends MinkContext
     }
 
     /**
-     * @Given a valid credit card
-     */
-    public function aValidCreditCard()
-    {
-        $this->creditCard = [
-            'customer_name'   => $this->customer->getName(),
-            'number'          => '4111111111111111',
-            'cvv'             => '123',
-            'expiration_date' => '0220'
-        ];
-    }
-
-    /**
      * @When I access the store page
      */
     public function iAccessTheStorePage()
@@ -184,42 +171,6 @@ class CheckoutContext extends MinkContext
     }
 
     /**
-     * @When I use a valid credit card to pay
-     */
-    public function iUseAValidCreditCardToPay()
-    {
-        $this->waitForElement(
-            '#pagarme-modal-box-step-credit-card-information',
-            1000
-        );
-
-        $this->fillField(
-            'pagarme-modal-box-credit-card-number',
-            $this->creditCard['number']
-        );
-
-        $this->fillField(
-            'pagarme-modal-box-credit-card-name',
-            $this->creditCard['customer_name']
-        );
-
-        $this->fillField(
-            'pagarme-modal-box-credit-card-expiration',
-            $this->creditCard['expiration_date']
-        );
-
-        $this->fillField(
-            'pagarme-modal-box-credit-card-cvv',
-            $this->creditCard['cvv']
-        );
-
-        $this->pagarMeCheckout->find(
-            'css',
-            '#pagarme-modal-box-step-credit-card-information .pagarme-modal-box-next-step'
-        )->click();
-    }
-
-    /**
      * @Then finish purchase
      */
     public function finishPurchase()
@@ -288,7 +239,6 @@ class CheckoutContext extends MinkContext
             )->getAttribute('href')
         );
     }
-
 
     /**
      * @AfterScenario
