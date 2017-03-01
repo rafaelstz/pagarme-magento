@@ -8,9 +8,36 @@ require_once __DIR__ . '/../../vendor/autoload.php';
 
 class ConfigureContext extends MinkContext
 {
+    use PagarMe\Magento\Test\Helper\CustomerDataProvider;
+    use PagarMe\Magento\Test\Helper\ProductDataProvider;
+
     const ADMIN_PASSWORD = 'admin123';
 
     private $adminUser;
+
+    private $magentoUrl;
+
+    private $customer;
+
+    /**
+     * @BeforeScenario
+     */
+    public function setUp()
+    {
+        $this->customer = $this->getCustomer();
+        $this->customer->save();
+
+        $this->customerAddress = $this->getCustomerAddress();
+        $this->customerAddress->setCustomerId($this->customer->getId());
+        $this->customerAddress->save();
+
+        $this->product = $this->getProduct();
+        $this->product->save();
+
+        $stock = $this->getProductStock();
+        $stock->assignProduct($this->product);
+        $stock->save();
+    }
 
     /**
      * @Given a admin user
@@ -171,6 +198,94 @@ class ConfigureContext extends MinkContext
         \PHPUnit_Framework_TestCase::assertEquals("The configuration has been saved.", $successMsg->getText());
     }
 
+    /**
+     * @When select payment method :paymentMethod
+     */
+    public function selectPaymentMethod($paymentMethod)
+    {
+        $session = $this->getSession();
+        $page = $session->getPage();
+
+        $page->find(
+            'named',
+            array(
+                'id',
+                'payment_pagarme_settings_payment_methods'
+            )
+        )->selectOption($paymentMethod);
+    }
+
+    /**
+     * @When any customer try to buy any product
+     */
+    public function anyCustomerTryToBuyAnyProduct()
+    {
+        $session = $this->getSession();
+        $session->visit(getenv('MAGENTO_URL'));
+        $page = $session->getPage();
+
+        $page->pressButton(
+            Mage::helper('pagarme_checkout')->__('Add to Cart')
+        );
+
+        $page->pressButton(
+            Mage::helper('pagarme_checkout')->__('Proceed to Checkout')
+        );
+
+        $this->fillField(
+            Mage::helper('pagarme_checkout')->__('Email Address'),
+            $this->customer->getEmail()
+        );
+
+        $this->fillField(
+            Mage::helper('pagarme_checkout')->__('Password'),
+            $this->customer->getPassword()
+        );
+
+        $page->pressButton('Login');
+
+        $page->find('css', '#billing-buttons-container button')->press();
+
+        $this->waitForElement('#checkout-step-shipping_method', 5000);
+
+        $page->find('css', '#shipping-method-buttons-container button')
+            ->press();
+
+        $this->waitForElement('#checkout-step-payment', 5000);
+
+        $page->find('css', '#p_method_pagarme_checkout')->click();
+        $page->pressButton(
+            Mage::helper('pagarme_checkout')->__('Fill in the card data')
+        );
+
+        $session->switchToIframe(
+            $page->find('css', 'iframe')->getAttribute('name')
+        );
+
+        $this->pagarMeCheckoutModal = $session->getPage();
+    }
+
+    /**
+     * @Then the :paymentMethodButton button must not be found
+     */
+    public function theButtonMustNotBeFound($paymentMethodButton)
+    {
+        \PHPUnit_Framework_TestCase::assertFalse(
+            $this->pagarMeCheckoutModal
+                ->findButton($paymentMethodButton)
+                ->isVisible()
+        );
+    }
+
+
+    public function waitForElement($element, $timeout)
+    {
+        $this->getSession()->wait(
+            $timeout,
+            "document.querySelector('${element}').style.display != 'none'"
+        );
+    }
+
     public function spin($lambda, $wait)
     {
         for ($i = 0; $i < $wait; $i++) {
@@ -191,5 +306,12 @@ class ConfigureContext extends MinkContext
     public function tearDown()
     {
         $this->adminUser->delete();
+        $this->customer->delete();
+        $this->product->delete();
+
+        Mage::getModel('core/config')->saveConfig(
+            'payment/pagarme_settings/payment_methods',
+            'credit_card,boleto'
+        );
     }
 }

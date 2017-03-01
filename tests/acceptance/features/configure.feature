@@ -13,3 +13,12 @@ Feature: Configuration Form
         And insert an encryption key
         And save configuration
         Then the configuration must be saved with success
+
+    Scenario: Disable payment method
+        Given a admin user
+        When I access the admin
+        And go to system configuration page
+        And select payment method "Boleto Only"
+        And save configuration
+        And any customer try to buy any product
+        Then the "Boleto" button must not be found

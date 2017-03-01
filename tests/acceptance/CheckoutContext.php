@@ -16,6 +16,7 @@ class CheckoutContext extends MinkContext
     private $session;
 
     private $pagarMeCheckout;
+    
     /**
      * @BeforeScenario
      */
