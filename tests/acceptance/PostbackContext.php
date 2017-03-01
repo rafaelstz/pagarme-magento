@@ -27,6 +27,8 @@ class PostbackContext extends MinkContext
 
         $this->product = $this->getProduct();
         $this->product->save();
+
+        $this->apiKey = PAGARME_API_KEY;
     }
 
     /**
@@ -62,9 +64,7 @@ class PostbackContext extends MinkContext
 
         $payload = "id={$transactionId}&current_status={$currentStatus}";
 
-        $apiKey = Mage::getStoreConfig('payment/pagarme_settings/api_key');
-
-        $hash = hash_hmac($algoritm, $payload, $apiKey);
+        $hash = hash_hmac($algoritm, $payload, $this->apiKey);
 
         $signature = "{$algoritm}={$hash}";
 
