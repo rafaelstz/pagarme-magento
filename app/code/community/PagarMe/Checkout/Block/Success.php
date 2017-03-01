@@ -3,13 +3,39 @@
 class PagarMe_Checkout_Block_Success extends Mage_Checkout_Block_Onepage_Success
 {
     /**
+     * @var Mage_Sales_Model_Order
+     */
+    protected $order;
+
+    /**
+     * @codeCoverageIgnore
+     */
+    public function getOrder()
+    {
+        if (is_null($this->order)) {
+            $this->order = Mage::getModel('sales/order')->loadByIncrementId(
+                $this->getOrderId()
+            );
+        }
+
+        return $this->order;
+    }
+
+    /**
+     * @codeCoverageIgnore
+     */
+    public function setOrder(Mage_Sales_Model_Order $order)
+    {
+        $this->order = $order;
+    }
+
+
+    /**
      * @return bool
      */
     public function isBoletoPayment()
     {
-        $order = Mage::getModel('sales/order')->loadByIncrementId(
-            $this->getOrderId()
-        );
+        $order = $this->getOrder();
 
         $additionalInfo = $order->getPayment()->getAdditionalInformation();
 
@@ -25,9 +51,7 @@ class PagarMe_Checkout_Block_Success extends Mage_Checkout_Block_Onepage_Success
      */
     public function getBoletoUrl()
     {
-        $order = Mage::getModel('sales/order')->loadByIncrementId(
-            $this->getOrderId()
-        );
+        $order = $this->getOrder();
 
         $additionalInfo = $order->getPayment()->getAdditionalInformation();
 
