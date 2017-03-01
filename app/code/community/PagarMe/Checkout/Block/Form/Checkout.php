@@ -4,6 +4,12 @@ class PagarMe_Checkout_Block_Form_Checkout extends Mage_Payment_Block_Form
 {
     const TEMPLATE = 'pagarme/form/checkout.phtml';
 
+    /** @var Mage_Sales_Model_Quote */
+    private $quote;
+
+    /** @var Mage_Customer_Model_Customer */
+    private $customer;
+
     /**
      * @codeCoverageIgnore
      */
@@ -15,6 +21,7 @@ class PagarMe_Checkout_Block_Form_Checkout extends Mage_Payment_Block_Form
 
     /**
      * @codeCoverageIgnore
+     *
      * @return string
      */
     public function getEncryptionKey()
@@ -23,12 +30,60 @@ class PagarMe_Checkout_Block_Form_Checkout extends Mage_Payment_Block_Form
     }
 
     /**
+     * @codeCoverageIgnore
+     *
+     * @return Mage_Sales_Model_Quote
+     */
+    public function getQuote()
+    {
+        if (is_null($this->quote)) {
+            $this->quote = Mage::getSingleton('checkout/session')->getQuote();
+        }
+
+        return $this->quote;
+    }
+
+    /**
+     * @codeCoverageIgnore
+     *
+     * @param Mage_Sales_Model_Quote
+     */
+    public function setQuote(Mage_Sales_Model_Quote $quote)
+    {
+        $this->quote = $quote;
+    }
+
+    /**
+     * @codeCoverageIgnore
+     *
+     * @return Mage_Customer_Model_Customer
+     */
+    public function getCustomer()
+    {
+        if (is_null($this->customer)) {
+            $this->customer = Mage::getSingleton('customer/session')->getCustomer();
+        }
+
+        return $this->customer;
+    }
+
+    /**
+     * @codeCoverageIgnore
+     *
+     * @param Mage_Customer_Model_Customer
+     */
+    public function setCustomer(Mage_Customer_Model_Customer $customer)
+    {
+        $this->customer = $customer;
+    }
+
+    /**
      * @return string
      */
     public function getCheckoutConfig()
     {
-        $order = Mage::getSingleton('checkout/session')->getQuote();
-        $customer = Mage::getSingleton('customer/session')->getCustomer();
+        $quote = $this->getQuote();
+        $customer = $this->getCustomer();
         $address = $customer->getDefaultBillingAddress();
 
         $helper = Mage::helper('pagarme_core');
@@ -36,7 +91,7 @@ class PagarMe_Checkout_Block_Form_Checkout extends Mage_Payment_Block_Form
         $telephone = $address->getTelephone();
 
         return json_encode([
-            'amount' => $helper->parseAmountToInteger($order->getGrandTotal()),
+            'amount' => $helper->parseAmountToInteger($quote->getGrandTotal()),
             'createToken' => "false",
             'customerName' => $customer->getName(),
             'customerEmail' => $customer->getEmail(),
