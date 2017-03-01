@@ -3,9 +3,11 @@
 class PagarMe_Core_Model_Service_Order
 {
     /**
+     * @codeCoverageIgnore
+     *
      * @param int $transactionId
      *
-     * @return type
+     * @return Mage_Sales_Model_Order
      */
     public function getOrderByTransactionId($transactionId)
     {
