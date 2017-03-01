@@ -91,7 +91,6 @@ class PagarMe_Checkout_Model_CheckoutTest extends PHPUnit_Framework_TestCase
 
         $paymentMock->method('getOrder')->willReturn($orderMock);
 
-
         $infoInstance = Mage::getModel('payment/info');
 
         $customerMock = $this->getMockBuilder('PagarMe\Sdk\Customer\Customer')
