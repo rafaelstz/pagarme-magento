@@ -43,21 +43,60 @@ class PostbackContext extends MinkContext
         );
 
         $this->order->save();
+
+        \PHPUnit_Framework_TestCase::assertEquals(
+            'pending',
+            $this->order->getStatus()
+        );
     }
 
     /**
     * @When I receive a postback with status :arg1
     */
-    public function iReceiveAPostbackWithStatus($arg1)
+    public function iReceiveAPostbackWithStatus($currentStatus)
     {
-        throw new PendingException();
+        $transactionId = Mage::getModel('pagarme_core/service_order')
+            ->getTransactionIdByOrder($this->order);
+
+        $algoritm = 'sha1';
+
+        $payload = "id={$transactionId}&current_status={$currentStatus}";
+
+        $apiKey = Mage::getStoreConfig('payment/pagarme_settings/api_key');
+
+        $hash = hash_hmac($algoritm, $payload, $apiKey);
+
+        $signature = "{$algoritm}={$hash}";
+
+        $client = new GuzzleHttp\Client();
+        $response = $client->post(
+            getenv('MAGENTO_URL') . 'index.php/pagarme/transaction_boleto/postback',
+            [
+                'headers' => [
+                    'X-Hub-Signature' => $signature
+                ],
+                'body' => [
+                    'id' => $transactionId,
+                    'current_status' => $currentStatus
+                ]
+            ]
+        );
+
+        \PHPUnit_Framework_TestCase::assertEquals(200, $response->getStatusCode());
+        \PHPUnit_Framework_TestCase::assertEquals("ok", (string) $response->getBody());
     }
 
     /**
-    * @Then my order must be updated to :arg1
+    * @Then my order must be updated to :status
     */
-    public function myOrderMustBeUpdatedTo($arg1)
+    public function myOrderMustBeUpdatedTo($status)
     {
-        throw new PendingException();
+        $order = Mage::getModel('sales/order')
+            ->load($this->order->getId());
+
+        \PHPUnit_Framework_TestCase::assertEquals(
+            $status,
+            $order->getStatus()
+        );
     }
 }
