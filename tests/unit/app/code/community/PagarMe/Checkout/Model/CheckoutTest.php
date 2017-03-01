@@ -83,8 +83,8 @@ class PagarMe_Checkout_Model_CheckoutTest extends PHPUnit_Framework_TestCase
         $orderMock = $this->getMockBuilder('Mage_Sales_Model_Order_Payment')
             ->getMock();
 
-        $orderMock->method('getId')->willReturn(rand(100,1000));
-        $orderMock->method('getIncrementId')->willReturn(rand(100,1000));
+        $orderMock->method('getId')->willReturn(rand(100, 1000));
+        $orderMock->method('getIncrementId')->willReturn(rand(100, 1000));
 
         $paymentMock = $this->getMockBuilder('Mage_Sales_Model_Order_Payment')
             ->getMock();

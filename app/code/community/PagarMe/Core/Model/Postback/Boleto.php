@@ -74,7 +74,7 @@ class PagarMe_Core_Model_Postback_Boleto extends Mage_Core_Model_Abstract
         $order = $this->getOrderService()
             ->getOrderByTransactionId($transactionId);
 
-        if(!$this->canProceedWithPostback($order, $currentStatus)) {
+        if (!$this->canProceedWithPostback($order, $currentStatus)) {
             throw new Exception(
                 Mage::helper('pagarme_core')->__('Can\'t proccess postback.')
             );

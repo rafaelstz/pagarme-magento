@@ -37,7 +37,7 @@ class PagarMe_Checkout_Model_Checkout extends Mage_Payment_Model_Method_Abstract
      */
     public function getPagarMeSdk()
     {
-        if(is_null($this->pagarMeSdk)) {
+        if (is_null($this->pagarMeSdk)) {
             $this->pagarMeSdk = Mage::getModel('pagarme_core/sdk_adapter')
                 ->getPagarMeSdk();
         }

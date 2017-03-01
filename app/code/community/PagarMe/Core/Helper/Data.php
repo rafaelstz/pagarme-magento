@@ -48,7 +48,8 @@ class PagarMe_Core_Helper_Data extends Mage_Core_Helper_Abstract
      *
      * @return \PagarMe\Sdk\Customer\Customer
      */
-    public function buildCustomer($array) {
+    public function buildCustomer($array)
+    {
         return $this->_buildCustomer($array);
     }
 
