@@ -10,6 +10,7 @@ class PagarMe_Checkout_Block_Form_CheckoutTest extends PHPUnit_Framework_TestCas
         $checkoutConfig = [
             'amount' => 1234,
             'createToken' => 'false',
+            'paymentMethods' => Mage::getStoreConfig('payment/pagarme_settings/payment_methods'),
             'customerName' => 'John Due',
             'customerEmail' => mktime() . 'john.due@email.com',
             'customerDocumentNumber' => '123.456.789-52',

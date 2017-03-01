@@ -54,8 +54,6 @@ class PagarMe_Checkout_Model_Checkout extends Mage_Payment_Model_Method_Abstract
     }
 
     /**
-     * @codeCoverageIgnore
-     *
      * @param array $data
      *
      * @return PagarMe_Checkout_Model_Checkout

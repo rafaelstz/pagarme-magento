@@ -93,6 +93,7 @@ class PagarMe_Checkout_Block_Form_Checkout extends Mage_Payment_Block_Form
         return json_encode([
             'amount' => $helper->parseAmountToInteger($quote->getGrandTotal()),
             'createToken' => "false",
+            'paymentMethods' => Mage::getStoreConfig('payment/pagarme_settings/payment_methods'),
             'customerName' => $customer->getName(),
             'customerEmail' => $customer->getEmail(),
             'customerDocumentNumber' => $customer->getTaxvat(),

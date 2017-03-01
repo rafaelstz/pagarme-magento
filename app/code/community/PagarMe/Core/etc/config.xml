@@ -76,6 +76,7 @@
                 <order_status>pending</order_status>
                 <title>Pagarme Checkout</title>
                 <allowspecific>0</allowspecific>
+                <payment_methods>credit_card,boleto</payment_methods>
                 <payment_action>authorize</payment_action>
             </pagarme_checkout>
         </payment>
