@@ -16,7 +16,7 @@ class CheckoutContext extends MinkContext
     private $session;
 
     private $pagarMeCheckout;
-    
+
     /**
      * @BeforeScenario
      */
@@ -244,11 +244,45 @@ class CheckoutContext extends MinkContext
     }
 
     /**
+     * @Given a payment method :paymentMethod
+     */
+    public function aPaymentMethod($paymentMethod)
+    {
+        $this->paymentMethod = $paymentMethod;
+    }
+
+    /**
+     * @When I disable this payment method
+     */
+    public function iDisableThisPaymentMethod()
+    {
+        $config = Mage::getModel('core/config')
+            ->saveConfig('payment/pagarme_settings/payment_methods', 'credit_card');
+        Mage::app()->getStore()->resetConfig();
+    }
+
+    /**
+     * @Then the payment method must be disabled
+     */
+    public function thePaymentMethodMustBeDisabled()
+    {
+        $checkoutBlock = new \PagarMe_Checkout_Block_Form_Checkout();
+        $availablePaymentMethods = $checkoutBlock
+            ->getAvailablePaymentMethods();
+
+        \PHPUnit_Framework_TestCase::assertNotContains(
+            'boleto',
+            $availablePaymentMethods
+        );
+    }
+
+
+    /**
      * @AfterScenario
      */
     public function tearDown()
     {
-        $this->customer->delete();
-        $this->product->delete();
+        //$this->customer->delete();
+        //$this->product->delete();
     }
 }

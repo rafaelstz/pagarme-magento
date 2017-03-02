@@ -28,12 +28,11 @@
     </button>
 </ul>
 
-<script type="text/javascript">
+<script type="text/javascript" id="pagarme-checkout">
     $("pagarme-checkout-fill-info-button").observe("click", function (event){
         var checkoutPagarme = new PagarMeCheckout.Checkout({
             "encryption_key" : "<?= $this->getEncryptionKey() ?>",
             success: function (response) {
-                console.log(response);
                 $('pagarme-checkout-hash').value = response['card_hash'];
                 $('pagarme-checkout-payment-method').value = response['payment_method'];
                 $('pagarme_checkout_customer_name').value = response['customer']['name'];

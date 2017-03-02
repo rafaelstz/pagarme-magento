@@ -121,6 +121,15 @@ class ConfigureContext extends MinkContext
         $page->find('named', array('link', 'Payment Methods'))
             ->click();
 
+        $page->find(
+            'named',
+            array(
+                'link',
+                'Pagar.me'
+            )
+        )
+        ->click();
+
         $this->spin(function () use ($page) {
             return $page->findById('config_edit_form') != null;
         }, 10);
@@ -133,15 +142,6 @@ class ConfigureContext extends MinkContext
     {
         $session = $this->getSession();
         $page = $session->getPage();
-
-        $page->find(
-            'named',
-            array(
-                'link',
-                'Pagar.me'
-            )
-        )
-        ->click();
 
         $page->find(
             'named',
@@ -205,6 +205,8 @@ class ConfigureContext extends MinkContext
     {
         $session = $this->getSession();
         $page = $session->getPage();
+
+        $this->waitForElement('#payment_pagarme_settings_payment_methods', 2000);
 
         $page->find(
             'named',
@@ -270,13 +272,15 @@ class ConfigureContext extends MinkContext
      */
     public function theButtonMustNotBeFound($paymentMethodButton)
     {
-        \PHPUnit_Framework_TestCase::assertFalse(
-            $this->pagarMeCheckoutModal
-                ->findButton($paymentMethodButton)
-                ->isVisible()
+        $checkoutBlock = new \PagarMe_Checkout_Block_Form_Checkout();
+        $availablePaymentMethods = $checkoutBlock
+            ->getAvailablePaymentMethods();
+
+        \PHPUnit_Framework_TestCase::assertNotContains(
+            'boleto',
+            $availablePaymentMethods
         );
     }
-
 
     public function waitForElement($element, $timeout)
     {
@@ -308,10 +312,5 @@ class ConfigureContext extends MinkContext
         $this->adminUser->delete();
         $this->customer->delete();
         $this->product->delete();
-
-        Mage::getModel('core/config')->saveConfig(
-            'payment/pagarme_settings/payment_methods',
-            'credit_card,boleto'
-        );
     }
 }

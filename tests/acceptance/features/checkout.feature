@@ -15,3 +15,9 @@ Feature: Checkout Pagar.me
         And finish purchase
         Then the purchase must be created success
         And a link to boleto must be provided
+
+    @only
+    Scenario: Disable payment method
+        Given a payment method "boleto"
+        When I disable this payment method
+        Then the payment method must be disabled

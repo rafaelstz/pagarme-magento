@@ -8,7 +8,6 @@ require_once __DIR__ . '/../../vendor/autoload.php';
 
 class PostbackContext extends MinkContext
 {
-
     use PagarMe\Magento\Test\Helper\CustomerDataProvider;
     use PagarMe\Magento\Test\Helper\ProductDataProvider;
     use PagarMe\Magento\Test\Helper\PostbackDataProvider;
@@ -60,13 +59,13 @@ class PostbackContext extends MinkContext
         $transactionId = Mage::getModel('pagarme_core/service_order')
             ->getTransactionIdByOrder($this->order);
 
-        $algoritm = 'sha1';
+        $algorithm = 'sha1';
 
         $payload = "id={$transactionId}&current_status={$currentStatus}";
 
-        $hash = hash_hmac($algoritm, $payload, $this->apiKey);
+        $hash = hash_hmac($algorithm, $payload, $this->apiKey);
 
-        $signature = "{$algoritm}={$hash}";
+        $signature = "{$algorithm}={$hash}";
 
         $client = new GuzzleHttp\Client();
         $response = $client->post(

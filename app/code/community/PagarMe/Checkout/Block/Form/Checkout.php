@@ -80,6 +80,14 @@ class PagarMe_Checkout_Block_Form_Checkout extends Mage_Payment_Block_Form
     /**
      * @return string
      */
+    public function getAvailablePaymentMethods()
+    {
+        return Mage::getStoreConfig('payment/pagarme_settings/payment_methods');
+    }
+
+    /**
+     * @return string
+     */
     public function getCheckoutConfig()
     {
         $quote = $this->getQuote();
@@ -93,7 +101,7 @@ class PagarMe_Checkout_Block_Form_Checkout extends Mage_Payment_Block_Form
         return json_encode([
             'amount' => $helper->parseAmountToInteger($quote->getGrandTotal()),
             'createToken' => "false",
-            'paymentMethods' => Mage::getStoreConfig('payment/pagarme_settings/payment_methods'),
+            'paymentMethods' => $this->getAvailablePaymentMethods(),
             'customerName' => $customer->getName(),
             'customerEmail' => $customer->getEmail(),
             'customerDocumentNumber' => $customer->getTaxvat(),
