@@ -6,13 +6,15 @@
 
 [caso essa issue se trate de um bug, descreva como é o ambiente que ele ocorre, por exemplo:]
 
+* Magento Community 1.8.1.0
+* Módulo Pagar.me 0.1.6
 * Servidor Linux
-* PHP 5.2
+* PHP 5.4
 * Apache 2.2
 * MySQL 5.6
 * Qualquer outra característica a ser considerada
 
-## Processo
+## Passos para reproduzir
 
 [lista organizada de processos para reproduzir a issue, por exemplo:]
 
@@ -37,6 +39,6 @@
 * Exibir uma mensagem após o usuário tentar salvar informando que a API Key informada é inválida.
 * Ao preencher o campo de API Key, marcá-lo com a borda em vermelho para o usuário.
 
-## `nome da issue` screenshot
+## Screenshots
 
 [se for relevante, inclua uma screenshot]
