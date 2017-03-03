@@ -22,6 +22,12 @@ class CheckoutContext extends MinkContext
      */
     public function setUp()
     {
+        $config = Mage::getModel('core/config')
+            ->saveConfig(
+                'payment/pagarme_settings/payment_methods',
+                'credit_card,boleto'
+            );
+
         $this->magentoUrl = getenv('MAGENTO_URL');
         $this->session = $this->getSession();
         $this->product = $this->getProduct();
@@ -135,11 +141,10 @@ class CheckoutContext extends MinkContext
         $page = $this->session->getPage();
 
         $this->session->switchToIframe(
-            $page->find('css', 'iframe')->getAttribute('name')
+            $page->find('css' ,'iframe')->getAttribute('name')
         );
 
         $this->pagarMeCheckout = $this->session->getPage();
-
         $this->pagarMeCheckout->pressButton($paymentMethod);
     }
 
@@ -148,7 +153,6 @@ class CheckoutContext extends MinkContext
      */
     public function iConfirmMyPersonalData()
     {
-
         $this->waitForElement(
             '#pagarme-modal-box-step-buyer-information',
             1000
@@ -244,45 +248,11 @@ class CheckoutContext extends MinkContext
     }
 
     /**
-     * @Given a payment method :paymentMethod
-     */
-    public function aPaymentMethod($paymentMethod)
-    {
-        $this->paymentMethod = $paymentMethod;
-    }
-
-    /**
-     * @When I disable this payment method
-     */
-    public function iDisableThisPaymentMethod()
-    {
-        $config = Mage::getModel('core/config')
-            ->saveConfig('payment/pagarme_settings/payment_methods', 'credit_card');
-        Mage::app()->getStore()->resetConfig();
-    }
-
-    /**
-     * @Then the payment method must be disabled
-     */
-    public function thePaymentMethodMustBeDisabled()
-    {
-        $checkoutBlock = new \PagarMe_Checkout_Block_Form_Checkout();
-        $availablePaymentMethods = $checkoutBlock
-            ->getAvailablePaymentMethods();
-
-        \PHPUnit_Framework_TestCase::assertNotContains(
-            'boleto',
-            $availablePaymentMethods
-        );
-    }
-
-
-    /**
      * @AfterScenario
      */
     public function tearDown()
     {
-        //$this->customer->delete();
-        //$this->product->delete();
+        $this->customer->delete();
+        $this->product->delete();
     }
 }

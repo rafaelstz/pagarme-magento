@@ -10,14 +10,8 @@ Feature: Checkout Pagar.me
         And I go to checkout page
         And login with registered user
         And confirm billing and shipping address information
-        And choose pay with pagar me checkout using "Boleto"
+        And choose pay with pagar me checkout using "Boleto bancário"
         And I confirm my personal data
         And finish purchase
         Then the purchase must be created success
         And a link to boleto must be provided
-
-    @only
-    Scenario: Disable payment method
-        Given a payment method "boleto"
-        When I disable this payment method
-        Then the payment method must be disabled
