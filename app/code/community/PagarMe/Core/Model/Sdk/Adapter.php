@@ -1,6 +1,6 @@
 <?php
 
-class PagarMe_Core_Model_Sdk_Adapter extends Mage_Core_Model_Abstract 
+class PagarMe_Core_Model_Sdk_Adapter extends Mage_Core_Model_Abstract
 {
     /**
      * @var \PagarMe\Sdk\PagarMe

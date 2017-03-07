@@ -141,7 +141,7 @@ class CheckoutContext extends MinkContext
         $page = $this->session->getPage();
 
         $this->session->switchToIframe(
-            $page->find('css' ,'iframe')->getAttribute('name')
+            $page->find('css', 'iframe')->getAttribute('name')
         );
 
         $this->pagarMeCheckout = $this->session->getPage();
