@@ -4,56 +4,43 @@ class PagarMe_Checkout_Model_Checkout extends Mage_Payment_Model_Method_Abstract
 {
     const PAGARME_CHECKOUT_BOLETO = 'pagarme_checkout_boleto';
 
-    /** @var string */
-    protected $_code                   = 'pagarme_checkout';
-
-    /** @var boolean */
-    protected $_isGateway              = true;
-
-    /** @var boolean */
-    protected $_canAuthorize           = true;
-
-    /** @var boolean */
-    protected $_canCapture             = true;
-
-    /** @var boolean */
-    protected $_canRefund              = true;
-
-    /** @var boolean */
+    /**
+     * @var string
+     */
+    protected $_code = 'pagarme_checkout';
+    /**
+     * @var bool
+     */
+    protected $_isGateway = true;
+    /**
+     * @var bool
+     */
+    protected $_canAuthorize = true;
+    /**
+     * @var bool
+     */
+    protected $_canCapture = true;
+    /**
+     * @var bool
+     */
+    protected $_canRefund = true;
+    /**
+     * @var bool
+     */
     protected $_canUseForMultishipping = true;
-
-    /** @var boolean */
-    protected $_isInitializeNeeded      = false;
-
-    /** @var string */
-    protected $_formBlockType          = 'pagarme_checkout/form_checkout';
-
     /**
-     * @codeCoverageIgnore
-     * @return \PagarMe\Sdk\PagarMe
+     * @var bool
      */
-    public function getPagarMeSdk()
-    {
-        if (is_null($this->pagarMeSdk)) {
-            $this->pagarMeSdk = Mage::getModel('pagarme_core/sdk_adapter')
-                ->getPagarMeSdk();
-        }
-
-        return $this->pagarMeSdk;
-    }
-
+    protected $_isInitializeNeeded = false;
     /**
-     * @param \PagarMe\Sdk\PagarMe $pagarMeSdk
+     * @var string
      */
-    public function setPagarMeSdk(\PagarMe\Sdk\PagarMe $pagarMeSdk)
-    {
-        $this->pagarMeSdk = $pagarMeSdk;
-    }
+    protected $_formBlockType = 'pagarme_checkout/form_checkout';
 
     /**
      * @param array $data
      *
-     * @return PagarMe_Checkout_Model_Checkout
+     * @return $this
      */
     public function assignData($data)
     {
@@ -64,12 +51,12 @@ class PagarMe_Checkout_Model_Checkout extends Mage_Payment_Model_Method_Abstract
 
         $customer = Mage::helper('pagarme_core')->buildCustomer($customerData);
 
-        $info->setAdditionalInformation(
-            [
-                'pagarme_payment_method' => $this->_code . '_' . $data['pagarme_checkout_payment_method'],
-                'customer' => $customer
-            ]
-        );
+        $info->setAdditionalInformation([
+            'pagarme_payment_method' =>
+                $this->_code .'_' . $data['pagarme_checkout_payment_method'],
+            'customer' => $customer,
+            'token' => $data['pagarme_checkout_token']
+        ]);
 
         return $this;
     }
@@ -77,22 +64,29 @@ class PagarMe_Checkout_Model_Checkout extends Mage_Payment_Model_Method_Abstract
     /**
      * Authorize payment
      *
-     * @param Varien_Object
+     * @param Varien_Object $payment
+     * @param float $amount
      *
-     * @return PagarMe_Checkout_Model_Checkout
+     * @throws Exception
+     *
+     * @return $this
      */
     public function authorize(Varien_Object $payment, $amount)
     {
         $infoInstance = $this->getInfoInstance();
-        $customer = $infoInstance->getAdditionalInformation('customer');
-
-        $transaction = $this->getPagarMeSdk()
-            ->transaction()
-            ->boletoTransaction(
-                Mage::helper('pagarme_core')->parseAmountToInteger($amount),
-                $customer,
-                Mage::getUrl('pagarme/transaction_boleto/postback')
+        
+        $preTransactionEntity = Mage::getModel('pagarme_core/entity_factory')
+            ->prepareTransaction(
+                $amount,
+                $infoInstance
             );
+
+        try {
+            $transaction = Mage::getModel('pagarme_core/service_transaction')
+                ->capture($preTransactionEntity);
+        } catch (\Exception $exception) {
+            throw $exception;
+        }
 
         $order = $payment->getOrder();
 
@@ -109,7 +103,7 @@ class PagarMe_Checkout_Model_Checkout extends Mage_Payment_Model_Method_Abstract
             )
         );
 
-        $transaction = Mage::getModel('pagarme_core/transaction')
+        Mage::getModel('pagarme_core/transaction')
             ->setTransactionId($transaction->getId())
             ->setOrderId($order->getId())
             ->save();

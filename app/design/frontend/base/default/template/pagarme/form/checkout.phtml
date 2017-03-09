@@ -1,7 +1,8 @@
 <ul class="form-list" id="payment_form_pagarme_checkout" style="display:none;">
-    <input type="hidden" value="" name="payment[pagarme_checkout_hash]" id="pagarme-checkout-hash" class="required-entry" />
-    <input type="hidden" value="" name="payment[pagarme_checkout_payment_method]" id="pagarme-checkout-payment-method" />
-    <input type="hidden" value="1" name="payment[pagarme_checkout_installments]" id="pagarme-checkout-installments" />
+    <input type="hidden" value="" name="payment[pagarme_checkout_hash]" id="pagarme_checkout_hash" class="required_entry" />
+    <input type="hidden" value="" name="payment[pagarme_checkout_token]" id="pagarme_checkout_token" class="required_entry" />
+    <input type="hidden" value="" name="payment[pagarme_checkout_payment_method]" id="pagarme_checkout_payment_method" />
+    <input type="hidden" value="1" name="payment[pagarme_checkout_installments]" id="pagarme_checkout_installments" />
     <input type="hidden" name="payment[pagarme_checkout_customer_document_number]" id="pagarme_checkout_customer_document_number"/>
     <input type="hidden" name="payment[pagarme_checkout_customer_document_type]" id="pagarme_checkout_customer_document_type"/>
     <input type="hidden" name="payment[pagarme_checkout_customer_name]" id="pagarme_checkout_customer_name"/>
@@ -33,12 +34,12 @@
         var checkoutPagarme = new PagarMeCheckout.Checkout({
             "encryption_key" : "<?= $this->getEncryptionKey() ?>",
             success: function (response) {
-                $('pagarme-checkout-hash').value = response['card_hash'];
-                $('pagarme-checkout-payment-method').value = response['payment_method'];
+                $('pagarme_checkout_hash').value = response['card_hash'];
+                $('pagarme_checkout_token').value = response['token'];
+                $('pagarme_checkout_payment_method').value = response['payment_method'];
                 $('pagarme_checkout_customer_name').value = response['customer']['name'];
                 $('pagarme_checkout_customer_email').value = response['customer']['email'];
                 $('pagarme_checkout_customer_document_number').value = response['customer']['document_number'];
-
                 $('pagarme_checkout_customer_address_street_1').value = response['customer']['address']['street'];
                 $('pagarme_checkout_customer_address_street_2').value = response['customer']['address']['street_number'];
                 $('pagarme_checkout_customer_address_street_3').value = response['customer']['address']['complementary'];
