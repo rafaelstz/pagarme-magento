@@ -121,14 +121,7 @@ class ConfigureContext extends MinkContext
         $page->find('named', array('link', 'Payment Methods'))
             ->click();
 
-        $page->find(
-            'named',
-            array(
-                'link',
-                'Pagar.me'
-            )
-        )
-        ->click();
+        $page->find('css', '#payment_pagarme_settings-head')->click();
 
         $this->spin(function () use ($page) {
             return $page->findById('config_edit_form') != null;
@@ -219,6 +212,33 @@ class ConfigureContext extends MinkContext
             sleep(1);
         }
     }
+
+    /**
+     * @When enable Pagar.me Checkout
+     */
+    public function enablePagarMeCheckout()
+    {
+        $page = $this->getSession()->getPage();
+
+        $this->getSession()->wait(5000);
+        $select = $page->find(
+            'css',
+            '#payment_pagarme_settings_active'
+        );
+        $select->selectOption('Yes');
+
+    }
+
+    /**
+     * @Then Pagar.me checkout must be enabled
+     */
+    public function pagarMeCheckoutMustBeEnabled()
+    {
+        \PHPUnit_Framework_TestCase::assertTrue(
+            Mage::helper('core')->isModuleEnabled('PagarMe_Core')
+        );
+    }
+
 
     /**
      * @AfterScenario

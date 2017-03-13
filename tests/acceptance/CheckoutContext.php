@@ -10,6 +10,7 @@ class CheckoutContext extends MinkContext
 {
     use PagarMe\Magento\Test\Helper\CustomerDataProvider;
     use PagarMe\Magento\Test\Helper\ProductDataProvider;
+    use PagarMe\Magento\Test\Helper\PagarMeCheckoutSwitch;
 
     private $customer;
 
@@ -36,6 +37,8 @@ class CheckoutContext extends MinkContext
         $stock = $this->getProductStock();
         $stock->assignProduct($this->product);
         $stock->save();
+
+        $this->enablePagarmeCheckout();
     }
 
     public function waitForElement($element, $timeout)
@@ -254,5 +257,6 @@ class CheckoutContext extends MinkContext
     {
         $this->customer->delete();
         $this->product->delete();
+        $this->disablePagarmeCheckout();
     }
 }
