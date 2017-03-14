@@ -38,7 +38,7 @@ class PostbackContext extends MinkContext
     */
     public function aPendingBoletoOrder()
     {
-        $this->order = $this->getOrder(
+        $this->order = $this->getOrderPaidByBoleto(
             $this->customer,
             $this->customerAddress,
             [
@@ -55,9 +55,22 @@ class PostbackContext extends MinkContext
     }
 
     /**
-    * @When I receive a postback with status :arg1
+    * @When I receive a postback for boleto with status :arg1
     */
-    public function iReceiveAPostbackWithStatus($currentStatus)
+    public function iReceiveAPostbackForBoletoWithStatus($currentStatus)
+    {
+        $this->processPostbackByPaymentMethod($currentStatus, 'boleto');
+    }
+
+    /**
+    * @When I receive a postback for credit card with status :arg1
+    */
+    public function iReceiveAPostbackForCreditCardWithStatus($currentStatus)
+    {
+        $this->processPostbackByPaymentMethod($currentStatus, 'creditcard');
+    }
+
+    private function processPostbackByPaymentMethod($currentStatus, $paymentMethod)
     {
         $transactionId = Mage::getModel('pagarme_core/service_order')
             ->getTransactionIdByOrder($this->order);
@@ -70,9 +83,13 @@ class PostbackContext extends MinkContext
 
         $signature = "{$algorithm}={$hash}";
 
+        $urlForPostback = getenv('MAGENTO_URL')
+            . 'index.php/pagarme/transaction_'
+            . $paymentMethod . '/postback';
+
         $client = new GuzzleHttp\Client();
         $response = $client->post(
-            getenv('MAGENTO_URL') . 'index.php/pagarme/transaction_boleto/postback',
+            $urlForPostback,
             [
                 'headers' => [
                     'X-Hub-Signature' => $signature
@@ -99,6 +116,27 @@ class PostbackContext extends MinkContext
         \PHPUnit_Framework_TestCase::assertEquals(
             $status,
             $order->getStatus()
+        );
+    }
+
+    /**
+     * @Given a pending credit card order
+     */
+    public function aPendingCreditCardOrder()
+    {
+        $this->order = $this->getOrderPaidByCreditCard(
+            $this->customer,
+            $this->customerAddress,
+            [
+                $this->product
+            ]
+        );
+
+        $this->order->save();
+
+        \PHPUnit_Framework_TestCase::assertEquals(
+            'pending',
+            $this->order->getStatus()
         );
     }
 
