@@ -1,5 +1,8 @@
 <?php
 
+use PagarMe\Sdk\Transaction\CreditCardTransaction;
+use PagarMe\Sdk\Transaction\BoletoTransaction;
+
 class PagarMe_Core_Model_Service_Transaction
 {
     /**
@@ -35,43 +38,23 @@ class PagarMe_Core_Model_Service_Transaction
     /**
      * @param PagarMe_Core_Model_Entity_EntityInterface $entity
      *
-     * @return void
+     * @return CreditCardTransaction|BoletoTransaction
+     *
+     * @throws Exception
      */
     public function capture(
         PagarMe_Core_Model_Entity_EntityInterface $entity
     ) {
-        switch ($entity->getPaymentMethod()) {
-            case PagarMe_Core_Model_Entity_CreditCard::PAGARME_PAYMENT_METHOD:
-                return $this->creditCardTransaction($entity);
-            case PagarMe_Core_Model_Entity_Boleto::PAGARME_PAYMENT_METHOD:
-                return $this->boletoTransaction($entity);
-        }
-    }
+        $transaction = $this->getTransactionObject($entity);
 
-    /**
-     * @param PagarMe_Core_Model_Entity_EntityInterface $entity
-     *
-     * @throws \Exception
-     *
-     * @return \PagarMe\Sdk\Transaction\CreditCardTransaction
-     */
-    private function creditCardTransaction(
-        PagarMe_Core_Model_Entity_EntityInterface $entity
-    ) {
         try {
-            $transaction = $this->getPagarMeSdk()
-                ->transaction()
-                ->get(
-                    $entity->getToken()
-                );
-
             return $this->getPagarMeSdk()
                 ->transaction()
                 ->capture(
                     $transaction,
                     $entity->getAmount()
                 );
-        } catch (\Exception $exception) {
+        } catch (Exception $exception) {
             throw $exception;
         }
     }
@@ -79,24 +62,26 @@ class PagarMe_Core_Model_Service_Transaction
     /**
      * @param PagarMe_Core_Model_Entity_EntityInterface $entity
      *
-     * @throws \Exception
+     * @return CreditCardTransaction|BoletoTransaction
      *
-     * @return type
+     * @throws Exception
      */
-    private function boletoTransaction(
-        PagarMe_Core_Model_Entity_EntityInterface $entity
-    ) {
-        try {
-            return $this->getPagarMeSdk()
-                ->transaction()
-                ->boletoTransaction(
-                    $entity->getAmount(),
-                    $entity->getCustomer(),
-                    $entity->getPostBackUrl(),
-                    $entity->getMetadata()
-                );
-        } catch (\Exception $exception) {
-            throw $exception;
+    private function getTransactionObject($entity)
+    {
+        $paymentMethod = $entity->getPaymentMethod();
+
+        if ($paymentMethod === PagarMe_Core_Model_Entity_CreditCard::PAGARME_PAYMENT_METHOD) {
+            return new CreditCardTransaction([
+                'token' => $entity->getToken()
+            ]);
         }
+
+        if ($paymentMethod === PagarMe_Core_Model_Entity_Boleto::PAGARME_PAYMENT_METHOD) {
+            return new BoletoTransaction([
+                'token' => $entity->getToken()
+            ]);
+        }
+
+        throw new Exception('Unsupported payment method: '.$paymentMethod);
     }
 }

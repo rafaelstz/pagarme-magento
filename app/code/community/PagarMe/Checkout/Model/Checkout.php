@@ -91,16 +91,9 @@ class PagarMe_Checkout_Model_Checkout extends Mage_Payment_Model_Method_Abstract
         $order = $payment->getOrder();
 
         $infoInstance->unsAdditionalInformation('customer');
+
         $infoInstance->setAdditionalInformation(
-            array_merge(
-                $infoInstance->getAdditionalInformation(),
-                [
-                    'pagarme_transaction_id' => $transaction->getId(),
-                    'pagarme_boleto_url'     => $transaction->getBoletoUrl(),
-                    'store_order_id'         => $order->getId(),
-                    'store_increment_id'     => $order->getIncrementId()
-                ]
-            )
+            $this->extractAdditionalInfo($infoInstance, $transaction, $order)
         );
 
         Mage::getModel('pagarme_core/transaction')
@@ -109,5 +102,30 @@ class PagarMe_Checkout_Model_Checkout extends Mage_Payment_Model_Method_Abstract
             ->save();
 
         return $this;
+    }
+
+    /**
+     * @param type $infoInstance
+     * @param \PagarMe\Sdk\Transaction\AbstractTransaction $transaction
+     * @param type $order
+     *
+     * @return array
+     */
+    private function extractAdditionalInfo($infoInstance, $transaction, $order)
+    {
+        $data = [
+                'pagarme_transaction_id' => $transaction->getId(),
+                'store_order_id'         => $order->getId(),
+                'store_increment_id'     => $order->getIncrementId()
+            ];
+
+        if ($transaction instanceof PagarMe\Sdk\Transaction\BoletoTransaction) {
+            $data['pagarme_boleto_url'] = $transaction->getBoletoUrl();
+        }
+
+        return array_merge(
+            $infoInstance->getAdditionalInformation(),
+            $data
+        );
     }
 }
