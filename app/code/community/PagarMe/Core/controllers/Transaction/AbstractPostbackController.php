@@ -1,7 +1,7 @@
 <?php
 
-class PagarMe_Core_Transaction_AbstractPostbackController
-    extends Mage_Core_Controller_Front_Action
+abstract class PagarMe_Core_Transaction_AbstractPostbackController extends
+ Mage_Core_Controller_Front_Action
 {
     /**
      * @return type
@@ -41,8 +41,9 @@ class PagarMe_Core_Transaction_AbstractPostbackController
      *
      * @return bool
      */
-    protected function isValidRequest(Mage_Core_Controller_Request_Http $request)
-    {
+    protected function isValidRequest(
+        Mage_Core_Controller_Request_Http $request
+    ) {
         if ($request->getPost('id') == null) {
             return false;
         }
