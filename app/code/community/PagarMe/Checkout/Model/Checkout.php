@@ -1,34 +1,50 @@
 <?php
 
-class PagarMe_Checkout_Model_Checkout
-    extends Mage_Payment_Model_Method_Abstract
+class PagarMe_Checkout_Model_Checkout extends
+ Mage_Payment_Model_Method_Abstract
 {
     const PAGARME_CHECKOUT_BOLETO      = 'pagarme_checkout_boleto';
 
     const PAGARME_CHECKOUT_CREDIT_CARD = 'pagarme_checkout_credit_card';
 
-    /** @var string */
+    /**
+     * @var string
+     */
     protected $_code                   = 'pagarme_checkout';
 
-    /** @var boolean */
+    /**
+     * @var boolean
+     */
     protected $_isGateway              = true;
 
-    /** @var boolean */
+    /**
+     * @var boolean
+     */
     protected $_canAuthorize           = true;
 
-    /** @var boolean */
+    /**
+     * @var boolean
+     */
     protected $_canCapture             = true;
 
-    /** @var boolean */
+    /**
+     * @var boolean
+     */
     protected $_canRefund              = true;
 
-    /** @var boolean */
+    /**
+     * @var boolean
+     */
     protected $_canUseForMultishipping = true;
 
-    /** @var boolean */
+    /**
+     * @var boolean
+     */
     protected $_isInitializeNeeded     = false;
 
-    /** @var string */
+    /**
+     * @var string
+     */
     protected $_formBlockType          = 'pagarme_checkout/form_checkout';
 
     /**
@@ -47,6 +63,7 @@ class PagarMe_Checkout_Model_Checkout
 
     /**
      * @param \PagarMe\Sdk\PagarMe $pagarMeSdk
+     * @return void
      */
     public function setPagarMeSdk(\PagarMe\Sdk\PagarMe $pagarMeSdk)
     {
@@ -60,30 +77,30 @@ class PagarMe_Checkout_Model_Checkout
      */
     public function assignData($data)
     {
-        $info = $this->getInfoInstance();
+        $paymentMethod = $this->code . '_' . $data['payment_method'];
+        $token = $data['token'];
 
-        $info->setAdditionalInformation(
-            [
-                'pagarme_payment_method' => $this->_code . '_' . $data['payment_method'],
-                'token' => $data['token']
-            ]
-        );
+        $additionalInfoData = [
+            'pagarme_payment_method' => $paymentMethod,
+            'token' => $token
+        ];
+
+        $this->getInfoInstance()->setAdditionalInformation($additionalInfoData);
 
         return $this;
-
     }
 
     /**
      * @param Varien_Object $payment
-     * @param int $amount
-     *
      * @return PagarMe_Checkout_Model_Checkout
      */
-    public function authorize(Varien_Object $payment, $amount)
+    public function authorize(Varien_Object $payment)
     {
         $infoInstance = $this->getInfoInstance();
         $token = $infoInstance->getAdditionalInformation('token');
-        $paymentMethod = $infoInstance->getAdditionalInformation('payment_method');
+        $paymentMethod = $infoInstance->getAdditionalInformation(
+            'payment_method'
+        );
 
         $infoInstance->unsAdditionalInformation('token');
 
@@ -100,7 +117,8 @@ class PagarMe_Checkout_Model_Checkout
         ];
 
         if ($paymentMethod == self::PAGARME_CHECKOUT_BOLETO) {
-            $transactionData['pagarme_boleto_url'] = $transaction->getBoletoUrl();
+            $transactionData['pagarme_boleto_url'] = $transaction
+                ->getBoletoUrl();
         }
 
         $infoInstance->setAdditionalInformation(
