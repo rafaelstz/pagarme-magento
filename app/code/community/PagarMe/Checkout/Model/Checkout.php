@@ -89,6 +89,8 @@ class PagarMe_Checkout_Model_Checkout extends Mage_Payment_Model_Method_Abstract
                 $infoInstance
             );
 
+        $infoInstance->unsAdditionalInformation('token');
+
         try {
             $transaction = Mage::getModel('pagarme_core/service_transaction')
                 ->capture($preTransaction);
