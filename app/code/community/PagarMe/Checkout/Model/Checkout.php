@@ -56,8 +56,8 @@ class PagarMe_Checkout_Model_Checkout extends Mage_Payment_Model_Method_Abstract
      */
     public function assignData($data)
     {
-        $paymentMethod = $this->code . '_' . $data['payment_method'];
-        $token = $data['token'];
+        $paymentMethod = $this->_code . '_' . $data['pagarme_checkout_payment_method'];
+        $token = $data['pagarme_checkout_token'];
 
         $additionalInfoData = [
             'pagarme_payment_method' => $paymentMethod,
