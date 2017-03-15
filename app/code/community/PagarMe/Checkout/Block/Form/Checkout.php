@@ -4,14 +4,20 @@ class PagarMe_Checkout_Block_Form_Checkout extends Mage_Payment_Block_Form
 {
     const TEMPLATE = 'pagarme/form/checkout.phtml';
 
-    /** @var Mage_Sales_Model_Quote */
+    /**
+     * @var Mage_Sales_Model_Quote
+     */
     private $quote;
 
-    /** @var Mage_Customer_Model_Customer */
+    /**
+     * @var Mage_Customer_Model_Customer
+     */
     private $customer;
 
     /**
      * @codeCoverageIgnore
+     *
+     * @return void
      */
     protected function _construct()
     {
@@ -46,7 +52,8 @@ class PagarMe_Checkout_Block_Form_Checkout extends Mage_Payment_Block_Form
     /**
      * @codeCoverageIgnore
      *
-     * @param Mage_Sales_Model_Quote
+     * @param Mage_Sales_Model_Quote $quote Current quote from session
+     * @return void
      */
     public function setQuote(Mage_Sales_Model_Quote $quote)
     {
@@ -61,7 +68,8 @@ class PagarMe_Checkout_Block_Form_Checkout extends Mage_Payment_Block_Form
     public function getCustomer()
     {
         if (is_null($this->customer)) {
-            $this->customer = Mage::getSingleton('customer/session')->getCustomer();
+            $this->customer = Mage::getSingleton('customer/session')
+                ->getCustomer();
         }
 
         return $this->customer;
@@ -70,7 +78,9 @@ class PagarMe_Checkout_Block_Form_Checkout extends Mage_Payment_Block_Form
     /**
      * @codeCoverageIgnore
      *
-     * @param Mage_Customer_Model_Customer
+     * @param Mage_Customer_Model_Customer $customer Current customer
+     *                                               from session
+     * @return void
      */
     public function setCustomer(Mage_Customer_Model_Customer $customer)
     {
@@ -100,7 +110,7 @@ class PagarMe_Checkout_Block_Form_Checkout extends Mage_Payment_Block_Form
 
         return json_encode([
             'amount' => $helper->parseAmountToInteger($quote->getGrandTotal()),
-            'createToken' => "true",
+            'createToken' => 'true',
             'paymentMethods' => $this->getAvailablePaymentMethods(),
             'customerName' => $customer->getName(),
             'customerEmail' => $customer->getEmail(),

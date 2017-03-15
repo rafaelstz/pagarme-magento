@@ -10,6 +10,7 @@ class CheckoutContext extends MinkContext
 {
     use PagarMe\Magento\Test\Helper\CustomerDataProvider;
     use PagarMe\Magento\Test\Helper\ProductDataProvider;
+    use PagarMe\Magento\Test\Helper\PagarMeCheckoutSwitch;
 
     private $customer;
 
@@ -36,6 +37,8 @@ class CheckoutContext extends MinkContext
         $stock = $this->getProductStock();
         $stock->assignProduct($this->product);
         $stock->save();
+
+        $this->enablePagarmeCheckout();
     }
 
     public function waitForElement($element, $timeout)
@@ -57,6 +60,19 @@ class CheckoutContext extends MinkContext
         $this->customerAddress = $this->getCustomerAddress();
         $this->customerAddress->setCustomerId($this->customer->getId());
         $this->customerAddress->save();
+    }
+
+    /**
+     * @Given a valid credit card
+     */
+    public function aValidCreditCard()
+    {
+        $this->creditCard = [
+            'customer_name'   => $this->customer->getName(),
+            'number'          => '4111111111111111',
+            'cvv'             => '123',
+            'expiration_date' => '0220'
+        ];
     }
 
     /**
@@ -187,22 +203,22 @@ class CheckoutContext extends MinkContext
         $this->pagarMeCheckout->find(
             'css',
             '#pagarme-modal-box-credit-card-number'
-        )->setValue('4111111111111111');
+        )->setValue($this->creditCard['number']);
 
         $this->pagarMeCheckout->find(
             'css',
             '#pagarme-modal-box-credit-card-name'
-        )->setValue('José das Couves');
+        )->setValue($this->creditCard['customer_name']);
 
         $this->pagarMeCheckout->find(
             'css',
             '#pagarme-modal-box-credit-card-expiration'
-        )->setValue('07/22');
+        )->setValue($this->creditCard['expiration_date']);
 
         $this->pagarMeCheckout->find(
             'css',
             '#pagarme-modal-box-credit-card-cvv'
-        )->setValue('123');
+        )->setValue($this->creditCard['cvv']);
 
         $this->pagarMeCheckout->find(
             'css',
@@ -235,9 +251,9 @@ class CheckoutContext extends MinkContext
     }
 
      /**
-     * @Then the purchase must be created success
+     * @Then the purchase must be paid with success
      */
-    public function thePurchaseMustBeCreatedWithSuccess()
+    public function thePurchaseMustBePaidWithSuccess()
     {
         $this->session->wait(5000);
 
@@ -290,5 +306,6 @@ class CheckoutContext extends MinkContext
     {
         $this->customer->delete();
         $this->product->delete();
+        $this->disablePagarmeCheckout();
     }
 }

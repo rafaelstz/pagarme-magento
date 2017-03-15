@@ -2,8 +2,6 @@
 
 class PagarMe_Checkout_Model_Checkout extends Mage_Payment_Model_Method_Abstract
 {
-    const PAGARME_CHECKOUT_BOLETO = 'pagarme_checkout_boleto';
-
     /**
      * @var string
      */
@@ -37,6 +35,20 @@ class PagarMe_Checkout_Model_Checkout extends Mage_Payment_Model_Method_Abstract
      */
     protected $_formBlockType = 'pagarme_checkout/form_checkout';
 
+    const PAGARME_CHECKOUT_CREDIT_CARD = 'pagarme_checkout_credit_card';
+    const PAGARME_CHECKOUT_BOLETO = 'pagarme_checkout_boleto';
+
+    public function isAvailable($quote = null)
+    {
+        if (!parent::isAvailable($quote)) {
+            return false;
+        }
+
+        return (bool) Mage::getStoreConfig(
+            'payment/pagarme_settings/active'
+        );
+    }
+
     /**
      * @param array $data
      *
@@ -44,19 +56,15 @@ class PagarMe_Checkout_Model_Checkout extends Mage_Payment_Model_Method_Abstract
      */
     public function assignData($data)
     {
-        $info = $this->getInfoInstance();
+        $paymentMethod = $this->code . '_' . $data['payment_method'];
+        $token = $data['token'];
 
-        $customerData = Mage::helper('pagarme_core')
-            ->prepareCustomerData($data);
+        $additionalInfoData = [
+            'pagarme_payment_method' => $paymentMethod,
+            'token' => $token
+        ];
 
-        $customer = Mage::helper('pagarme_core')->buildCustomer($customerData);
-
-        $info->setAdditionalInformation([
-            'pagarme_payment_method' =>
-                $this->_code .'_' . $data['pagarme_checkout_payment_method'],
-            'customer' => $customer,
-            'token' => $data['pagarme_checkout_token']
-        ]);
+        $this->getInfoInstance()->setAdditionalInformation($additionalInfoData);
 
         return $this;
     }
@@ -75,22 +83,20 @@ class PagarMe_Checkout_Model_Checkout extends Mage_Payment_Model_Method_Abstract
     {
         $infoInstance = $this->getInfoInstance();
         
-        $preTransactionEntity = Mage::getModel('pagarme_core/entity_factory')
-            ->prepareTransaction(
+        $preTransaction = Mage::getModel('pagarme_core/entity_PaymentMethodFactory')
+            ->createTransactionObject(
                 $amount,
                 $infoInstance
             );
 
         try {
             $transaction = Mage::getModel('pagarme_core/service_transaction')
-                ->capture($preTransactionEntity);
+                ->capture($preTransaction);
         } catch (\Exception $exception) {
             throw $exception;
         }
 
         $order = $payment->getOrder();
-
-        $infoInstance->unsAdditionalInformation('customer');
 
         $infoInstance->setAdditionalInformation(
             $this->extractAdditionalInfo($infoInstance, $transaction, $order)
