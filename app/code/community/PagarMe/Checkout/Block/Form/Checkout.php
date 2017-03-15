@@ -79,7 +79,7 @@ class PagarMe_Checkout_Block_Form_Checkout extends Mage_Payment_Block_Form
      * @codeCoverageIgnore
      *
      * @param Mage_Customer_Model_Customer $customer Current customer
-     *      from session
+     *                                               from session
      * @return void
      */
     public function setCustomer(Mage_Customer_Model_Customer $customer)
