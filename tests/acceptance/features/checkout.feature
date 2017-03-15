@@ -24,5 +24,8 @@ Feature: Checkout Pagar.me
         And I go to checkout page
         And login with registered user
         And confirm billing and shipping address information
-        And I use a valid credit card to pay
+        And choose pay with pagar me checkout using "Cartão de crédito"
+        And I confirm my personal data
+        And I confirm my payment information
+        And finish purchase
         Then the purchase must be paid with success

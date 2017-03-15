@@ -1,6 +1,6 @@
 <ul class="form-list" id="payment_form_pagarme_checkout" style="display:none;">
-    <input type="hidden" value="" name="payment[token]" id="token" class="required-entry" />
-    <input type="hidden" value="" name="payment[payment_method]" id="payment_method" class="required-entry" />
+    <input type="hidden" value="" name="payment[pagarme_checkout_token]" id="pagarme_checkout_token" class="required_entry" />
+    <input type="hidden" value="" name="payment[pagarme_checkout_payment_method]" id="pagarme_checkout_payment_method" />
 
     <div style="display:none;" id="advice-required-entry-pagarme-checkout-hash" class="validation-advice">
         <?php echo __("Please click the button below<br />and complete the information."); ?>
@@ -16,8 +16,8 @@
         var checkoutPagarme = new PagarMeCheckout.Checkout({
             "encryption_key" : "<?= $this->getEncryptionKey() ?>",
             success: function (response) {
-                $('token').value = response.token;
-                $('payment_method').value = response.payment_method;
+                $('pagarme_checkout_token').value = response['token'];
+                $('pagarme_checkout_payment_method').value = response['payment_method'];
             }
         });
 

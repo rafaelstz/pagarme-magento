@@ -191,75 +191,39 @@ class CheckoutContext extends MinkContext
     }
 
     /**
-     * @When I use a valid credit card to pay
+     * @When I confirm my payment information
      */
-    public function iUseAValidCreditCardToPay()
+    public function iConfirmMyPaymentInformation()
     {
-        $page = $this->session->getPage();
-        $this->session->switchToIframe(
-            $page->find('css' ,'iframe')->getAttribute('name')
-        );
-
-        $pagarMeCheckout = $this->session->getPage();
-        $pagarMeCheckout->pressButton('Cartão de crédito');
-        $this->waitForElement(
-            '#pagarme-modal-box-step-buyer-information',
-            1000
-        );
-
-        $pagarMeCheckout->find(
-            'css',
-            '#pagarme-modal-box-step-buyer-information .pagarme-modal-box-next-step'
-        )->click();
-
-        $pagarMeCheckout->find(
-            'css',
-            '#pagarme-modal-box-step-customer-address-information .pagarme-modal-box-next-step'
-        )->click();
-
         $this->waitForElement(
             '#pagarme-modal-box-step-credit-card-information',
             1000
         );
 
-        $this->fillField(
-            'pagarme-modal-box-credit-card-number',
-            $this->creditCard['number']
-        );
+        $this->pagarMeCheckout->find(
+            'css',
+            '#pagarme-modal-box-credit-card-number'
+        )->setValue($this->creditCard['number']);
 
-        $pagarMeCheckout->fillField(
-            'pagarme-modal-box-credit-card-name',
-            $this->creditCard['customer_name']
-        );
+        $this->pagarMeCheckout->find(
+            'css',
+            '#pagarme-modal-box-credit-card-name'
+        )->setValue($this->creditCard['customer_name']);
 
-        $pagarMeCheckout->fillField(
-            'pagarme-modal-box-credit-card-expiration',
-            $this->creditCard['expiration_date']
-        );
+        $this->pagarMeCheckout->find(
+            'css',
+            '#pagarme-modal-box-credit-card-expiration'
+        )->setValue($this->creditCard['expiration_date']);
 
-        $pagarMeCheckout->fillField(
-            'pagarme-modal-box-credit-card-cvv',
-            $this->creditCard['cvv']
-        );
+        $this->pagarMeCheckout->find(
+            'css',
+            '#pagarme-modal-box-credit-card-cvv'
+        )->setValue($this->creditCard['cvv']);
 
-        $pagarMeCheckout->find(
+        $this->pagarMeCheckout->find(
             'css',
             '#pagarme-modal-box-step-credit-card-information .pagarme-modal-box-next-step'
         )->click();
-
-        $this->session->switchToIframe();
-        $this->session->wait(
-            5000,
-            "document.querySelector('#pagarme-checkout-container').style.display == 'none'"
-        );
-
-        $page->find(
-            'css',
-            '#payment-buttons-container button'
-        )->press();
-
-        $this->waitForElement('#checkout-step-review', 2000);
-        $page->pressButton(Mage::helper('pagarme_checkout')->__('Place Order'));
     }
 
     /**
