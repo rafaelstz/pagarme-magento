@@ -175,6 +175,42 @@ class CheckoutContext extends MinkContext
     }
 
     /**
+     * @When I confirm my payment information
+     */
+    public function iConfirmMyPaymentInformation()
+    {
+        $this->waitForElement(
+            '#pagarme-modal-box-step-credit-card-information',
+            1000
+        );
+
+        $this->pagarMeCheckout->find(
+            'css',
+            '#pagarme-modal-box-credit-card-number'
+        )->setValue('4111111111111111');
+
+        $this->pagarMeCheckout->find(
+            'css',
+            '#pagarme-modal-box-credit-card-name'
+        )->setValue('José das Couves');
+
+        $this->pagarMeCheckout->find(
+            'css',
+            '#pagarme-modal-box-credit-card-expiration'
+        )->setValue('07/22');
+
+        $this->pagarMeCheckout->find(
+            'css',
+            '#pagarme-modal-box-credit-card-cvv'
+        )->setValue('123');
+
+        $this->pagarMeCheckout->find(
+            'css',
+            '#pagarme-modal-box-step-credit-card-information .pagarme-modal-box-next-step'
+        )->click();
+    }
+
+    /**
      * @Then finish purchase
      */
     public function finishPurchase()
