@@ -4,35 +4,58 @@ namespace PagarMe\Magento\Test\Helper;
 
 trait PostbackDataProvider
 {
-    public function getOrderPaidByBoleto($customer, $customerAddress, $products)
-    {
-        $quote = $this->createQuote($customer, $customerAddress, $products);
-
-        $dataQuote = [
-            'method' => 'pagarme_checkout',
-            'pagarme_checkout_payment_method' => 'boleto',
-            'pagarme_checkout_token' => $this->createToken('boleto', $quote->getGrandTotal())
-        ];
-
-        $quote->getPayment()->importData($dataQuote);
-        $quote->save();
-
-        $service = \Mage::getModel('sales/service_quote', $quote);
-        $service->submitAll();
-
-        $order = $service->getOrder();
-
-        return $order;
+    public function getOrderPaidByBoleto(
+        $customer,
+        $customerAddress,
+        $products
+    ) {
+        return $this->getOrderPaid(
+            'boleto',
+            $customer,
+            $customerAddress,
+            $products
+        );
     }
 
-    public function getOrderPaidByCreditCard($customer, $customerAddress, $products)
-    {
+    public function getOrderPaidByCreditCard(
+        $customer,
+        $customerAddress,
+        $products
+    ) {
+        return $this->getOrderPaid(
+            'credit_card',
+            $customer,
+            $customerAddress,
+            $products
+        );
+    }
+
+    private function getOrderPaid(
+        $paymentMethod,
+        $customer,
+        $customerAddress,
+        $products
+    ) {
         $quote = $this->createQuote($customer, $customerAddress, $products);
+
+        if ($paymentMethod == 'boleto') {
+            $token = $this->createTokenBoletoTransaction(
+                $quote->getGrandTotal(),
+                $customer,
+                $customerAddress
+            );
+        } elseif ($paymentMethod == 'credit_card') {
+            $token = $this->createTokenCreditCardTransaction(
+                $quote->getGrandTotal(),
+                $customer,
+                $customerAddress
+            );
+        }
 
         $dataQuote = [
             'method' => 'pagarme_checkout',
-            'pagarme_checkout_payment_method' => 'credit_card',
-            'pagarme_checkout_token' => $this->createToken('credit_card', $quote->getGrandTotal())
+            'pagarme_checkout_payment_method' => $paymentMethod,
+            'pagarme_checkout_token' => $token
         ];
 
         $quote->getPayment()->importData($dataQuote);
@@ -46,8 +69,11 @@ trait PostbackDataProvider
         return $order;
     }
 
-    private function createQuote($customer, $customerAddress, $products)
-    {
+    private function createQuote(
+        $customer,
+        $customerAddress,
+        $products
+    ) {
         \Mage::app()
             ->setCurrentStore(1);
 
@@ -80,44 +106,45 @@ trait PostbackDataProvider
         return $quote;
     }
 
-    public function createToken($paymentMethod, $amount)
-    {
-        $encryptionKey = \Mage::getStoreConfig(
-            'payment/pagarme_settings/encryption_key'
+    private function createTokenBoletoTransaction(
+        $amount,
+        $customer,
+        $customerAddress
+    ) {
+        $bodyData = $this->createCommonDataForToken(
+            $amount,
+            $customer,
+            $customerAddress
         );
 
-        $bodyData = [
-            'amount' => '' . (int) ($amount * 100),
-            'postback_url' => 'http://requestb.in/pkt7pgpk',
-            'customer' => [
-                'name' => 'Aardvark Silva',
-                'email' => 'aardvark.silva@pagar.me',
-                'document_number' => '18152564000105',
-                'address' => [
-                    'zipcode' => '01451001',
-                    'neighborhood' => 'Jardim Paulistano',
-                    'street' => 'Avenida Brigadeiro Faria Lima',
-                    'street_number' => '1811'
-                ],
-                'phone' => [
-                    'number' => '99999999',
-                    'ddi' => '55',
-                    'ddd' => '11'
-                ]
-            ],
-            'metadata' => ['idProduto' => '13933139'],
-            'capture' => 'false',
-            'payment_method' => $paymentMethod,
-            'encryption_key' => $encryptionKey
-        ];
+        $bodyData['payment_method'] = 'boleto';
 
-        if ($paymentMethod == 'credit_card') {
-            $bodyData = array_merge(
-                $bodyData,
-                $this->getCreditCardData()
-            );
-        }
+        return $this->createToken($bodyData);
+    }
 
+    private function createTokenCreditCardTransaction(
+        $amount,
+        $customer,
+        $customerAddress
+    ) {
+        $bodyData = $this->createCommonDataForToken(
+            $amount,
+            $customer,
+            $customerAddress
+        );
+
+        $bodyData['payment_method'] = 'credit_card';
+
+        $bodyData = array_merge(
+            $this->getCreditCardData(),
+            $bodyData
+        );
+
+        return $this->createToken($bodyData);
+    }
+
+    private function createToken($bodyData)
+    {
         $client = new \GuzzleHttp\Client();
         $response = $client->post(
             'https://api.pagar.me/1/transactions',
@@ -140,28 +167,36 @@ trait PostbackDataProvider
         ];
     }
 
-    private function createCommonDataForQuote($customer, $customerAddress)
+    private function createCommonDataForToken($amount, $customer, $customerAddress)
     {
         $helper = \Mage::helper('pagarme_core');
 
+        $encryptionKey = \Mage::getStoreConfig(
+            'payment/pagarme_settings/encryption_key'
+        );
+
         return [
-            'method' => 'pagarme_checkout',
-            'pagarme_checkout_customer_document_number' => $customer->getTaxvat(),
-            'pagarme_checkout_customer_document_type' => 'cpf',
-            'pagarme_checkout_customer_name' => $customer->getName(),
-            'pagarme_checkout_customer_email' => $customer->getEmail(),
-            'pagarme_checkout_customer_born_at' => $customer->getDob(),
-            'pagarme_checkout_customer_phone_ddd' => $helper->getDddFromPhoneNumber($customerAddress->getTelephone()),
-            'pagarme_checkout_customer_phone_number' => $helper->getPhoneWithoutDdd($customerAddress->getTelephone()),
-            'pagarme_checkout_customer_address_street_1' => $customerAddress->getStreet(1),
-            'pagarme_checkout_customer_address_street_2' => $customerAddress->getStreet(2),
-            'pagarme_checkout_customer_address_street_3' => $customerAddress->getStreet(3),
-            'pagarme_checkout_customer_address_street_4' => $customerAddress->getStreet(4),
-            'pagarme_checkout_customer_address_city' => $customerAddress->getCity(),
-            'pagarme_checkout_customer_address_state' => $customerAddress->getRegion(),
-            'pagarme_checkout_customer_address_zipcode' => $customerAddress->getPostcode(),
-            'pagarme_checkout_customer_address_country' => $customerAddress->getCountryId(),
-            'pagarme_checkout_customer_gender' => $customer->getGender()
+            'amount' => '' . (int) ($amount * 100),
+            'postback_url' => 'http://requestb.in/pkt7pgpk',
+            'customer' => [
+                'name' => $customer->getName(),
+                'email' => $customer->getEmail(),
+                'document_number' => $customer->getTaxvat(),
+                'address' => [
+                    'zipcode' => $customerAddress->getPostcode(),
+                    'neighborhood' => $customerAddress->getStreet(4),
+                    'street' => $customerAddress->getStreet(1),
+                    'street_number' => $customerAddress->getStreet(2)
+                ],
+                'phone' => [
+                    'ddi' => '55',
+                    'ddd' => $helper->getDddFromPhoneNumber($customerAddress->getTelephone()),
+                    'number' => $helper->getPhoneWithoutDdd($customerAddress->getTelephone())
+                ]
+            ],
+            'metadata' => ['idProduto' => '13933139'],
+            'capture' => 'false',
+            'encryption_key' => $encryptionKey
         ];
     }
 }
