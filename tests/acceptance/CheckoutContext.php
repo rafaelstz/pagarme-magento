@@ -63,6 +63,19 @@ class CheckoutContext extends MinkContext
     }
 
     /**
+     * @Given a valid credit card
+     */
+    public function aValidCreditCard()
+    {
+        $this->creditCard = [
+            'customer_name'   => $this->customer->getName(),
+            'number'          => '4111111111111111',
+            'cvv'             => '123',
+            'expiration_date' => '0220'
+        ];
+    }
+
+    /**
      * @When I access the store page
      */
     public function iAccessTheStorePage()
@@ -178,6 +191,42 @@ class CheckoutContext extends MinkContext
     }
 
     /**
+     * @When I confirm my payment information
+     */
+    public function iConfirmMyPaymentInformation()
+    {
+        $this->waitForElement(
+            '#pagarme-modal-box-step-credit-card-information',
+            1000
+        );
+
+        $this->pagarMeCheckout->find(
+            'css',
+            '#pagarme-modal-box-credit-card-number'
+        )->setValue($this->creditCard['number']);
+
+        $this->pagarMeCheckout->find(
+            'css',
+            '#pagarme-modal-box-credit-card-name'
+        )->setValue($this->creditCard['customer_name']);
+
+        $this->pagarMeCheckout->find(
+            'css',
+            '#pagarme-modal-box-credit-card-expiration'
+        )->setValue($this->creditCard['expiration_date']);
+
+        $this->pagarMeCheckout->find(
+            'css',
+            '#pagarme-modal-box-credit-card-cvv'
+        )->setValue($this->creditCard['cvv']);
+
+        $this->pagarMeCheckout->find(
+            'css',
+            '#pagarme-modal-box-step-credit-card-information .pagarme-modal-box-next-step'
+        )->click();
+    }
+
+    /**
      * @Then finish purchase
      */
     public function finishPurchase()
@@ -202,9 +251,9 @@ class CheckoutContext extends MinkContext
     }
 
      /**
-     * @Then the purchase must be created success
+     * @Then the purchase must be paid with success
      */
-    public function thePurchaseMustBeCreatedWithSuccess()
+    public function thePurchaseMustBePaidWithSuccess()
     {
         $this->session->wait(5000);
 

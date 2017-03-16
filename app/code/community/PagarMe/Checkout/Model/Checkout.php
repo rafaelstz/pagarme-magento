@@ -2,31 +2,41 @@
 
 class PagarMe_Checkout_Model_Checkout extends Mage_Payment_Model_Method_Abstract
 {
-    const PAGARME_CHECKOUT_BOLETO = 'pagarme_checkout_boleto';
-
-    /** @var string */
-    protected $_code                   = 'pagarme_checkout';
-
-    /** @var boolean */
-    protected $_isGateway              = true;
-
-    /** @var boolean */
-    protected $_canAuthorize           = true;
-
-    /** @var boolean */
-    protected $_canCapture             = true;
-
-    /** @var boolean */
-    protected $_canRefund              = true;
-
-    /** @var boolean */
+    /**
+     * @var string
+     */
+    protected $_code = 'pagarme_checkout';
+    /**
+     * @var bool
+     */
+    protected $_isGateway = true;
+    /**
+     * @var bool
+     */
+    protected $_canAuthorize = true;
+    /**
+     * @var bool
+     */
+    protected $_canCapture = true;
+    /**
+     * @var bool
+     */
+    protected $_canRefund = true;
+    /**
+     * @var bool
+     */
     protected $_canUseForMultishipping = true;
+    /**
+     * @var bool
+     */
+    protected $_isInitializeNeeded = false;
+    /**
+     * @var string
+     */
+    protected $_formBlockType = 'pagarme_checkout/form_checkout';
 
-    /** @var boolean */
-    protected $_isInitializeNeeded      = false;
-
-    /** @var string */
-    protected $_formBlockType          = 'pagarme_checkout/form_checkout';
+    const PAGARME_CHECKOUT_CREDIT_CARD = 'pagarme_checkout_credit_card';
+    const PAGARME_CHECKOUT_BOLETO = 'pagarme_checkout_boleto';
 
     public function isAvailable($quote = null)
     {
@@ -40,47 +50,21 @@ class PagarMe_Checkout_Model_Checkout extends Mage_Payment_Model_Method_Abstract
     }
 
     /**
-     * @codeCoverageIgnore
-     * @return \PagarMe\Sdk\PagarMe
-     */
-    public function getPagarMeSdk()
-    {
-        if (is_null($this->pagarMeSdk)) {
-            $this->pagarMeSdk = Mage::getModel('pagarme_core/sdk_adapter')
-                ->getPagarMeSdk();
-        }
-
-        return $this->pagarMeSdk;
-    }
-
-    /**
-     * @param \PagarMe\Sdk\PagarMe $pagarMeSdk
-     */
-    public function setPagarMeSdk(\PagarMe\Sdk\PagarMe $pagarMeSdk)
-    {
-        $this->pagarMeSdk = $pagarMeSdk;
-    }
-
-    /**
      * @param array $data
      *
-     * @return PagarMe_Checkout_Model_Checkout
+     * @return $this
      */
     public function assignData($data)
     {
-        $info = $this->getInfoInstance();
+        $paymentMethod = $this->_code . '_' . $data['pagarme_checkout_payment_method'];
+        $token = $data['pagarme_checkout_token'];
 
-        $customerData = Mage::helper('pagarme_core')
-            ->prepareCustomerData($data);
+        $additionalInfoData = [
+            'pagarme_payment_method' => $paymentMethod,
+            'token' => $token
+        ];
 
-        $customer = Mage::helper('pagarme_core')->buildCustomer($customerData);
-
-        $info->setAdditionalInformation(
-            [
-                'pagarme_payment_method' => $this->_code . '_' . $data['pagarme_checkout_payment_method'],
-                'customer' => $customer
-            ]
-        );
+        $this->getInfoInstance()->setAdditionalInformation($additionalInfoData);
 
         return $this;
     }
@@ -88,43 +72,68 @@ class PagarMe_Checkout_Model_Checkout extends Mage_Payment_Model_Method_Abstract
     /**
      * Authorize payment
      *
-     * @param Varien_Object
+     * @param Varien_Object $payment
+     * @param float $amount
      *
-     * @return PagarMe_Checkout_Model_Checkout
+     * @throws Exception
+     *
+     * @return $this
      */
     public function authorize(Varien_Object $payment, $amount)
     {
         $infoInstance = $this->getInfoInstance();
-        $customer = $infoInstance->getAdditionalInformation('customer');
-
-        $transaction = $this->getPagarMeSdk()
-            ->transaction()
-            ->boletoTransaction(
-                Mage::helper('pagarme_core')->parseAmountToInteger($amount),
-                $customer,
-                Mage::getUrl('pagarme/transaction_boleto/postback')
+        
+        $preTransaction = Mage::getModel('pagarme_core/entity_PaymentMethodFactory')
+            ->createTransactionObject(
+                $amount,
+                $infoInstance
             );
+
+        $infoInstance->unsAdditionalInformation('token');
+
+        try {
+            $transaction = Mage::getModel('pagarme_core/service_transaction')
+                ->capture($preTransaction);
+        } catch (\Exception $exception) {
+            throw $exception;
+        }
 
         $order = $payment->getOrder();
 
-        $infoInstance->unsAdditionalInformation('customer');
         $infoInstance->setAdditionalInformation(
-            array_merge(
-                $infoInstance->getAdditionalInformation(),
-                [
-                    'pagarme_transaction_id' => $transaction->getId(),
-                    'pagarme_boleto_url'     => $transaction->getBoletoUrl(),
-                    'store_order_id'         => $order->getId(),
-                    'store_increment_id'     => $order->getIncrementId()
-                ]
-            )
+            $this->extractAdditionalInfo($infoInstance, $transaction, $order)
         );
 
-        $transaction = Mage::getModel('pagarme_core/transaction')
+        Mage::getModel('pagarme_core/transaction')
             ->setTransactionId($transaction->getId())
             ->setOrderId($order->getId())
             ->save();
 
         return $this;
+    }
+
+    /**
+     * @param type $infoInstance
+     * @param \PagarMe\Sdk\Transaction\AbstractTransaction $transaction
+     * @param type $order
+     *
+     * @return array
+     */
+    private function extractAdditionalInfo($infoInstance, $transaction, $order)
+    {
+        $data = [
+                'pagarme_transaction_id' => $transaction->getId(),
+                'store_order_id'         => $order->getId(),
+                'store_increment_id'     => $order->getIncrementId()
+            ];
+
+        if ($transaction instanceof PagarMe\Sdk\Transaction\BoletoTransaction) {
+            $data['pagarme_boleto_url'] = $transaction->getBoletoUrl();
+        }
+
+        return array_merge(
+            $infoInstance->getAdditionalInformation(),
+            $data
+        );
     }
 }
