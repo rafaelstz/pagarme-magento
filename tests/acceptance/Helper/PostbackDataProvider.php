@@ -8,15 +8,14 @@ trait PostbackDataProvider
     {
         $quote = $this->createQuote($customer, $customerAddress, $products);
 
-        $dataQuote = $this->createCommonDataForQuote(
-            $customer,
-            $customerAddress
-        );
-
-        $dataQuote['pagarme_checkout_payment_method'] = 'boleto';
+        $dataQuote = [
+            'method' => 'pagarme_checkout',
+            'pagarme_checkout_payment_method' => 'boleto',
+            'pagarme_checkout_token' => $this->createToken('boleto', $quote->getGrandTotal())
+        ];
 
         $quote->getPayment()->importData($dataQuote);
-        $quote->collectTotals()->save();
+        $quote->save();
 
         $service = \Mage::getModel('sales/service_quote', $quote);
         $service->submitAll();
@@ -30,12 +29,11 @@ trait PostbackDataProvider
     {
         $quote = $this->createQuote($customer, $customerAddress, $products);
 
-        $dataQuote = $this->createCommonDataForQuote(
-            $customer,
-            $customerAddress
-        );
-
-        $dataQuote['pagarme_checkout_payment_method'] = 'credit_card';
+        $dataQuote = [
+            'method' => 'pagarme_checkout',
+            'pagarme_checkout_payment_method' => 'credit_card',
+            'pagarme_checkout_token' => $this->createToken('credit_card', $quote->getGrandTotal())
+        ];
 
         $quote->getPayment()->importData($dataQuote);
         $quote->collectTotals()->save();
@@ -53,11 +51,9 @@ trait PostbackDataProvider
         \Mage::app()
             ->setCurrentStore(1);
 
-        $helper = \Mage::helper('pagarme_core');
-
         $quote = \Mage::getModel('sales/quote')
             ->setStoreId(
-                \Mage::app()->getStore()->getStoreId()
+               \Mage::app()->getStore()->getStoreId()
             )
             ->assignCustomer($customer);
 
@@ -79,7 +75,69 @@ trait PostbackDataProvider
             ->collectShippingRates()
             ->setShippingMethod('flatrate_flatrate');
 
+        $quote->collectTotals();
+
         return $quote;
+    }
+
+    public function createToken($paymentMethod, $amount)
+    {
+        $encryptionKey = \Mage::getStoreConfig(
+            'payment/pagarme_settings/encryption_key'
+        );
+
+        $bodyData = [
+            'amount' => '' . (int) ($amount * 100),
+            'postback_url' => 'http://requestb.in/pkt7pgpk',
+            'customer' => [
+                'name' => 'Aardvark Silva',
+                'email' => 'aardvark.silva@pagar.me',
+                'document_number' => '18152564000105',
+                'address' => [
+                    'zipcode' => '01451001',
+                    'neighborhood' => 'Jardim Paulistano',
+                    'street' => 'Avenida Brigadeiro Faria Lima',
+                    'street_number' => '1811'
+                ],
+                'phone' => [
+                    'number' => '99999999',
+                    'ddi' => '55',
+                    'ddd' => '11'
+                ]
+            ],
+            'metadata' => ['idProduto' => '13933139'],
+            'capture' => 'false',
+            'payment_method' => $paymentMethod,
+            'encryption_key' => $encryptionKey
+        ];
+
+        if ($paymentMethod == 'credit_card') {
+            $bodyData = array_merge(
+                $bodyData,
+                $this->getCreditCardData()
+            );
+        }
+
+        $client = new \GuzzleHttp\Client();
+        $response = $client->post(
+            'https://api.pagar.me/1/transactions',
+            [
+                'body' => $bodyData
+            ]
+        );
+
+        $responseObj = json_decode((string) $response->getBody());
+        return $responseObj->token;
+    }
+
+    private function getCreditCardData()
+    {
+        return [
+            'card_number' => '4111111111111111',
+            'card_holder_name' => 'Ricardo Ledo',
+            'card_expiration_date' => '0220',
+            'card_cvv' => '231'
+        ];
     }
 
     private function createCommonDataForQuote($customer, $customerAddress)
