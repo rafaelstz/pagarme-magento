@@ -393,7 +393,6 @@ class ConfigureContext extends RawMinkContext
             $savedCreditCardsBrands
         );
 
-
         if (empty($this->creditCardListToAllow)) {
             $this->creditCardListToAllow = [
                 'visa',
