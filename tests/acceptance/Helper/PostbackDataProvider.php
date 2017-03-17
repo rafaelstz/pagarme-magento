@@ -2,6 +2,9 @@
 
 namespace PagarMe\Magento\Test\Helper;
 
+use PagarMe\Sdk\Transaction\CreditCardTransaction;
+use PagarMe\Sdk\Transaction\BoletoTransaction;
+
 trait PostbackDataProvider
 {
     public function getOrderPaidByBoleto(
@@ -10,7 +13,7 @@ trait PostbackDataProvider
         $products
     ) {
         return $this->getOrderPaid(
-            'boleto',
+            BoletoTransaction::PAYMENT_METHOD,
             $customer,
             $customerAddress,
             $products
@@ -23,7 +26,7 @@ trait PostbackDataProvider
         $products
     ) {
         return $this->getOrderPaid(
-            'credit_card',
+            CreditCardTransaction::PAYMENT_METHOD,
             $customer,
             $customerAddress,
             $products
@@ -38,13 +41,13 @@ trait PostbackDataProvider
     ) {
         $quote = $this->createQuote($customer, $customerAddress, $products);
 
-        if ($paymentMethod == 'boleto') {
+        if ($paymentMethod == BoletoTransaction::PAYMENT_METHOD) {
             $token = $this->createTokenBoletoTransaction(
                 $quote->getGrandTotal(),
                 $customer,
                 $customerAddress
             );
-        } elseif ($paymentMethod == 'credit_card') {
+        } elseif ($paymentMethod == CreditCardTransaction::PAYMENT_METHOD) {
             $token = $this->createTokenCreditCardTransaction(
                 $quote->getGrandTotal(),
                 $customer,
@@ -117,7 +120,7 @@ trait PostbackDataProvider
             $customerAddress
         );
 
-        $bodyData['payment_method'] = 'boleto';
+        $bodyData['payment_method'] = BoletoTransaction::PAYMENT_METHOD;
 
         return $this->createToken($bodyData);
     }
@@ -133,7 +136,7 @@ trait PostbackDataProvider
             $customerAddress
         );
 
-        $bodyData['payment_method'] = 'credit_card';
+        $bodyData['payment_method'] = CreditCardTransaction::PAYMENT_METHOD;
 
         $bodyData = array_merge(
             $this->getCreditCardData(),
