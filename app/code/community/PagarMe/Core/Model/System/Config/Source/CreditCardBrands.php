@@ -9,8 +9,6 @@ class PagarMe_Core_Model_System_Config_Source_CreditCardBrands
      */
     public function toOptionArray()
     {
-
-
         return [
             [
                 'value' => 'visa',
