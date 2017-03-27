@@ -3,16 +3,24 @@ Feature: Update order status
     I want receive updates about transactions status
     To keep order workflow updated and financial health of my store
 
-    Scenario Outline: Receiving boleto order status update
+    Scenario: Receive boleto order status update to paid
         Given a pending boleto order
-        When I receive a postback for boleto with status "<postback_status>"
-        Then my order must be updated to "<new_status>"
-        Examples:
-        | postback_status | new_status |
-        | paid            | processing |
-        | refunded        | closed     |
+        When a "boleto" order be paid
+        Then the order status must be updated to "processing"
+
+    Scenario: Receive boleto order status update to refunded
+        Given a pending boleto order
+        When a "boleto" order be paid
+        And then the "boleto" payment be refunded
+        Then the order status must be updated to "closed"
 
     Scenario: Receiving credit card order status update
         Given a pending credit card order
-        When I receive a postback for credit card with status "paid"
-        Then my order must be updated to "processing"
+        When a "creditcard" order be paid
+        Then the order status must be updated to "processing"
+
+    Scenario: Receive credit card order status update to refunded
+        Given a pending credit card order
+        When a "creditcard" order be paid
+        And then the "creditcard" payment be refunded
+        Then the order status must be updated to "closed"

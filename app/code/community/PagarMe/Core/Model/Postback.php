@@ -1,9 +1,14 @@
 <?php
 
-class PagarMe_Core_Model_Postback_Boleto extends Mage_Core_Model_Abstract
+class PagarMe_Core_Model_Postback extends Mage_Core_Model_Abstract
 {
     const POSTBACK_STATUS_PAID = 'paid';
     const POSTBACK_STATUS_REFUNDED = 'refunded';
+
+    /**
+     * @var PagarMe_Core_Model_Service_Order
+     */
+    protected $orderService;
 
     /**
      * @var PagarMe_Core_Model_Service_Invoice
@@ -11,30 +16,22 @@ class PagarMe_Core_Model_Postback_Boleto extends Mage_Core_Model_Abstract
     protected $invoiceService;
 
     /**
-     * @var array
-     */
-    protected $validStatus = [
-        self::POSTBACK_STATUS_PAID,
-        self::POSTBACK_STATUS_REFUNDED
-    ];
-
-    /**
      * @param Mage_Sales_Model_Order $order
-     * @param type $currentStatus
+     * @param string $currentStatus
      *
      * @return bool
      */
-    private function canProceedWithPostback(Mage_Sales_Model_Order $order, $currentStatus)
+    public function canProceedWithPostback(Mage_Sales_Model_Order $order, $currentStatus)
     {
-        return $order->canInvoice() && $this->isValidStatus($currentStatus);
-    }
+        if ($order->canInvoice() && $currentStatus == self::POSTBACK_STATUS_PAID) {
+            return true;
+        }
 
-    /**
-     * @param string $status
-     */
-    private function isValidStatus($status)
-    {
-        return in_array($status, $this->validStatus);
+        if ($currentStatus == self::POSTBACK_STATUS_REFUNDED) {
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -111,6 +108,10 @@ class PagarMe_Core_Model_Postback_Boleto extends Mage_Core_Model_Abstract
         return $order;
     }
 
+    /**
+     * @param Mage_Sales_Model_Order $order
+     * @return void
+     */
     public function setOrderAsPaid($order)
     {
         $invoice = $this->getInvoiceService()
@@ -127,8 +128,36 @@ class PagarMe_Core_Model_Postback_Boleto extends Mage_Core_Model_Abstract
             ->save();
     }
 
+    /**
+     * @param Mage_Sales_Model_Order $order
+     * @return void
+     */
     public function setOrderAsRefunded($order)
     {
-        $order->setState(Mage_Sales_Model_Order::STATE_CLOSED);
+        $orderService = Mage::getModel('sales/service_order', $order);
+
+        $invoices = [];
+
+        foreach ($order->getInvoiceCollection() as $invoice) {
+            if ($invoice->canRefund()) {
+                $invoices[] = $invoice;
+            }
+        }
+
+        $transaction = Mage::getModel('core/resource_transaction');
+
+        foreach ($invoices as $invoice) {
+            $creditmemo = $orderService->prepareInvoiceCreditmemo($invoice);
+            $creditmemo->setRefundRequested(true);
+            $creditmemo->setOfflineRequested(true);
+            $creditmemo->setGrantAmount(10);
+            $creditmemo->setPaymentRefundDisallowed(true)->register();
+            $transaction->addObject($creditmemo);
+        }
+
+        $transaction->addObject($order)
+            ->save();
+
+        return $order;
     }
 }
