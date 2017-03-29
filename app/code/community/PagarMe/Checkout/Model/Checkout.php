@@ -82,7 +82,7 @@ class PagarMe_Checkout_Model_Checkout extends Mage_Payment_Model_Method_Abstract
     public function authorize(Varien_Object $payment, $amount)
     {
         $infoInstance = $this->getInfoInstance();
-        
+
         $preTransaction = Mage::getModel('pagarme_core/entity_PaymentMethodFactory')
             ->createTransactionObject(
                 $amount,

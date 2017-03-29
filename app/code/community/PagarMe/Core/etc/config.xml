@@ -80,5 +80,8 @@
                 <payment_action>authorize</payment_action>
             </pagarme_checkout>
         </payment>
+        <settings>
+            <capture_customer_data>1</capture_customer_data>
+        </settings>
     </default>
 </config>

@@ -239,6 +239,18 @@ class ConfigureContext extends MinkContext
         );
     }
 
+    /**
+     * @When turn off customer data capture
+     */
+    public function turnOffCustomerDataCapture()
+    {
+        $captureCustomerData = $this->getSession()->getPage()->find(
+            'css',
+            '#payment_pagarme_settings_capture_customer_data'
+        );
+
+        $captureCustomerData->selectOption(0);
+    }
 
     /**
      * @AfterScenario

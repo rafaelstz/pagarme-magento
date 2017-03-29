@@ -21,3 +21,11 @@ Feature: Configuration Form
         And enable Pagar.me Checkout
         And save configuration
         Then Pagar.me checkout must be enabled
+
+    Scenario: Enabling module
+        Given a admin user
+        When I access the admin
+        And go to system configuration page
+        And turn off customer data capture
+        And save configuration
+        Then Pagar.me checkout must be enabled

@@ -22,7 +22,8 @@ class PagarMe_Checkout_Block_Form_CheckoutTest extends PHPUnit_Framework_TestCas
             'customerAddressComplementary' => '',
             'customerAddressNeighborhood' => 'Downtown',
             'customerAddressCity' => 'Nowhere',
-            'customerAddressState' => 'XP'
+            'customerAddressState' => 'XP',
+            'customerData' => Mage::getStoreConfig('payment/pagarme_settings/capture_customer_data')
         ];
 
         $quote = Mage::getModel('sales/quote')
