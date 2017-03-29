@@ -216,15 +216,6 @@
                     </inchoo_test_log_cart_add>
                 </observers>
             </sales_quote_add_item>
-            <controller_action_postdispatch_checkout_onepage_savePayment>
-                <observers>
-                    <pagarme>
-                        <type>singleton</type>
-                        <class>pagarme/observer</class>
-                        <method>addCreditCardInterestFee</method>
-                    </pagarme>
-                </observers>
-            </controller_action_postdispatch_checkout_onepage_savePayment>
             <controller_front_init_before>
                 <observers>
                     <add_pagarme_library>
