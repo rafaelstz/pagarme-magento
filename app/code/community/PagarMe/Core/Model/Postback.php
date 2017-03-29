@@ -50,6 +50,7 @@ class PagarMe_Core_Model_Postback extends Mage_Core_Model_Abstract
     /**
      * @codeCoverageIgnore
      * @param PagarMe_Core_Model_Service_Order $orderService
+     * @return void
      */
     public function setOrderService(PagarMe_Core_Model_Service_Order $orderService)
     {
@@ -72,6 +73,7 @@ class PagarMe_Core_Model_Postback extends Mage_Core_Model_Abstract
     /**
      * @codeCoverageIgnore
      * @param PagarMe_Core_Model_Service_Invoice $invoiceService
+     * @return void
      */
     public function setInvoiceService(PagarMe_Core_Model_Service_Invoice $invoiceService)
     {
