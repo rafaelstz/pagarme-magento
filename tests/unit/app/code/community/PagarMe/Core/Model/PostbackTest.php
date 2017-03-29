@@ -151,49 +151,6 @@ class PagarMe_Core_Model_PostbackTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
-     */
-    public function mustSetOrderAsRefunded()
-    {
-        $resourceMock = $this->getMockBuilder('Mage_Core_Model_Resource_Resource')
-            ->getMock();
-
-        $invoiceMock = $this->getMockBuilder('Mage_Sales_Model_Order_Invoice')
-            ->getMock();
-
-        $invoiceMock->method('getResource')
-            ->willReturn($resourceMock);
-
-        $invoiceMock->expects($this->once())
-            ->method('canRefund')
-            ->willReturn(true);
-
-        $orderMock = $this->getMockBuilder('Mage_Sales_Model_Order')
-            ->getMock();
-
-        $orderMock->method('getResource')
-            ->willReturn($resourceMock);
-
-        $orderMock->expects($this->once())
-            ->method('getInvoiceCollection')
-            ->willReturn([
-                $invoiceMock
-            ]);
-
-        $orderMock->expects($this->once())
-            ->method('setState')
-            ->with(
-                Mage_Sales_Model_Order::STATE_CLOSED
-            );
-
-        $orderMock->expects($this->once())
-            ->method('save');
-
-        $postback = Mage::getModel('pagarme_core/postback');
-        $postback->setOrderAsRefunded($orderMock);
-    }
-
-    /**
-     * @test
      * @expectedException \Exception
      * @dataProvicer invalidPostbackData
      */

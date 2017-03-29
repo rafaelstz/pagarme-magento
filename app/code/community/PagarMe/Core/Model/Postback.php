@@ -150,7 +150,6 @@ class PagarMe_Core_Model_Postback extends Mage_Core_Model_Abstract
             $creditmemo = $orderService->prepareInvoiceCreditmemo($invoice);
             $creditmemo->setRefundRequested(true);
             $creditmemo->setOfflineRequested(true);
-            $creditmemo->setGrantAmount(10);
             $creditmemo->setPaymentRefundDisallowed(true)->register();
             $transaction->addObject($creditmemo);
         }

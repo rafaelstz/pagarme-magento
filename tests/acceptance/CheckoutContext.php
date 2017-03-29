@@ -255,7 +255,7 @@ class CheckoutContext extends MinkContext
      */
     public function thePurchaseMustBePaidWithSuccess()
     {
-        $this->session->wait(5000);
+        $this->session->wait(10000);
 
         $page = $this->session->getPage();
 
@@ -304,8 +304,8 @@ class CheckoutContext extends MinkContext
      */
     public function tearDown()
     {
-        $this->customer->delete();
-        $this->product->delete();
-        $this->disablePagarmeCheckout();
+        // $this->customer->delete();
+        // $this->product->delete();
+        // $this->disablePagarmeCheckout();
     }
 }
