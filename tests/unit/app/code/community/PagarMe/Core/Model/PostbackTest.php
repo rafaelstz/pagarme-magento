@@ -2,33 +2,7 @@
 
 class PagarMe_Core_Model_PostbackTest extends \PHPUnit_Framework_TestCase
 {
-    public function invalidPostbackData()
-    {
-        return [
-            [
-                true,
-                '1515613216',
-                'authorized'
-            ],
-            [
-                false,
-                '1515611234',
-                'waiting_payment'
-            ],
-            [
-                true,
-                '1515234516',
-                'payment_refund'
-            ],
-            [
-                true,
-                '1515612346',
-                'refused'
-            ]
-        ];
-    }
-
-    public function mustProceedWithPostbackDataProvider()
+    public function validPostbackDataProvider()
     {
         return [
             [
@@ -40,7 +14,13 @@ class PagarMe_Core_Model_PostbackTest extends \PHPUnit_Framework_TestCase
                 true,
                 false,
                 PagarMe_Core_Model_Postback::POSTBACK_STATUS_REFUNDED
-            ],
+            ]
+        ];
+    }
+
+    public function invalidPostbackInvalidProvider()
+    {
+        return [
             [
                 false,
                 true,
@@ -54,25 +34,17 @@ class PagarMe_Core_Model_PostbackTest extends \PHPUnit_Framework_TestCase
         ];
     }
 
-    public function mustProcessPostbackDataProvider()
+    public function postbackDataProvider()
     {
-        return [
-            [
-                true,
-                PagarMe_Core_Model_Postback::POSTBACK_STATUS_PAID,
-                Mage_Sales_Model_Order::STATE_PROCESSING
-            ],
-            [
-                false,
-                PagarMe_Core_Model_Postback::POSTBACK_STATUS_REFUNDED,
-                Mage_Sales_Model_Order::STATE_CLOSED
-            ]
-        ];
+        return array_merge(
+            $this->validPostbackDataProvider(),
+            $this->validPostbackDataProvider()
+        );
     }
 
     /**
      * @test
-     * @dataProvider mustProceedWithPostbackDataProvider
+     * @dataProvider postbackDataProvider
      */
     public function mustProceedWithPostback(
         $expectedValue,
@@ -152,10 +124,13 @@ class PagarMe_Core_Model_PostbackTest extends \PHPUnit_Framework_TestCase
     /**
      * @test
      * @expectedException \Exception
-     * @dataProvicer invalidPostbackData
+     * @dataProvicer invalidPostbackDataProvider
      */
-    public function mustThrowExceptionWhenCantProceedWithPostback($orderCanInvoice, $transactionId, $status)
-    {
+    public function mustThrowExceptionWhenCantProceedWithPostback(
+        $expectedValue,
+        $orderCanInvoice,
+        $currentStatus
+    ) {
         $orderMock = $this->getMockBuilder('Mage_Sales_Model_Order')
             ->getMock();
 
@@ -165,6 +140,8 @@ class PagarMe_Core_Model_PostbackTest extends \PHPUnit_Framework_TestCase
         $orderServiceMock = $this->getMockBuilder('PagarMe_Core_Model_Service_Order')
             ->getMock();
 
+        $transactionId = rand(0, 9999);
+
         $orderServiceMock->expects($this->once())
             ->method('getOrderByTransactionId')
             ->with($transactionId)
@@ -172,6 +149,6 @@ class PagarMe_Core_Model_PostbackTest extends \PHPUnit_Framework_TestCase
 
         $postback = Mage::getModel('pagarme_core/postback');
         $postback->setOrderService($orderServiceMock);
-        $postback->processPostback($transactionId, "paid");
+        $postback->processPostback($transactionId, $currentStatus);
     }
 }
