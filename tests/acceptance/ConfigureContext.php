@@ -1,12 +1,12 @@
 <?php
 
 use Behat\Behat\Tester\Exception\PendingException;
-use Behat\MinkExtension\Context\MinkContext;
+use Behat\MinkExtension\Context\RawMinkContext;
 
 require_once __DIR__ . '/../bootstrap.php';
 require_once __DIR__ . '/../../vendor/autoload.php';
 
-class ConfigureContext extends MinkContext
+class ConfigureContext extends RawMinkContext
 {
     use PagarMe\Magento\Test\Helper\CustomerDataProvider;
     use PagarMe\Magento\Test\Helper\ProductDataProvider;
@@ -41,6 +41,7 @@ class ConfigureContext extends MinkContext
 
     /**
      * @Given a admin user
+     * @Then as an Admin user
      */
     public function aAdminUser()
     {
@@ -239,6 +240,48 @@ class ConfigureContext extends MinkContext
         );
     }
 
+    /**
+     * @Given Pagar.me settings panel
+     */
+    public function pagarMeSettingsPanel()
+    {
+        $this->aAdminUser();
+        $this->iAccessTheAdmin();
+        $this->goToSystemConfigurationPage();
+    }
+
+    /**
+     * @When I set interest rate to :interestRate
+     */
+    public function iSetInterestRateTo($interestRate)
+    {
+        $this->fillField(
+            'payment_pagarme_settings_interest_rate',
+            $interestRate
+        );
+    }
+
+    /**
+     * @When I set max instalments to :maxInstallmets
+     */
+    public function iSetMaxInstalmentsTo($maxInstallmets)
+    {
+        $this->fillField(
+            'payment_pagarme_settings_max_installments',
+            $maxInstallmets
+        );
+    }
+
+    /**
+     * @When I set free instalments to :freeInstallments
+     */
+    public function iSetFreeInstalmentsTo($freeInstallments)
+    {
+        $this->fillField(
+            'payment_pagarme_settings_free_installments',
+            $freeInstallments
+        );
+    }
 
     /**
      * @AfterScenario
