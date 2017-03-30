@@ -18,7 +18,7 @@ class PagarMe_Core_Model_PostbackTest extends \PHPUnit_Framework_TestCase
         ];
     }
 
-    public function invalidPostbackInvalidProvider()
+    public function invalidPostbackDataProvider()
     {
         return [
             [
@@ -38,7 +38,7 @@ class PagarMe_Core_Model_PostbackTest extends \PHPUnit_Framework_TestCase
     {
         return array_merge(
             $this->validPostbackDataProvider(),
-            $this->validPostbackDataProvider()
+            $this->invalidPostbackDataProvider()
         );
     }
 
