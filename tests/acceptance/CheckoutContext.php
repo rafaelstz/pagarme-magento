@@ -1,12 +1,11 @@
 <?php
 
-use Behat\MinkExtension\Context\MinkContext;
-use Behat\Behat\Tester\Exception\PendingException;
+use Behat\MinkExtension\Context\RawMinkContext;
 
 require_once __DIR__ . '/../bootstrap.php';
 require_once __DIR__ . '/../../vendor/autoload.php';
 
-class CheckoutContext extends MinkContext
+class CheckoutContext extends RawMinkContext
 {
     use PagarMe\Magento\Test\Helper\CustomerDataProvider;
     use PagarMe\Magento\Test\Helper\ProductDataProvider;
@@ -133,12 +132,12 @@ class CheckoutContext extends MinkContext
     {
         $page = $this->session->getPage();
 
-        $this->fillField(
+        $this->getSession()->getPage()->fillField(
             Mage::helper('pagarme_checkout')->__('Email Address'),
             $this->customer->getEmail()
         );
 
-        $this->fillField(
+        $this->getSession()->getPage()->fillField(
             Mage::helper('pagarme_checkout')->__('Password'),
             $this->customer->getPassword()
         );

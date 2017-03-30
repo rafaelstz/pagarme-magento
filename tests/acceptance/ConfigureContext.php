@@ -1,6 +1,5 @@
 <?php
 
-use Behat\Behat\Tester\Exception\PendingException;
 use Behat\MinkExtension\Context\RawMinkContext;
 
 require_once __DIR__ . '/../bootstrap.php';
@@ -255,7 +254,7 @@ class ConfigureContext extends RawMinkContext
      */
     public function iSetInterestRateTo($interestRate)
     {
-        $this->fillField(
+        $this->getSession()->getPage()->fillField(
             'payment_pagarme_settings_interest_rate',
             $interestRate
         );
@@ -266,7 +265,7 @@ class ConfigureContext extends RawMinkContext
      */
     public function iSetMaxInstalmentsTo($maxInstallmets)
     {
-        $this->fillField(
+        $this->getSession()->getPage()->fillField(
             'payment_pagarme_settings_max_installments',
             $maxInstallmets
         );
@@ -277,7 +276,7 @@ class ConfigureContext extends RawMinkContext
      */
     public function iSetFreeInstalmentsTo($freeInstallments)
     {
-        $this->fillField(
+        $this->getSession()->getPage()->fillField(
             'payment_pagarme_settings_free_installments',
             $freeInstallments
         );
