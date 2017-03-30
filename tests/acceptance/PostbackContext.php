@@ -93,7 +93,7 @@ class PostbackContext extends MinkContext
     }
 
     /**
-     * @When then the :paymentMethod payment be refunded
+     * @When the :paymentMethod payment be refunded
      */
     public function thenThePaymentBeRefunded($paymentMethod)
     {

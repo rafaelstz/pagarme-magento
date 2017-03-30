@@ -11,7 +11,7 @@ Feature: Update order status
     Scenario: Receive boleto order status update to refunded
         Given a pending boleto order
         When a "boleto" order be paid
-        And then the "boleto" payment be refunded
+        And the "boleto" payment be refunded
         Then the order status must be updated to "closed"
 
     Scenario: Receiving credit card order status update
@@ -22,5 +22,5 @@ Feature: Update order status
     Scenario: Receive credit card order status update to refunded
         Given a pending credit card order
         When a "creditcard" order be paid
-        And then the "creditcard" payment be refunded
+        And the "creditcard" payment be refunded
         Then the order status must be updated to "closed"
