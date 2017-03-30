@@ -108,7 +108,7 @@ class PagarMe_Checkout_Block_Form_Checkout extends Mage_Payment_Block_Form
 
         $telephone = $address->getTelephone();
 
-        return json_encode([
+        return [
             'amount' => $helper->parseAmountToInteger($quote->getGrandTotal()),
             'createToken' => 'true',
             'paymentMethods' => $this->getAvailablePaymentMethods(),
@@ -125,6 +125,15 @@ class PagarMe_Checkout_Block_Form_Checkout extends Mage_Payment_Block_Form
             'customerAddressCity' => $address->getCity(),
             'customerAddressState' => $address->getRegion(),
             'customerData' => Mage::getStoreConfig('payment/pagarme_settings/capture_customer_data')
-        ]);
+            'interestRate' => Mage::getStoreConfig(
+                'payment/pagarme_settings/interest_rate'
+            ),
+            'maxInstallments' => Mage::getStoreConfig(
+                'payment/pagarme_settings/max_installments'
+            ),
+            'freeInstallments' => Mage::getStoreConfig(
+                'payment/pagarme_settings/free_installments'
+            )
+        ];
     }
 }
