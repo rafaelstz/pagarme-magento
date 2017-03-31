@@ -22,7 +22,7 @@ abstract class PagarMe_Core_Transaction_AbstractPostbackController extends
         $currentStatus = $request->getPost('current_status');
 
         try {
-            Mage::getModel('pagarme_core/postback_boleto')
+            Mage::getModel('pagarme_core/postback')
                 ->processPostback(
                     $transactionId,
                     $currentStatus

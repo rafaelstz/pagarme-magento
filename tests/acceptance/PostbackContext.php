@@ -8,6 +8,8 @@ require_once __DIR__ . '/../../vendor/autoload.php';
 
 class PostbackContext extends MinkContext
 {
+    const MAGENTO_ORDER_STATUS_PENDING = 'pending';
+
     use PagarMe\Magento\Test\Helper\CustomerDataProvider;
     use PagarMe\Magento\Test\Helper\ProductDataProvider;
     use PagarMe\Magento\Test\Helper\PostbackDataProvider;
@@ -53,25 +55,52 @@ class PostbackContext extends MinkContext
         $this->order->save();
 
         \PHPUnit_Framework_TestCase::assertEquals(
-            'pending',
+            self::MAGENTO_ORDER_STATUS_PENDING,
             $this->order->getStatus()
         );
     }
 
     /**
-    * @When I receive a postback for boleto with status :arg1
-    */
-    public function iReceiveAPostbackForBoletoWithStatus($currentStatus)
+     * @Given a pending credit card order
+     */
+    public function aPendingCreditCardOrder()
     {
-        $this->processPostbackByPaymentMethod($currentStatus, 'boleto');
+        $this->order = $this->getOrderPaidByCreditCard(
+            $this->customer,
+            $this->customerAddress,
+            [
+                $this->product
+            ]
+        );
+
+        $this->order->save();
+
+        \PHPUnit_Framework_TestCase::assertEquals(
+            self::MAGENTO_ORDER_STATUS_PENDING,
+            $this->order->getStatus()
+        );
     }
 
     /**
-    * @When I receive a postback for credit card with status :arg1
-    */
-    public function iReceiveAPostbackForCreditCardWithStatus($currentStatus)
+     * @When a :paymentMethod order be paid
+     */
+    public function aOrderBePaid($paymentMethod)
     {
-        $this->processPostbackByPaymentMethod($currentStatus, 'creditcard');
+        $this->processPostbackByPaymentMethod(
+            PagarMe_Core_Model_Postback::POSTBACK_STATUS_PAID,
+            $paymentMethod
+        );
+    }
+
+    /**
+     * @When the :paymentMethod payment be refunded
+     */
+    public function thenThePaymentBeRefunded($paymentMethod)
+    {
+        $this->processPostbackByPaymentMethod(
+            PagarMe_Core_Model_Postback::POSTBACK_STATUS_REFUNDED,
+            $paymentMethod
+        );
     }
 
     private function processPostbackByPaymentMethod($currentStatus, $paymentMethod)
@@ -94,6 +123,7 @@ class PostbackContext extends MinkContext
             . $paymentMethod . '/postback';
 
         $client = new GuzzleHttp\Client();
+
         $response = $client->post(
             $urlForPostback,
             [
@@ -112,9 +142,9 @@ class PostbackContext extends MinkContext
     }
 
     /**
-    * @Then my order must be updated to :status
+    * @Then the order status must be updated to :status
     */
-    public function myOrderMustBeUpdatedTo($status)
+    public function theOrderStatusMustBeUpdatedTo($status)
     {
         $order = Mage::getModel('sales/order')
             ->load($this->order->getId());
@@ -122,27 +152,6 @@ class PostbackContext extends MinkContext
         \PHPUnit_Framework_TestCase::assertEquals(
             $status,
             $order->getStatus()
-        );
-    }
-
-    /**
-     * @Given a pending credit card order
-     */
-    public function aPendingCreditCardOrder()
-    {
-        $this->order = $this->getOrderPaidByCreditCard(
-            $this->customer,
-            $this->customerAddress,
-            [
-                $this->product
-            ]
-        );
-
-        $this->order->save();
-
-        \PHPUnit_Framework_TestCase::assertEquals(
-            'pending',
-            $this->order->getStatus()
         );
     }
 
