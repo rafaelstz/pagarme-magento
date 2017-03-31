@@ -107,4 +107,18 @@ class PagarMe_Core_Helper_Data extends Mage_Core_Helper_Abstract
     {
         return substr(Zend_Filter::filterStatic($phone, 'Digits'), 2);
     }
+
+    /**
+     * @param Mage_Sales_Model_Quote $quote
+     *
+     * @return string
+     */
+    public function getCustomerNameFromQuote($quote)
+    {
+        return implode([
+            $quote->getCustomerFirstname(),
+            $quote->getCustomerMiddlename(),
+            $quote->getCustomerLastname()
+        ], ' ');
+    }
 }

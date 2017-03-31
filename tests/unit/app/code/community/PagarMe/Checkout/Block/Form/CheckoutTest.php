@@ -13,7 +13,7 @@ class PagarMe_Checkout_Block_Form_CheckoutTest extends PHPUnit_Framework_TestCas
             'amount'                       => 1234,
             'createToken'                  => 'true',
             'paymentMethods'               => Mage::getStoreConfig('payment/pagarme_settings/payment_methods'),
-            'customerName'                 => 'John Due',
+            'customerName'                 => 'Amazing Spider Man',
             'customerEmail'                => mktime() . 'john.due@email.com',
             'customerDocumentNumber'       => '123.456.789-52',
             'customerPhoneDdd'             => '15',
@@ -50,14 +50,8 @@ class PagarMe_Checkout_Block_Form_CheckoutTest extends PHPUnit_Framework_TestCas
             )
         ];
 
-        $quote = Mage::getModel('sales/quote')
-            ->setGrandTotal('12.34');
-
         $customer = Mage::getModel('customer/customer')
-            ->setFirstname('John')
-            ->setLastname('Due')
             ->setEmail($checkoutConfig['customerEmail'])
-            ->setTaxvat($checkoutConfig['customerDocumentNumber'])
             ->save();
 
         $address = Mage::getModel('customer/address')
@@ -84,9 +78,19 @@ class PagarMe_Checkout_Block_Form_CheckoutTest extends PHPUnit_Framework_TestCas
 
         $customer = Mage::getModel('customer/customer')
             ->load($customer->getId());
+        $address = Mage::getModel('customer/address')
+            ->load($address->getId());
+
+        $quote = Mage::getModel('sales/quote')
+            ->setGrandTotal('12.34')
+            ->setCustomerFirstname('Amazing')
+            ->setCustomerMiddlename('Spider')
+            ->setCustomerLastname('Man')
+            ->setCustomerEmail($checkoutConfig['customerEmail'])
+            ->setCustomerTaxvat($checkoutConfig['customerDocumentNumber']);
+        $quote->setBillingAddress($address);
 
         $checkoutBlock = new PagarMe_Checkout_Block_Form_Checkout();
-        $checkoutBlock->setCustomer($customer);
         $checkoutBlock->setQuote($quote);
 
         $this->assertEquals(
