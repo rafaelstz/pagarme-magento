@@ -26,7 +26,7 @@ Feature: Configuration Form
         Given a admin user
         When I access the admin
         And go to system configuration page
-        And turn off customer data capture
+        And turn on customer data capture
         And save configuration
         Then Pagar.me checkout must be enabled
 

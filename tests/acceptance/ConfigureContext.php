@@ -241,16 +241,16 @@ class ConfigureContext extends RawMinkContext
     }
 
     /**
-     * @When turn off customer data capture
+     * @When turn on customer data capture
      */
-    public function turnOffCustomerDataCapture()
+    public function turnOnCustomerDataCapture()
     {
         $captureCustomerData = $this->getSession()->getPage()->find(
             'css',
             '#payment_pagarme_settings_capture_customer_data'
         );
 
-        $captureCustomerData->selectOption(0);
+        $captureCustomerData->selectOption(1);
     }
 
     /**
