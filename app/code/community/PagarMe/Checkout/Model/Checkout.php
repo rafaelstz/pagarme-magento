@@ -163,10 +163,19 @@ class PagarMe_Checkout_Model_Checkout extends Mage_Payment_Model_Method_Abstract
         PagarMe\Sdk\Transaction\AbstractTransaction $transaction,
         $infoInstance
     ) {
+
+        $installments = 1;
+
+        if ($transaction instanceof PagarMe\Sdk\Transaction\CreditCatdTransaction)
+        {
+            $installments = $transaction->getInstallments();
+        }
+
+
         Mage::getModel('pagarme_core/transaction')
             ->setTransactionId($transaction->getId())
             ->setOrderId($order->getId())
-            ->setInstallments($transaction->getInstallments())
+            ->setInstallments($installments)
             ->setInterestRate(
                 $infoInstance->getAdditionalInformation('interest_rate')
             )
