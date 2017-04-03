@@ -132,16 +132,11 @@ class PagarMe_Checkout_Block_Form_Checkout extends Mage_Payment_Block_Form
             ),
             'freeInstallments' => Mage::getStoreConfig(
                 'payment/pagarme_settings/free_installments'
+            ),
+            'customerData' => Mage::getStoreConfig(
+                'payment/pagarme_settings/capture_customer_data'
             )
         ];
-
-        $customerData = Mage::getStoreConfig(
-            'payment/pagarme_settings/capture_customer_data'
-            );
-
-        if ($customerData == 1) {
-            $config['customerData'] = 'true';
-        }
 
         return $config;
     }
