@@ -22,7 +22,7 @@ Feature: Configuration Form
         And save configuration
         Then Pagar.me checkout must be enabled
 
-    Scenario: Enabling module
+    Scenario: Enabling capture customer data
         Given a admin user
         When I access the admin
         And go to system configuration page
