@@ -22,6 +22,14 @@ Feature: Configuration Form
         And save configuration
         Then Pagar.me checkout must be enabled
 
+    Scenario: Enabling capture customer data
+        Given a admin user
+        When I access the admin
+        And go to system configuration page
+        And turn on customer data capture
+        And save configuration
+        Then Pagar.me checkout must be enabled
+
     Scenario Outline: Configuring installments info
         Given Pagar.me settings panel
         When I set interest rate to "<interest_rate>"

@@ -237,7 +237,12 @@ class CheckoutContext extends RawMinkContext
             '#pagarme-modal-box-credit-card-cvv'
         )->setValue($this->creditCard['cvv']);
 
-        if ($installmentsNumber > 1) {
+        $installmentSelector = $this->pagarMeCheckout->find(
+            'css',
+            '#pagarme-checkout-installments-container'
+        );
+
+        if ($installmentSelector) {
             $field = $this->pagarMeCheckout->find(
                 'css',
                 "[data-value='$installmentsNumber']"
@@ -271,7 +276,7 @@ class CheckoutContext extends RawMinkContext
             '#payment-buttons-container button'
         )->press();
 
-        $this->waitForElement('#checkout-step-review', 5000);
+        $this->waitForElement('#checkout-step-review', 8000);
     }
 
     /**

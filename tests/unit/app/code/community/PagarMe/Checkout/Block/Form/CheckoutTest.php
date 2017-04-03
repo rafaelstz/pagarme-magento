@@ -23,6 +23,7 @@ class PagarMe_Checkout_Block_Form_CheckoutTest extends PHPUnit_Framework_TestCas
             'customerAddressNeighborhood' => 'Downtown',
             'customerAddressCity' => 'Nowhere',
             'customerAddressState' => 'XP',
+            'customerData' => Mage::getStoreConfig('payment/pagarme_settings/capture_customer_data'),
             'interestRate' => Mage::getStoreConfig('payment/pagarme_settings/interest_rate'),
             'maxInstallments' => Mage::getStoreConfig('payment/pagarme_settings/max_installments'),
             'freeInstallments' => Mage::getStoreConfig('payment/pagarme_settings/free_installments')

@@ -108,7 +108,7 @@ class PagarMe_Checkout_Block_Form_Checkout extends Mage_Payment_Block_Form
 
         $telephone = $address->getTelephone();
 
-        return [
+        $config = [
             'amount' => $helper->parseAmountToInteger($quote->getGrandTotal()),
             'createToken' => 'true',
             'paymentMethods' => $this->getAvailablePaymentMethods(),
@@ -132,7 +132,12 @@ class PagarMe_Checkout_Block_Form_Checkout extends Mage_Payment_Block_Form
             ),
             'freeInstallments' => Mage::getStoreConfig(
                 'payment/pagarme_settings/free_installments'
+            ),
+            'customerData' => Mage::getStoreConfig(
+                'payment/pagarme_settings/capture_customer_data'
             )
         ];
+
+        return $config;
     }
 }

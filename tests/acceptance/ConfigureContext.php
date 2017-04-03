@@ -240,6 +240,19 @@ class ConfigureContext extends RawMinkContext
     }
 
     /**
+     * @When turn on customer data capture
+     */
+    public function turnOnCustomerDataCapture()
+    {
+        $captureCustomerData = $this->getSession()->getPage()->find(
+            'css',
+            '#payment_pagarme_settings_capture_customer_data'
+        );
+
+        $captureCustomerData->selectOption(1);
+    }
+
+    /**
      * @Given Pagar.me settings panel
      */
     public function pagarMeSettingsPanel()
