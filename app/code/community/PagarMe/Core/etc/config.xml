@@ -84,9 +84,7 @@
                 <free_installments>1</free_installments>
                 <max_installments>1</max_installments>
             </pagarme_settings>
-        </payment>
-        <settings>
             <capture_customer_data>1</capture_customer_data>
-        </settings>
+        </payment>
     </default>
 </config>
