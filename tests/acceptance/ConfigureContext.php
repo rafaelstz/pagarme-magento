@@ -249,7 +249,7 @@ class ConfigureContext extends RawMinkContext
             '#payment_pagarme_settings_capture_customer_data'
         );
 
-        $captureCustomerData->selectOption(1);
+        $captureCustomerData->selectOption('true');
     }
 
     /**
