@@ -19,7 +19,7 @@ services:
             - HUB_PORT_4444_TCP_PORT=4444
 
     mysql:
-        image: mysql:5.6
+        image: mysql:5.5
         env_file: .env
 
     magento:
