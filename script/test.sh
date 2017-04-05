@@ -33,5 +33,15 @@ done
 docker-compose exec magento /opt/docker/bin/composer install
 docker-compose exec magento php index.php
 
-./script/test-unit.sh
-./script/test-e2e.sh
+for testScript in $(ls ./script/test-*.sh); do
+    /bin/bash $testScript
+
+    stepExitCode=$?
+
+    if [[ -z $exitCode || $stepExitCode -ne 0 ]]
+    then
+        exitCode=$stepExitCode
+    fi
+done
+
+exit $exitCode
