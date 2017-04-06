@@ -116,6 +116,10 @@ class PagarMe_Checkout_Block_Form_Checkout extends Mage_Payment_Block_Form
         $billingAddress = $quote->getBillingAddress();
         $telephone = $billingAddress->getTelephone();
 
+        if ($address == false) {
+            return false;
+        }
+
         $helper = Mage::helper('pagarme_core');
 
         $cardBrands = \Mage::getStoreConfig(
