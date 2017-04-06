@@ -126,7 +126,7 @@ class PagarMe_Checkout_Block_Form_Checkout extends Mage_Payment_Block_Form
             'payment/pagarme_settings/allowed_credit_card_brands'
         );
 
-        return [
+        $config = [
             'amount' => $helper->parseAmountToInteger($quote->getGrandTotal()),
             'createToken' => 'true',
             'paymentMethods' => $this->getAvailablePaymentMethods(),
@@ -171,5 +171,25 @@ class PagarMe_Checkout_Block_Form_Checkout extends Mage_Payment_Block_Form
                 'payment/pagarme_settings/capture_customer_data'
             )
         ];
+
+        if (Mage::getStoreConfig('payment/pagarme_settings/boleto_discount_mode')
+            == PagarMe_Core_Model_System_Config_Source_BoletoDiscountMode::FIXED_VALUE) {
+            $discount = $helper->parseAmountToInteger(Mage::getStoreConfig(
+                'payment/pagarme_settings/boleto_discount'
+            ));
+
+            $config['boletoDiscountAmount'] = $discount;
+        }
+
+        if (Mage::getStoreConfig('payment/pagarme_settings/boleto_discount_mode')
+            == PagarMe_Core_Model_System_Config_Source_BoletoDiscountMode::PERCENTAGE) {
+            $discount = Mage::getStoreConfig(
+                'payment/pagarme_settings/boleto_discount'
+            );
+
+            $config['boletoDiscountPercentage'] = $discount;
+        }
+
+        return $config;
     }
 }
