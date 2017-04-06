@@ -8,19 +8,17 @@
             <strong>Payment Method</strong>
         </td>
         <td>
-           <?= ($transaction->getInstallments() > 0) ? 'Cartão de Crédito' : 'Boleto' ?>
+           <?= $this->getPaymentMethod() ?>
         </td>
     </tr>
-    <?php if ($transaction->getInstallments() > 0): ?>
-        <tr>
-            <td>
-                <strong>Installments</strong>
-            </td>
-            <td style="text-align:right;">
-               <?= $transaction->getInstallments() ?>
-            </td>
-        </tr>
-    <?php endif; ?>
+    <tr>
+        <td>
+            <strong>Installments</strong>
+        </td>
+        <td style="text-align:right;">
+           <?= $transaction->getInstallments() ?>
+        </td>
+    </tr>
     <?php if ($transaction->getInterestRate() > 0): ?>
         <tr>
             <td>

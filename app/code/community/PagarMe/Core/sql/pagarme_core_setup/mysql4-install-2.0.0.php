@@ -47,6 +47,14 @@ $table = $installer->getConnection()
         'rate_amount',
         Varien_Db_Ddl_Table::TYPE_FLOAT,
         null
+    )
+    ->addColumn(
+        'payment_method',
+        Varien_Db_Ddl_Table::TYPE_VARCHAR,
+        50,
+        [
+            'nullable' => false
+        ]
     );
 
 $installer->getConnection()
