@@ -32,19 +32,19 @@ class CheckoutContext extends RawMinkContext
 
         $config = Mage::getModel('core/config');
         $config->saveConfig(
-                'payment/pagarme_settings/payment_methods',
-                'credit_card,boleto'
-            );
+            'payment/pagarme_settings/payment_methods',
+            'credit_card,boleto'
+        );
 
         $config->saveConfig(
-                'payment/pagarme_settings/interest_rate',
-                5
-            );
+            'payment/pagarme_settings/interest_rate',
+            5
+        );
 
         $config->saveConfig(
-                'payment/pagarme_settings/max_installments',
-                12
-            );
+            'payment/pagarme_settings/max_installments',
+            12
+        );
 
         $this->magentoUrl = getenv('MAGENTO_URL');
         $this->session = $this->getSession();
@@ -283,6 +283,7 @@ class CheckoutContext extends RawMinkContext
 
     /**
      * @Then place order
+     * @And place order
      */
     public function placeOrder()
     {

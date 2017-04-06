@@ -13,8 +13,9 @@ Feature: Order Visualization
         And choose pay with pagar me checkout using "Cartão de crédito"
         And I confirm my personal data
         Given a valid credit card
-        And I confirm my payment information
-        And finish purchase
+        And I confirm my payment information with 1 installments
+        And finish payment process
+        And place order
         Then the purchase must be paid with success
         Then as an Admin user
         When I access the admin
@@ -31,7 +32,8 @@ Feature: Order Visualization
         And confirm billing and shipping address information
         And choose pay with pagar me checkout using "Boleto"
         And I confirm my personal data
-        And finish purchase
+        And finish payment process
+        And place order
         Then the purchase must be paid with success
         Then as an Admin user
         When I access the admin

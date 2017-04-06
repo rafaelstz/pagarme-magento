@@ -7,8 +7,67 @@ require_once __DIR__ . '/../../vendor/autoload.php';
 
 class OrderViewContext extends RawMinkContext
 {
+    use PagarMe\Magento\Test\Helper\CustomerDataProvider;
+    use PagarMe\Magento\Test\Helper\ProductDataProvider;
+    use PagarMe\Magento\Test\Helper\PagarMeCheckoutSwitch;
+
+    private $customer;
+
+    private $session;
+
+    private $grandTotal;
+
+    private $pagarMeCheckout;
+
     const PAYMENT_METHOD_CREDIT_CARD_LABEL = 'Cartão de crédito';
     const PAYMENT_METHOD_BOLETO_LABEL = 'Boleto';
+
+    /**
+     * @BeforeScenario
+     */
+    public function setUp()
+    {
+        \Mage::app()->setCurrentStore(Mage_Core_Model_App::ADMIN_STORE_ID);
+
+        $config = Mage::getModel('core/config');
+        $config->saveConfig(
+            'payment/pagarme_settings/payment_methods',
+            'credit_card,boleto'
+        );
+
+        $config->saveConfig(
+            'payment/pagarme_settings/active',
+            true
+        );
+
+        $config->saveConfig(
+            'payment/pagarme_settings/interest_rate',
+            5
+        );
+
+        $config->saveConfig(
+            'payment/pagarme_settings/max_installments',
+            12
+        );
+
+        $this->magentoUrl = getenv('MAGENTO_URL');
+        $this->session = $this->getSession();
+        $this->product = $this->getProduct();
+        $this->product->save();
+
+        $stock = $this->getProductStock();
+        $stock->assignProduct($this->product);
+        $stock->save();
+
+        $this->enablePagarmeCheckout();
+
+        $this->customer = $this->getCustomer();
+        $this->customer->save();
+
+        $this->customerAddress = $this->getCustomerAddress();
+        $this->customerAddress->setCustomerId($this->customer->getId());
+        $this->customerAddress->save();
+    }
     
     /**
      * @When navigate to the Order page
@@ -80,5 +139,17 @@ class OrderViewContext extends RawMinkContext
             'Transaction Id',
             $htmlContent
         );
+
+        sleep(3);
+    }
+
+    /**
+     * @AfterScenario
+     */
+    public function tearDown()
+    {
+        $this->customer->delete();
+        $this->product->delete();
+        $this->disablePagarmeCheckout();
     }
 }
