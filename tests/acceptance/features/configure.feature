@@ -80,4 +80,3 @@ Feature: Configuration Form
         And save configuration
         Then the configuration must be saved with success
         And the credit card list must be saved in database
-
