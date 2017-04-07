@@ -17,9 +17,10 @@ Feature: Checkout Pagar.me
         Then the purchase must be paid with success
         And a link to boleto must be provided
 
-    Scenario: Make a purchase by boleto with fixed discount
+    @only
+    Scenario Outline: Make a purchase by boleto with fixed discount
         Given a registered user
-        And fixed discount of "6.00"
+        And a <discount_mode> discount of <discount_value>
         When I access the store page
         And add any product to basket
         And I go to checkout page
@@ -30,6 +31,10 @@ Feature: Checkout Pagar.me
         And finish payment process
         Then the discount must be described in checkout
         And the discount must be applied
+        Examples:
+        | discount_mode | discount_value |
+        | fixed_value   | 6              |
+        | percentage    | 2              |
 
     Scenario: Make a purchase by credit card
         Given a registered user

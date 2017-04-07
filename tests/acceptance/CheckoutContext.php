@@ -370,11 +370,20 @@ class CheckoutContext extends RawMinkContext
     }
 
     /**
-     * @Given fixed discount of :discount
+     * @Given a :discountMode discount of :discount
      */
-    public function fixedDiscountOf($discount)
-    {
+    public function discountOf(
+        $discountMode,
+        $discount
+    ) {
+        $this->configuredDiscountMode = $discountMode;
         $this->configuredDiscount = $discount;
+
+        Mage::getModel('core/config')
+            ->saveConfig(
+                'payment/pagarme_settings/boleto_discount_mode',
+                $this->configuredDiscountMode
+            );
 
         Mage::getModel('core/config')
             ->saveConfig(
@@ -456,16 +465,24 @@ class CheckoutContext extends RawMinkContext
         $discountLabel = \Mage::helper('pagarme_core')->__('Discount');
 
         $subtotal = $this->getSubtotal([ $discountLabel ]);
-        $discount = $this->getItemValue($discountLabel);
+        $discount = (int) $this->getItemValue($discountLabel);
         $grandTotal = $this->getGrandTotal();
 
-        \PHPUnit_Framework_TestCase::assertEquals(
-            $grandTotal,
-            $subtotal + $discount
-        );
+        if ($this->configuredDiscountMode ==
+            PagarMe_Core_Model_System_Config_Source_BoletoDiscountMode::FIXED_VALUE) {
+            $expectedGrandTotal = $subtotal + $discount;
+            $expectedDiscountValue = \Mage::helper('pagarme_core')
+                ->parseAmountToInteger($this->configuredDiscount) * -1;
+        } else if ($this->configuredDiscountMode ==
+            PagarMe_Core_Model_System_Config_Source_BoletoDiscountMode::PERCENTAGE) {
+            $expectedGrandTotal = ceil($subtotal * (1 - ($this->configuredDiscount / 100)));
+            $expectedDiscountValue = ((int) ($subtotal * ($this->configuredDiscount / 100))) * -1;
+        }
 
-        $expectedDiscountValue = \Mage::helper('pagarme_core')
-            ->parseAmountToInteger($this->configuredDiscount) * -1;
+        \PHPUnit_Framework_TestCase::assertEquals(
+            $expectedGrandTotal,
+            $grandTotal
+        );
 
         \PHPUnit_Framework_TestCase::assertEquals(
             $expectedDiscountValue,
