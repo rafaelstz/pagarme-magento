@@ -110,6 +110,8 @@ class PagarMe_Checkout_Model_Checkout extends Mage_Payment_Model_Method_Abstract
                 $transaction->getAmount()
             );
         } catch (\Exception $exception) {
+            \Mage::logException($exception->getMessage());
+
             throw $exception;
         }
 
@@ -163,14 +165,10 @@ class PagarMe_Checkout_Model_Checkout extends Mage_Payment_Model_Method_Abstract
         PagarMe\Sdk\Transaction\AbstractTransaction $transaction,
         $infoInstance
     ) {
-
         $installments = 1;
-
-        if ($transaction instanceof PagarMe\Sdk\Transaction\CreditCatdTransaction)
-        {
+        if ($transaction instanceof PagarMe\Sdk\Transaction\CreditCardTransaction) {
             $installments = $transaction->getInstallments();
         }
-
 
         Mage::getModel('pagarme_core/transaction')
             ->setTransactionId($transaction->getId())
@@ -179,6 +177,7 @@ class PagarMe_Checkout_Model_Checkout extends Mage_Payment_Model_Method_Abstract
             ->setInterestRate(
                 $infoInstance->getAdditionalInformation('interest_rate')
             )
+            ->setPaymentMethod($transaction::PAYMENT_METHOD)
             ->setFutureValue(
                 Mage::helper('pagarme_core')
                     ->parseAmountToFloat($transaction->getAmount())

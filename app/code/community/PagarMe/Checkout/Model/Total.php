@@ -1,5 +1,7 @@
 <?php
-class PagarMe_Checkout_Model_Total extends Mage_Sales_Model_Quote_Address_Total_Abstract
+
+class PagarMe_Checkout_Model_Total
+ extends Mage_Sales_Model_Quote_Address_Total_Abstract
 {
     private $interestAmount;
 
@@ -36,17 +38,34 @@ class PagarMe_Checkout_Model_Total extends Mage_Sales_Model_Quote_Address_Total_
             return $this;
         }
 
-        $transaction = Mage::getModel(
-            'pagarme_core/sdk_adapter'
+        $transaction = null;
+
+        try {
+            $transaction = Mage::getModel(
+                'pagarme_core/sdk_adapter'
             )->getPagarMeSdk()
             ->transaction()
             ->get($paymentData['pagarme_checkout_token']);
+        } catch (\PagarMe\Sdk\ClientException $exception) {
+            return $this;
+        }
 
+        $this->calculateTotals($address, $transaction);
+
+        return $this;
+    }
+
+    /**
+     * @param Mage_Sales_Model_Quote_Address $address
+     * @param PagarMe\Sdk\Transaction\AbstractTransaction $transaction
+     * @return $this
+     */
+    private function calculateTotals($address, $transaction)
+    {
         $quote = $address->getQuote();
 
         $quoteTotals = $quote->getTotals();
         $baseSubtotalWithDiscount = $quoteTotals['subtotal']->getValue();
-
         $shippingAmount = $quote->getShippingAddress()->getShippingAmount();
 
         $subTotal = $baseSubtotalWithDiscount + $shippingAmount;
@@ -58,8 +77,6 @@ class PagarMe_Checkout_Model_Total extends Mage_Sales_Model_Quote_Address_Total_
             $this->_addAmount($this->interestAmount);
             $this->_addBaseAmount($this->interestAmount);
         }
-
-        return $this;
     }
 
     /**

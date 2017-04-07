@@ -87,6 +87,24 @@ class PagarMe_Core_Helper_DataTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @test
+     */
+    public function mustConcatenateTheCustomerNameFromQuote()
+    {
+        $quote = Mage::getModel('sales/quote');
+        $quote->setCustomerFirstname('José');
+        $quote->setCustomerMiddlename('das');
+        $quote->setCustomerLastname('Couves');
+
+        $customerName = $this->helper->getCustomerNameFromQuote($quote);
+
+        $this->assertEquals(
+            'José das Couves',
+            $customerName
+        );
+    }
+
+    /**
      * @return array
      */
     public function getFloatValues()

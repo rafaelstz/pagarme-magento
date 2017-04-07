@@ -113,12 +113,10 @@ class PagarMe_Checkout_Block_Form_Checkout extends Mage_Payment_Block_Form
     public function getCheckoutConfig()
     {
         $quote = $this->getQuote();
-        $customer = $this->getCustomer();
-        $address = $customer->getDefaultBillingAddress();
+        $billingAddress = $quote->getBillingAddress();
+        $telephone = $billingAddress->getTelephone();
 
         $helper = Mage::helper('pagarme_core');
-
-        $telephone = $address->getTelephone();
 
         $cardBrands = \Mage::getStoreConfig(
             'payment/pagarme_settings/allowed_credit_card_brands'
@@ -128,18 +126,18 @@ class PagarMe_Checkout_Block_Form_Checkout extends Mage_Payment_Block_Form
             'amount' => $helper->parseAmountToInteger($quote->getGrandTotal()),
             'createToken' => 'true',
             'paymentMethods' => $this->getAvailablePaymentMethods(),
-            'customerName' => $customer->getName(),
-            'customerEmail' => $customer->getEmail(),
-            'customerDocumentNumber' => $customer->getTaxvat(),
+            'customerName' => $helper->getCustomerNameFromQuote($quote),
+            'customerEmail' => $quote->getCustomerEmail(),
+            'customerDocumentNumber' => $quote->getCustomerTaxvat(),
             'customerPhoneDdd' => $helper->getDddFromPhoneNumber($telephone),
             'customerPhoneNumber' => $helper->getPhoneWithoutDdd($telephone),
-            'customerAddressZipcode' => $address->getPostcode(),
-            'customerAddressStreet' => $address->getStreet(1),
-            'customerAddressStreetNumber' => $address->getStreet(2),
-            'customerAddressComplementary' => $address->getStreet(3),
-            'customerAddressNeighborhood' => $address->getStreet(4),
-            'customerAddressCity' => $address->getCity(),
-            'customerAddressState' => $address->getRegion(),
+            'customerAddressZipcode' => $billingAddress->getPostcode(),
+            'customerAddressStreet' => $billingAddress->getStreet(1),
+            'customerAddressStreetNumber' => $billingAddress->getStreet(2),
+            'customerAddressComplementary' => $billingAddress->getStreet(3),
+            'customerAddressNeighborhood' => $billingAddress->getStreet(4),
+            'customerAddressCity' => $billingAddress->getCity(),
+            'customerAddressState' => $billingAddress->getRegion(),
             'brands' => $cardBrands,
             'boletoHelperText' => Mage::getStoreConfig(
                 'payment/pagarme_settings/boleto_helper_text'
@@ -167,21 +165,6 @@ class PagarMe_Checkout_Block_Form_Checkout extends Mage_Payment_Block_Form
             ),
             'customerData' => Mage::getStoreConfig(
                 'payment/pagarme_settings/capture_customer_data'
-            ),
-            'boletoHelperText' => Mage::getStoreConfig(
-                'payment/pagarme_settings/boleto_helper_text'
-            ),
-            'creditCardHelperText' => Mage::getStoreConfig(
-                'payment/pagarme_settings/credit_card_helper_text'
-            ),
-            'uiColor' => Mage::getStoreConfig(
-                'payment/pagarme_settings/ui_color'
-            ),
-            'headerText' => Mage::getStoreConfig(
-                'payment/pagarme_settings/header_text'
-            ),
-            'paymentButtonText' => Mage::getStoreConfig(
-                'payment/pagarme_settings/payment_button_text'
             )
         ];
     }
