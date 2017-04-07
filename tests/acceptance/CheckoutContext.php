@@ -337,10 +337,10 @@ class CheckoutContext extends RawMinkContext
     /**
      * @Then the interest must be described in checkout
      */
-    public function mustBeDescribedInCheckout()
+    public function theInterestMustBeDescribedInCheckout()
     {
         \PHPUnit_Framework_TestCase::assertContains(
-            Mage::helper('pagarme_checkout')->__('Interest/Discount'),
+            Mage::helper('pagarme_checkout')->__('Interest'),
             $this->getSession()->getPage()->getText()
         );
     }
@@ -370,6 +370,110 @@ class CheckoutContext extends RawMinkContext
     }
 
     /**
+     * @Given fixed discount of :discount
+     */
+    public function fixedDiscountOf($discount)
+    {
+        $this->configuredDiscount = $discount;
+
+        Mage::getModel('core/config')
+            ->saveConfig(
+                'payment/pagarme_settings/boleto_discount',
+                $this->configuredDiscount
+            );
+    }
+
+    /**
+     * @Then the discount must be described in checkout
+     */
+    public function theDiscountMustBeDescribedInCheckout()
+    {
+        \PHPUnit_Framework_TestCase::assertContains(
+            Mage::helper('pagarme_checkout')->__('Discount'),
+            $this->getSession()->getPage()->getText()
+        );
+    }
+
+    private function getGrandTotal()
+    {
+        $grandTotalCell = $this->session->getPage()->find(
+            'css',
+            'tfoot strong span.price'
+        );
+        
+        $grandTotal = filter_var(
+            $grandTotalCell->getHtml(),
+            FILTER_SANITIZE_NUMBER_FLOAT
+        );
+
+        return $grandTotal;
+    }
+
+    private function getSubtotal($ignoredValues = array())
+    {
+        $subtotal = 0;
+        $prices = $this->session->getPage()->findAll('css', 'tfoot tr');
+
+        foreach ($prices as $price) {
+            $label = trim($price->find('css', 'td')->getText());
+            $value = filter_var(
+                $price->find('css', 'td.last')->getHtml(),
+                FILTER_SANITIZE_NUMBER_FLOAT
+            );
+
+            if (in_array($label, $ignoredValues)
+                || $label == \Mage::helper('core')->__('Grand Total')) {
+                continue;
+            }
+
+            $subtotal += $value;
+        }
+
+        return $subtotal;
+    }
+
+    private function getItemValue($item)
+    {
+        $itemLabelElement = $this->session->getPage()->find(
+            'css',
+            'tfoot tr td:contains("'. $item .'")'
+        );
+
+        $itemRowElement = $itemLabelElement->getParent();
+        $itemValue = $itemRowElement->find('css', '.last .price');
+
+        return filter_var(
+            $itemValue->getHtml(),
+            FILTER_SANITIZE_NUMBER_FLOAT
+        );
+    }
+
+    /**
+     * @Then the discount must be applied
+     */
+    public function theDiscountMustBeApplied()
+    {
+        $discountLabel = \Mage::helper('pagarme_core')->__('Discount');
+
+        $subtotal = $this->getSubtotal([ $discountLabel ]);
+        $discount = $this->getItemValue($discountLabel);
+        $grandTotal = $this->getGrandTotal();
+
+        \PHPUnit_Framework_TestCase::assertEquals(
+            $grandTotal,
+            $subtotal + $discount
+        );
+
+        $expectedDiscountValue = \Mage::helper('pagarme_core')
+            ->parseAmountToInteger($this->configuredDiscount) * -1;
+
+        \PHPUnit_Framework_TestCase::assertEquals(
+            $expectedDiscountValue,
+            $discount
+        );
+    }
+
+    /**
      * @AfterScenario
      */
     public function tearDown()
@@ -377,5 +481,11 @@ class CheckoutContext extends RawMinkContext
         $this->customer->delete();
         $this->product->delete();
         $this->disablePagarmeCheckout();
+
+        Mage::getModel('core/config')
+            ->saveConfig(
+                'payment/pagarme_settings/boleto_discount',
+                '0'
+            );
     }
 }

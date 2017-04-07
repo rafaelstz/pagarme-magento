@@ -17,6 +17,20 @@ Feature: Checkout Pagar.me
         Then the purchase must be paid with success
         And a link to boleto must be provided
 
+    Scenario: Make a purchase by boleto with fixed discount
+        Given a registered user
+        And fixed discount of "6.00"
+        When I access the store page
+        And add any product to basket
+        And I go to checkout page
+        And login with registered user
+        And confirm billing and shipping address information
+        And choose pay with pagar me checkout using "Boleto bancário"
+        And I confirm my personal data
+        And finish payment process
+        Then the discount must be described in checkout
+        And the discount must be applied
+
     Scenario: Make a purchase by credit card
         Given a registered user
         And a valid credit card

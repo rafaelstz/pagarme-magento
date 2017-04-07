@@ -94,4 +94,3 @@ Feature: Configuration Form
         | 0               | No discount           |
         | 10.5            | Fixed value           |
         | 20.72           | Percentage            |
->>>>>>> Checkout PagarMe: Add configure field to boleto discount
