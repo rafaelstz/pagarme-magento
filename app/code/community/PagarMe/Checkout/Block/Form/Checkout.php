@@ -116,7 +116,7 @@ class PagarMe_Checkout_Block_Form_Checkout extends Mage_Payment_Block_Form
         $billingAddress = $quote->getBillingAddress();
         $telephone = $billingAddress->getTelephone();
 
-        if ($address == false) {
+        if ($billingAddress == false) {
             return false;
         }
 
