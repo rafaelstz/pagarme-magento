@@ -41,30 +41,23 @@ class PagarMe_Core_Model_Quote_Address_Total_BoletoDiscount
 
         $this->discount = $totalAmount - $subtotalAmount;
 
-        if ($this->discount < 0) {
+
+        if ($address->getGrandTotal() == 0) {
+            $this->_setAddress($address);
             $this->_setAmount($this->discount);
-            $this->_setBaseAmount($this->discount);
+            $this->_setBaseAmount($subtotalAmount);
+
+            $quote->setGrandTotal($this->discount);
+            $quote->setBaseGrandTotal($subtotalAmount);
+
+            $quote->save();
+            $address->setQuote($quote);
+
+            $address->setDiscountAmount($this->discount);
+            $address->setBaseDiscountAmount($this->discount);
+            $address->save();
         }
 
-        return $this;
-    }
-
-    /**
-     * Add giftcard totals information to address object
-     *
-     * @param Mage_Sales_Model_Quote_Address $address
-     */
-    public function fetch(Mage_Sales_Model_Quote_Address $address)
-    {
-        $addressTotalAmount = $address->getTotalAmount($this->getCode());
-
-        if ($this->discount != 0 && $addressTotalAmount == 0) {
-            $address->addTotal(array(
-                'code'  => $this->getCode(),
-                'title' => $this->getLabel(),
-                'value' => $this->discount
-            ));
-        }
 
         return $this;
     }

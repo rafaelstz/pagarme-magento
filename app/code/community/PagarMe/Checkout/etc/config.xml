@@ -31,8 +31,8 @@
                     </pagarme_checkout_interest_fee>
                     <pagarme_checkout_discount>
                         <class>pagarme_core/quote_address_total_boletoDiscount</class>
-                        <after>subtotal,shipping</after>
-                        <before>tax</before>
+                        <after>discount</after>
+                        <before>tax,grand_total</before>
                     </pagarme_checkout_discount>
                 </totals>
             </quote>
