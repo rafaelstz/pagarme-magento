@@ -11,8 +11,17 @@ class PagarMe_Core_Model_Sdk_Adapter extends Mage_Core_Model_Abstract
     {
         parent::_construct();
 
+        $headers = [
+            'User-Agent' => sprintf(
+                'Magento/%s',
+                Mage::getVersion()
+            )
+        ];
+
         $this->pagarMeSdk = new \PagarMe\Sdk\PagarMe(
-            Mage::getStoreConfig('payment/pagarme_settings/api_key')
+            Mage::getStoreConfig('payment/pagarme_settings/api_key'),
+            null,
+            $headers
         );
     }
 
