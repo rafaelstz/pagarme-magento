@@ -172,18 +172,26 @@ class PagarMe_Checkout_Model_Checkout extends Mage_Payment_Model_Method_Abstract
             $installments = $transaction->getInstallments();
         }
 
+        $totalAmount = Mage::helper('pagarme_core')
+            ->parseAmountToFloat($transaction->getAmount());
+        $rateAmount = ($totalAmount - $order->getBaseGrandTotal());
+
+        $interestRate = $infoInstance->getAdditionalInformation('interest_rate');
+        if ($rateAmount <= 0) {
+            $interestRate = 0;
+        }
+
         Mage::getModel('pagarme_core/transaction')
             ->setTransactionId($transaction->getId())
             ->setOrderId($order->getId())
             ->setInstallments($installments)
-            ->setInterestRate(
-                $infoInstance->getAdditionalInformation('interest_rate')
-            )
+            ->setInterestRate($interestRate)
             ->setPaymentMethod($transaction::PAYMENT_METHOD)
-            ->setFutureValue(
-                Mage::helper('pagarme_core')
-                    ->parseAmountToFloat($transaction->getAmount())
-            )
+            ->setFutureValue($totalAmount)
+            ->setRateAmount($rateAmount)
             ->save();
+
+        $order->setGrandTotal($totalAmount);
+        $order->save();
     }
 }
