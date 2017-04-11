@@ -108,6 +108,8 @@ class CheckoutContext extends RawMinkContext
     {
         $page = $this->session->getPage();
 
+        $page->clickLink($this->product->getName());
+
         $page->pressButton(
             Mage::helper('pagarme_checkout')->__('Add to Cart')
         );
@@ -309,10 +311,12 @@ class CheckoutContext extends RawMinkContext
         );
 
         \PHPUnit_Framework_TestCase::assertEquals(
-            Mage::helper(
-                'pagarme_checkout'
-            )->__('Your order has been received.'),
-            $successMessage
+            strtolower(
+                Mage::helper(
+                    'pagarme_checkout'
+                )->__('Your order has been received.')
+            ),
+            strtolower($successMessage)
         );
     }
 
