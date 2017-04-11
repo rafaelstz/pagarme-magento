@@ -13,8 +13,9 @@ class PagarMe_Core_Model_Sdk_Adapter extends Mage_Core_Model_Abstract
 
         $headers = [
             'User-Agent' => sprintf(
-                'Magento/%s PHP/%s',
+                'Magento/%s PagarMe/%s PHP/%s',
                 Mage::getVersion(),
+                Mage::getConfig()->getNode()->modules->PagarMe_Core->version,
                 phpversion()
             )
         ];
