@@ -1,6 +1,6 @@
 <?php
 
-class PagarMe_Checkout_Model_Total
+class PagarMe_Core_Model_Quote_Address_Total_CreditCardInterestAmount
  extends PagarMe_Core_Model_Quote_Address_Total_Abstract
 {
     private $interestAmount;
