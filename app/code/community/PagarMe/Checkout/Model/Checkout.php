@@ -104,10 +104,13 @@ class PagarMe_Checkout_Model_Checkout extends Mage_Payment_Model_Method_Abstract
 
         $transaction = $pagarMeSdk->transaction()->get($token);
 
+        $order = $payment->getOrder();
+
         try {
             $transaction = $pagarMeSdk->transaction()->capture(
                 $transaction,
-                $transaction->getAmount()
+                $transaction->getAmount(),
+                ['order_id' => $order->getIncrementId()]
             );
         } catch (\Exception $exception) {
             \Mage::logException($exception->getMessage());
@@ -115,7 +118,6 @@ class PagarMe_Checkout_Model_Checkout extends Mage_Payment_Model_Method_Abstract
             throw $exception;
         }
 
-        $order = $payment->getOrder();
 
         $infoInstance->setAdditionalInformation(
             $this->extractAdditionalInfo($infoInstance, $transaction, $order)
