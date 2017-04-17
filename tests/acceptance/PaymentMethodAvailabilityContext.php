@@ -9,6 +9,8 @@ require_once __DIR__ . '/../../vendor/autoload.php';
 
 class PaymentMethodAvailabilityContext extends MinkContext
 {
+    use PagarMe\Magento\Test\Helper\PagarMeSettings;
+
     private static $checkoutBlock;
 
     /**
@@ -101,10 +103,8 @@ class PaymentMethodAvailabilityContext extends MinkContext
     /**
      * @AfterScenario
      */
-    public static function tearDown()
+    public function tearDown()
     {
-        PaymentMethodSettingsProvider::setPaymentMethodsAvailable(
-            PaymentMethodSettingsProvider::CREDIT_CARD_AND_BOLETO
-        );
+        $this->restorePagarMeSettings();
     }
 }
