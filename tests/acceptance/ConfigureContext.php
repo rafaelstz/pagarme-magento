@@ -484,5 +484,17 @@ class ConfigureContext extends RawMinkContext
         $this->adminUser->delete();
         $this->customer->delete();
         $this->product->delete();
+
+        Mage::getModel('core/config')
+            ->saveConfig(
+                'payment/pagarme_settings/boleto_helper_text',
+                ''
+            );
+
+        Mage::getModel('core/config')
+            ->saveConfig(
+                'payment/pagarme_settings/credit_card_helper_text',
+                ''
+            );
     }
 }
