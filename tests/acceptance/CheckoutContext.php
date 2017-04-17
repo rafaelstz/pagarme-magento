@@ -7,6 +7,7 @@ require_once __DIR__ . '/../../vendor/autoload.php';
 
 class CheckoutContext extends RawMinkContext
 {
+    use PagarMe\Magento\Test\Helper\PagarMeSettings;
     use PagarMe\Magento\Test\Helper\CustomerDataProvider;
     use PagarMe\Magento\Test\Helper\ProductDataProvider;
     use PagarMe\Magento\Test\Helper\PagarMeCheckoutSwitch;
@@ -376,6 +377,6 @@ class CheckoutContext extends RawMinkContext
     {
         $this->customer->delete();
         $this->product->delete();
-        $this->disablePagarmeCheckout();
+        $this->restorePagarMeSettings();
     }
 }
