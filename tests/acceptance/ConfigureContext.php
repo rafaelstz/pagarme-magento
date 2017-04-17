@@ -7,6 +7,7 @@ require_once __DIR__ . '/../../vendor/autoload.php';
 
 class ConfigureContext extends RawMinkContext
 {
+    use PagarMe\Magento\Test\Helper\PagarMeSettings;
     use PagarMe\Magento\Test\Helper\CustomerDataProvider;
     use PagarMe\Magento\Test\Helper\ProductDataProvider;
 
@@ -484,17 +485,6 @@ class ConfigureContext extends RawMinkContext
         $this->adminUser->delete();
         $this->customer->delete();
         $this->product->delete();
-
-        Mage::getModel('core/config')
-            ->saveConfig(
-                'payment/pagarme_settings/boleto_helper_text',
-                ''
-            );
-
-        Mage::getModel('core/config')
-            ->saveConfig(
-                'payment/pagarme_settings/credit_card_helper_text',
-                ''
-            );
+        $this->restorePagarMeSettings();
     }
 }

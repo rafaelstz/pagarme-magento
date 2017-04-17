@@ -10,6 +10,7 @@ class PostbackContext extends MinkContext
 {
     const MAGENTO_ORDER_STATUS_PENDING = 'pending';
 
+    use PagarMe\Magento\Test\Helper\PagarMeSettings;
     use PagarMe\Magento\Test\Helper\CustomerDataProvider;
     use PagarMe\Magento\Test\Helper\ProductDataProvider;
     use PagarMe\Magento\Test\Helper\PostbackDataProvider;
@@ -160,6 +161,6 @@ class PostbackContext extends MinkContext
      */
     public function tearDown()
     {
-        $this->disablePagarmeCheckout();
+        $this->restorePagarMeSettings();
     }
 }
