@@ -32,7 +32,7 @@ class PagarMe_Core_Model_Quote_Address_Total_CreditCardInterestAmount
             return $this;
         }
                 
-                $quote = $address->getQuote();
+        $quote = $address->getQuote();
         $subtotalAmount = $this->getSubtotal($quote);
         
         $transaction = $this->getTransaction();

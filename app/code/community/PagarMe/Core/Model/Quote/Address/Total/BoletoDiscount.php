@@ -41,7 +41,6 @@ class PagarMe_Core_Model_Quote_Address_Total_BoletoDiscount
 
         $this->discount = $totalAmount - $subtotalAmount;
 
-
         if ($address->getGrandTotal() == 0) {
             $this->_setAddress($address);
             $this->_setAmount($this->discount);
@@ -57,7 +56,6 @@ class PagarMe_Core_Model_Quote_Address_Total_BoletoDiscount
             $address->setBaseDiscountAmount($this->discount);
             $address->save();
         }
-
 
         return $this;
     }
