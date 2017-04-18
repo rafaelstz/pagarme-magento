@@ -408,7 +408,7 @@ class CheckoutContext extends RawMinkContext
     {
         $grandTotalCell = $this->session->getPage()->find(
             'css',
-            'tfoot strong span.price'
+            'tfoot tr.last strong span.price'
         );
         
         $grandTotal = filter_var(
@@ -425,7 +425,7 @@ class CheckoutContext extends RawMinkContext
         $prices = $this->session->getPage()->findAll('css', 'tfoot tr');
 
         foreach ($prices as $price) {
-            $label = trim($price->find('css', 'td')->getText());
+            $label = trim($price->find('css', ':first-child')->getText());
             $value = filter_var(
                 $price->find('css', 'td.last')->getHtml(),
                 FILTER_SANITIZE_NUMBER_FLOAT
@@ -446,7 +446,7 @@ class CheckoutContext extends RawMinkContext
     {
         $itemLabelElement = $this->session->getPage()->find(
             'css',
-            'tfoot tr td:contains("'. $item .'")'
+            'tfoot tr td:contains("'. $item .'"), tfoot tr th:contains("'. $item . '")'
         );
 
         $itemRowElement = $itemLabelElement->getParent();
