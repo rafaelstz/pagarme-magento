@@ -26,7 +26,7 @@ trait CustomerDataProvider
             ->setLastname('Isabelle Freitas')
             ->setTaxvat('332.840.319-10')
             ->setDob('03/12/1980')
-            ->setEmail(mktime() . 'livia_nina@arganet.com.br')
+            ->setEmail((mktime()+ rand(1, 99)) . 'livia_nina@arganet.com.br')
             ->setPassword('123456');
 
         return $customer;
