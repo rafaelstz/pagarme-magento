@@ -15,6 +15,8 @@ Feature: Order Visualization
         Given a valid credit card
         And I confirm my payment information with 1 installments
         And finish payment process
+        Then I see the customer payment information using "Cartão de Crédito"
+        And I see the customer selected 1 installments
         And place order
         Then the purchase must be paid with success
         Then as an Admin user
@@ -22,6 +24,10 @@ Feature: Order Visualization
         And navigate to the Order page
         And click on the last created Order
         Then I see that the interest rate information for "Cartão de Crédito" is present
+        Then I, as a registered user, navigate to My Account
+        And click on my Order
+        Then I see my payment method selection as "Cartão de Crédito"
+        And I see my installment selection as 1
 
     Scenario: Order Rate Value and Info from Boleto Purchase
         Given a registered user
@@ -33,6 +39,7 @@ Feature: Order Visualization
         And choose pay with pagar me checkout using "Boleto"
         And I confirm my personal data
         And finish payment process
+        Then I see the customer payment information using "Boleto"
         And place order
         Then the purchase must be paid with success
         Then as an Admin user
@@ -40,3 +47,7 @@ Feature: Order Visualization
         And navigate to the Order page
         And click on the last created Order
         Then I see that the interest rate information for "Boleto" is present
+        Then I, as a registered user, navigate to My Account
+        And click on my Order
+        Then I see my payment method selection as "Boleto"
+

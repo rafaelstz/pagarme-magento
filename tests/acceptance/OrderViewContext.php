@@ -124,15 +124,15 @@ class OrderViewContext extends RawMinkContext
                 'Installments',
                 $htmlContent
             );
+
+            \PHPUnit_Framework_TestCase::assertContains(
+                'Interest Fee',
+                $htmlContent
+            );
         }
 
         \PHPUnit_Framework_TestCase::assertContains(
             $paymentMethod,
-            $htmlContent
-        );
-
-        \PHPUnit_Framework_TestCase::assertContains(
-            'Interest Fee',
             $htmlContent
         );
 
@@ -142,6 +142,119 @@ class OrderViewContext extends RawMinkContext
         );
 
         sleep(3);
+    }
+
+    /**
+     * @Then I see the customer payment information using :paymentMethod
+     */
+    public function iSeeTheCustomerPaymentInformationUsingThePaymenMethod($paymentMethod)
+    {
+        $session = $this->getSession();
+        $page = $session->getPage();
+
+        $session->wait(3000);
+
+        $element = $page->find('css', '#payment-progress-opcheckout');
+
+        \PHPUnit_Framework_TestCase::assertInstanceOf(
+            'Behat\Mink\Element\NodeElement',
+            $element
+        );
+        \PHPUnit_Framework_TestCase::assertContains(
+            $paymentMethod,
+            $element->getHtml()
+        );
+    }
+
+    /**
+     * @Then I see the customer selected :installment installments
+     */
+    public function iSeeTheCustomerPaymentInformationWithInstallments($installment)
+    {
+        $session = $this->getSession();
+        $page = $session->getPage();
+
+        $element = $page->find('css', '#payment-progress-opcheckout');
+        \PHPUnit_Framework_TestCase::assertInstanceOf(
+            'Behat\Mink\Element\NodeElement',
+            $element
+        );
+
+        $htmlContent = $element->getHtml();
+
+        \PHPUnit_Framework_TestCase::assertContains(
+            'Installments',
+            $htmlContent
+        );
+        \PHPUnit_Framework_TestCase::assertContains(
+            $installment,
+            $htmlContent
+        );
+    }
+
+    /**
+     * @Then I, as a registered user, navigate to My Account
+     */
+    public function iNavigateToMyAccountPage()
+    {
+        $session = $this->getSession();
+
+        $session->visit(getenv('MAGENTO_URL') . 'index.php/customer/account/');
+    }
+
+    /**
+     * @Then click on my Order
+     */
+    public function iClickOnMyOrder()
+    {
+        $session = $this->getSession();
+        $page = $session->getPage();
+
+        $page->find('css', '#my-orders-table tbody tr td span a')->click();
+    }
+
+    /**
+     * @Then I see my payment method selection as :paymentMethod
+     */
+    public function iSeeMyPaymentMethodSelectionAs($paymentMethod)
+    {
+        $session = $this->getSession();
+        $page = $session->getPage();
+
+        $element = $page->find('css', '.box-payment');
+        \PHPUnit_Framework_TestCase::assertInstanceOf(
+            'Behat\Mink\Element\NodeElement',
+            $element
+        );
+
+        $htmlContent = $element->getHtml();
+
+        \PHPUnit_Framework_TestCase::assertContains(
+            $paymentMethod,
+            $htmlContent
+        );
+    }
+
+    /**
+     * @Then I see my installment selection as :installment
+     */
+    public function iSeeMyInstallmentSelection($installment)
+    {
+        $session = $this->getSession();
+        $page = $session->getPage();
+
+        $element = $page->find('css', '.box-payment');
+        \PHPUnit_Framework_TestCase::assertInstanceOf(
+            'Behat\Mink\Element\NodeElement',
+            $element
+        );
+
+        $htmlContent = $element->getHtml();
+
+        \PHPUnit_Framework_TestCase::assertContains(
+            $installment,
+            $htmlContent
+        );
     }
 
     /**
