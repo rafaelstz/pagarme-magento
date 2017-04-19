@@ -28,6 +28,7 @@ Feature: Order Visualization
         And click on my Order
         Then I see my payment method selection as "Cartão de Crédito"
         And I see my installment selection as 1
+        And I see my rate amount
 
     Scenario: Order Rate Value and Info from Boleto Purchase
         Given a registered user

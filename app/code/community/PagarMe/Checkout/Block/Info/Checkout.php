@@ -81,10 +81,24 @@ class PagarMe_Checkout_Block_Info_Checkout extends Mage_Payment_Block_Info
                 $installments = 1;
             }
 
+            $additionalInformation = $this->getInfo()
+                ->getAdditionalInformation();
+
             $specificInformation = array_merge($specificInformation, [
                 'Payment Method' => $this->getPaymentMethod(),
-                'Installments' => $installments
+                'Installments' => $installments,
+                'Interest Fee %' => $additionalInformation['interest_rate']
             ]);
+
+            $order = $this->getInfo()->getOrder();
+            if (!is_null($order)) {
+                $rateAmount = Mage::getModel('pagarme_core/transaction')
+                    ->load($order->getId(), 'order_id')
+                    ->getRateAmount();
+
+                $specificInformation['Rate Amount'] = Mage::helper('core')
+                    ->currency($rateAmount, true, false);
+            }
         }
 
         return new Varien_Object($specificInformation);

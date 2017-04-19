@@ -171,8 +171,7 @@ class OrderViewContext extends RawMinkContext
      */
     public function iSeeTheCustomerPaymentInformationWithInstallments($installment)
     {
-        $session = $this->getSession();
-        $page = $session->getPage();
+        $page = $this->getSession()->getPage();
 
         $element = $page->find('css', '#payment-progress-opcheckout');
         \PHPUnit_Framework_TestCase::assertInstanceOf(
@@ -207,8 +206,7 @@ class OrderViewContext extends RawMinkContext
      */
     public function iClickOnMyOrder()
     {
-        $session = $this->getSession();
-        $page = $session->getPage();
+        $page = $this->getSession()->getPage();
 
         $page->find('css', '#my-orders-table tbody tr td span a')->click();
     }
@@ -218,8 +216,7 @@ class OrderViewContext extends RawMinkContext
      */
     public function iSeeMyPaymentMethodSelectionAs($paymentMethod)
     {
-        $session = $this->getSession();
-        $page = $session->getPage();
+        $page = $this->getSession()->getPage();
 
         $element = $page->find('css', '.box-payment');
         \PHPUnit_Framework_TestCase::assertInstanceOf(
@@ -240,8 +237,7 @@ class OrderViewContext extends RawMinkContext
      */
     public function iSeeMyInstallmentSelection($installment)
     {
-        $session = $this->getSession();
-        $page = $session->getPage();
+        $page = $this->getSession()->getPage();
 
         $element = $page->find('css', '.box-payment');
         \PHPUnit_Framework_TestCase::assertInstanceOf(
@@ -253,6 +249,27 @@ class OrderViewContext extends RawMinkContext
 
         \PHPUnit_Framework_TestCase::assertContains(
             $installment,
+            $htmlContent
+        );
+    }
+
+    /**
+     * @Then I see my rate amount
+     */
+    public function iSeeMyRateAmount()
+    {
+        $page = $this->getSession()->getPage();
+
+        $element = $page->find('css', '.box-payment');
+        \PHPUnit_Framework_TestCase::assertInstanceOf(
+            'Behat\Mink\Element\NodeElement',
+            $element
+        );
+
+        $htmlContent = $element->getHtml();
+
+        \PHPUnit_Framework_TestCase::assertContains(
+            'Rate Amount',
             $htmlContent
         );
     }
