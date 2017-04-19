@@ -226,7 +226,6 @@ class ConfigureContext extends RawMinkContext
             '#payment_pagarme_settings_active'
         );
         $select->selectOption('Yes');
-
     }
 
     /**
@@ -450,6 +449,32 @@ class ConfigureContext extends RawMinkContext
     private function flushCachedStoreConfig()
     {
         Mage::app()->getStore()->resetConfig();
+    }
+
+    /**
+     * @When I set boleto discount to :discount
+     */
+    public function iSetBoletoDiscountTo($discount)
+    {
+        $this->getSession()->getPage()->fillField(
+            'payment_pagarme_settings_boleto_discount',
+            $discount
+        );
+    }
+
+    /**
+     * @When I set boleto discount mode to :discountMode
+     */
+    public function iSetBoletoDiscountModeTo($discountMode)
+    {
+        $select = $this->getSession()->getPage()->find(
+            'css',
+            '#payment_pagarme_settings_boleto_discount_mode'
+        );
+
+        $select->selectOption(
+            \Mage::helper('pagarme_core')->__($discountMode)
+        );
     }
 
     /**

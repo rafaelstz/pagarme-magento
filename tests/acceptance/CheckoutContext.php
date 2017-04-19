@@ -338,10 +338,10 @@ class CheckoutContext extends RawMinkContext
     /**
      * @Then the interest must be described in checkout
      */
-    public function mustBeDescribedInCheckout()
+    public function theInterestMustBeDescribedInCheckout()
     {
         \PHPUnit_Framework_TestCase::assertContains(
-            Mage::helper('pagarme_checkout')->__('Interest/Discount'),
+            Mage::helper('pagarme_checkout')->__('Interest'),
             $this->getSession()->getPage()->getText()
         );
     }
@@ -367,6 +367,127 @@ class CheckoutContext extends RawMinkContext
                 'css',
                 '.pagarme_info_boleto a'
             )->getAttribute('href')
+        );
+    }
+
+    /**
+     * @Given a :discountMode discount of :discount
+     */
+    public function discountOf(
+        $discountMode,
+        $discount
+    ) {
+        $this->configuredDiscountMode = $discountMode;
+        $this->configuredDiscount = $discount;
+
+        Mage::getModel('core/config')
+            ->saveConfig(
+                'payment/pagarme_settings/boleto_discount_mode',
+                $this->configuredDiscountMode
+            );
+
+        Mage::getModel('core/config')
+            ->saveConfig(
+                'payment/pagarme_settings/boleto_discount',
+                $this->configuredDiscount
+            );
+    }
+
+    /**
+     * @Then the discount must be described in checkout
+     */
+    public function theDiscountMustBeDescribedInCheckout()
+    {
+        \PHPUnit_Framework_TestCase::assertContains(
+            Mage::helper('pagarme_checkout')->__('Discount'),
+            $this->getSession()->getPage()->getText()
+        );
+    }
+
+    private function getGrandTotal()
+    {
+        $grandTotalCell = $this->session->getPage()->find(
+            'css',
+            'tfoot tr.last strong span.price'
+        );
+        
+        $grandTotal = filter_var(
+            $grandTotalCell->getHtml(),
+            FILTER_SANITIZE_NUMBER_FLOAT
+        );
+
+        return $grandTotal;
+    }
+
+    private function getSubtotal($ignoredValues = array())
+    {
+        $subtotal = 0;
+        $prices = $this->session->getPage()->findAll('css', 'tfoot tr');
+
+        foreach ($prices as $price) {
+            $label = trim($price->find('css', ':first-child')->getText());
+            $value = filter_var(
+                $price->find('css', 'td.last')->getHtml(),
+                FILTER_SANITIZE_NUMBER_FLOAT
+            );
+
+            if (in_array($label, $ignoredValues)
+                || $label == \Mage::helper('core')->__('Grand Total')) {
+                continue;
+            }
+
+            $subtotal += $value;
+        }
+
+        return $subtotal;
+    }
+
+    private function getItemValue($item)
+    {
+        $itemLabelElement = $this->session->getPage()->find(
+            'css',
+            'tfoot tr td:contains("'. $item .'"), tfoot tr th:contains("'. $item . '")'
+        );
+
+        $itemRowElement = $itemLabelElement->getParent();
+        $itemValue = $itemRowElement->find('css', '.last .price');
+
+        return filter_var(
+            $itemValue->getHtml(),
+            FILTER_SANITIZE_NUMBER_FLOAT
+        );
+    }
+
+    /**
+     * @Then the discount must be applied
+     */
+    public function theDiscountMustBeApplied()
+    {
+        $discountLabel = \Mage::helper('pagarme_core')->__('Discount');
+
+        $subtotal = $this->getSubtotal([ $discountLabel ]);
+        $discount = (int) $this->getItemValue($discountLabel);
+        $grandTotal = $this->getGrandTotal();
+
+        if ($this->configuredDiscountMode ==
+            PagarMe_Core_Model_System_Config_Source_BoletoDiscountMode::FIXED_VALUE) {
+            $expectedGrandTotal = $subtotal + $discount;
+            $expectedDiscountValue = \Mage::helper('pagarme_core')
+                ->parseAmountToInteger($this->configuredDiscount) * -1;
+        } else if ($this->configuredDiscountMode ==
+            PagarMe_Core_Model_System_Config_Source_BoletoDiscountMode::PERCENTAGE) {
+            $expectedGrandTotal = ceil($subtotal * (1 - ($this->configuredDiscount / 100)));
+            $expectedDiscountValue = ((int) ($subtotal * ($this->configuredDiscount / 100))) * -1;
+        }
+
+        \PHPUnit_Framework_TestCase::assertEquals(
+            $expectedGrandTotal,
+            $grandTotal
+        );
+
+        \PHPUnit_Framework_TestCase::assertEquals(
+            $expectedDiscountValue,
+            $discount
         );
     }
 

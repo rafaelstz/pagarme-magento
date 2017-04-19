@@ -24,11 +24,16 @@
         <sales>
             <quote>
                 <totals>
-                    <pagarme_checkout>
-                        <class>pagarme_checkout/total</class>
+                    <pagarme_checkout_interest_fee>
+                        <class>pagarme_core/quote_address_total_creditCardInterestAmount</class>
                         <after>subtotal,shipping</after>
                         <before>tax</before>
-                    </pagarme_checkout>
+                    </pagarme_checkout_interest_fee>
+                    <pagarme_checkout_discount>
+                        <class>pagarme_core/quote_address_total_boletoDiscount</class>
+                        <after>discount</after>
+                        <before>tax,grand_total</before>
+                    </pagarme_checkout_discount>
                 </totals>
             </quote>
         </sales>

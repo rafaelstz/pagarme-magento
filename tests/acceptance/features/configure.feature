@@ -80,3 +80,17 @@ Feature: Configuration Form
         And save configuration
         Then the configuration must be saved with success
         And the credit card list must be saved in database
+
+    Scenario Outline: Cunfigure boleto discount
+        Given a admin user
+        When I access the admin
+        And go to system configuration page
+        And I set boleto discount to "<boleto_discount>"
+        And I set boleto discount mode to "<boleto_discount_mode>"
+        And save configuration
+        Then the configuration must be saved with success
+        Examples:
+        | boleto_discount | boleto_discount_mode  |
+        | 0               | No discount           |
+        | 10.5            | Fixed value           |
+        | 20.72           | Percentage            |

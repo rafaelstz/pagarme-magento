@@ -86,6 +86,8 @@
                 <max_installments>1</max_installments>
                 <capture_customer_data>true</capture_customer_data>
                 <button_text>Realizar pagamento</button_text>
+                <boleto_discount>0</boleto_discount>
+                <boleto_discount_mode>no_discount</boleto_discount_mode>
             </pagarme_settings>
         </payment>
     </default>
