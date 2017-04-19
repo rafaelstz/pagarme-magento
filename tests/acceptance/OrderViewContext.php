@@ -260,7 +260,7 @@ class OrderViewContext extends RawMinkContext
     {
         $page = $this->getSession()->getPage();
 
-        $element = $page->find('css', '.box-payment');
+        $element = $page->find('css', '.pagarme_checkout_rate_amount');
         \PHPUnit_Framework_TestCase::assertInstanceOf(
             'Behat\Mink\Element\NodeElement',
             $element
@@ -269,7 +269,7 @@ class OrderViewContext extends RawMinkContext
         $htmlContent = $element->getHtml();
 
         \PHPUnit_Framework_TestCase::assertContains(
-            'Rate Amount',
+            'Interest Fee',
             $htmlContent
         );
     }
