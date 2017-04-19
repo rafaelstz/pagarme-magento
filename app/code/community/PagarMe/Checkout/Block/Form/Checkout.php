@@ -107,6 +107,25 @@ class PagarMe_Checkout_Block_Form_Checkout extends Mage_Payment_Block_Form
         return Mage::getStoreConfig('payment/pagarme_settings/payment_methods');
     }
 
+    public function hasFixedDiscountOnBoleto()
+    {
+        return Mage::getStoreConfig('payment/pagarme_settings/boleto_discount_mode')
+            == PagarMe_Core_Model_System_Config_Source_BoletoDiscountMode::FIXED_VALUE;
+    }
+
+    private function hasPercentageDiscountOnBoleto()
+    {
+        return Mage::getStoreConfig('payment/pagarme_settings/boleto_discount_mode')
+            == PagarMe_Core_Model_System_Config_Source_BoletoDiscountMode::PERCENTAGE;
+    }
+
+    private function getBoletoDiscount()
+    {
+        return Mage::getStoreConfig(
+            'payment/pagarme_settings/boleto_discount'
+        );
+    }
+
     /**
      * @return array
      */
@@ -172,22 +191,14 @@ class PagarMe_Checkout_Block_Form_Checkout extends Mage_Payment_Block_Form
             )
         ];
 
-        if (Mage::getStoreConfig('payment/pagarme_settings/boleto_discount_mode')
-            == PagarMe_Core_Model_System_Config_Source_BoletoDiscountMode::FIXED_VALUE) {
-            $discount = $helper->parseAmountToInteger(Mage::getStoreConfig(
-                'payment/pagarme_settings/boleto_discount'
-            ));
-
-            $config['boletoDiscountAmount'] = $discount;
+        if ($this->hasFixedDiscountOnBoleto()) {
+            $config['boletoDiscountAmount'] = $helper->parseAmountToInteger(
+                $this->getBoletoDiscount()
+            );
         }
 
-        if (Mage::getStoreConfig('payment/pagarme_settings/boleto_discount_mode')
-            == PagarMe_Core_Model_System_Config_Source_BoletoDiscountMode::PERCENTAGE) {
-            $discount = Mage::getStoreConfig(
-                'payment/pagarme_settings/boleto_discount'
-            );
-
-            $config['boletoDiscountPercentage'] = $discount;
+        if ($this->hasPercentageDiscountOnBoleto()) {
+            $config['boletoDiscountPercentage'] = $this->getBoletoDiscount();
         }
 
         return $config;
