@@ -1,7 +1,6 @@
 <?php
 
-class PagarMe_Core_Model_Quote_Address_Total_BoletoDiscount
- extends PagarMe_Core_Model_Quote_Address_Total_Abstract
+class PagarMe_Core_Model_Quote_Address_Total_BoletoDiscount extends PagarMe_Core_Model_Quote_Address_Total_Abstract
 {
     private $discount;
 
@@ -63,6 +62,17 @@ class PagarMe_Core_Model_Quote_Address_Total_BoletoDiscount
     /**
      * @return bool
      */
+    private function hasDiscountOnBoleto()
+    {
+        return (Mage::getStoreConfig('payment/pagarme_settings/boleto_discount_mode')
+            == PagarMe_Core_Model_System_Config_Source_BoletoDiscountMode::FIXED_VALUE) ||
+            (Mage::getStoreConfig('payment/pagarme_settings/boleto_discount_mode')
+            == PagarMe_Core_Model_System_Config_Source_BoletoDiscountMode::PERCENTAGE);
+    }
+
+    /**
+     * @return bool
+     */
     protected function shouldCollect()
     {
         if (!parent::shouldCollect()) {
@@ -72,6 +82,10 @@ class PagarMe_Core_Model_Quote_Address_Total_BoletoDiscount
         $transaction = $this->getTransaction();
 
         if (!$transaction instanceof \PagarMe\Sdk\Transaction\BoletoTransaction) {
+            return false;
+        }
+
+        if (!$this->hasDiscountOnBoleto()) {
             return false;
         }
 
