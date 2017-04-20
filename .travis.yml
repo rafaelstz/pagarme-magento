@@ -18,11 +18,7 @@ before_install:
   - curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose
   - chmod +x docker-compose
   - sudo mv docker-compose /usr/local/bin
-  - wget https://github.com/satooshi/php-coveralls/releases/download/${COVERALLS_VERSION}/coveralls.phar
   - echo "MAGENTO_VERSION=$MAGENTO_VERSION" >> .env
 
 script:
   - script/test.sh
-
-after_success:
-  - travis_retry php coveralls.phar
