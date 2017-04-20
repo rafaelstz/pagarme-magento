@@ -15,3 +15,6 @@
 "Checkout header text","Texto que será exibido no topo do Checkout Pagar.me"
 "Checkout button text","Texto do botão para preencher os dados do Checkout Pagar.me"
 "Checkout final button text","Texto do botão para finalizar o pagamento"
+"Boleto Only","Somente boleto"
+"Credit Card Only","Somente Cartão de Crédito"
+"Boleto and Credit Card","Boleto e Cartão de Crédito"
