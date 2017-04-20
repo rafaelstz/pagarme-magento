@@ -86,9 +86,14 @@ class PagarMe_Checkout_Block_Info_Checkout extends Mage_Payment_Block_Info
 
             $specificInformation = array_merge($specificInformation, [
                 'Payment Method' => $this->getPaymentMethod(),
-                'Installments' => $installments,
-                'Interest Fee %' => $additionalInformation['interest_rate']
+                'Installments' => $installments
             ]);
+
+            if ($this->getPaymentMethod() === self::PAYMENT_METHOD_CREDIT_CARD_LABEL
+                && $additionalInformation['interest_rate'] > 0
+            ) {
+                $specificInformation['Interest Fee %'] = $additionalInformation['interest_rate'];
+            }
         }
 
         return new Varien_Object($specificInformation);
