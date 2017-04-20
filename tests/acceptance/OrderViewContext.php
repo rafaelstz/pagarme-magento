@@ -69,7 +69,7 @@ class OrderViewContext extends RawMinkContext
         $this->customerAddress->setCustomerId($this->customer->getId());
         $this->customerAddress->save();
     }
-    
+
     /**
      * @When navigate to the Order page
      */
@@ -154,7 +154,11 @@ class OrderViewContext extends RawMinkContext
 
         $session->wait(3000);
 
-        $element = $page->find('css', '#payment-progress-opcheckout');
+        $elementIdentifier = '#payment-progress-opcheckout';
+        if (getenv('MAGENTO_VERSION') === '1.7.0.2') {
+            $elementIdentifier = '#checkout-progress-wrapper';
+        }
+        $element = $page->find('css', $elementIdentifier);
 
         \PHPUnit_Framework_TestCase::assertInstanceOf(
             'Behat\Mink\Element\NodeElement',
@@ -173,7 +177,11 @@ class OrderViewContext extends RawMinkContext
     {
         $page = $this->getSession()->getPage();
 
-        $element = $page->find('css', '#payment-progress-opcheckout');
+        $elementIdentifier = '#payment-progress-opcheckout';
+        if (getenv('MAGENTO_VERSION') === '1.7.0.2') {
+            $elementIdentifier = '#checkout-progress-wrapper';
+        }
+        $element = $page->find('css', $elementIdentifier);
         \PHPUnit_Framework_TestCase::assertInstanceOf(
             'Behat\Mink\Element\NodeElement',
             $element
