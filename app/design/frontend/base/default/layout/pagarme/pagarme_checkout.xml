@@ -14,4 +14,9 @@
             <block type="pagarme_checkout/success" name="pagarme_checkout.success" template="pagarme/success.phtml"/>
         </reference>
     </checkout_onepage_success>
+    <sales_order_view>
+        <reference name="order_totals">
+            <block type="pagarme_checkout/sales_RateAmount" name="pagarme_checkout.rateamount"/>
+        </reference>
+    </sales_order_view>
 </layout>

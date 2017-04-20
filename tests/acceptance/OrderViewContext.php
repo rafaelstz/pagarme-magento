@@ -69,7 +69,7 @@ class OrderViewContext extends RawMinkContext
         $this->customerAddress->setCustomerId($this->customer->getId());
         $this->customerAddress->save();
     }
-    
+
     /**
      * @When navigate to the Order page
      */
@@ -124,15 +124,15 @@ class OrderViewContext extends RawMinkContext
                 'Installments',
                 $htmlContent
             );
+
+            \PHPUnit_Framework_TestCase::assertContains(
+                'Interest Fee',
+                $htmlContent
+            );
         }
 
         \PHPUnit_Framework_TestCase::assertContains(
             $paymentMethod,
-            $htmlContent
-        );
-
-        \PHPUnit_Framework_TestCase::assertContains(
-            'Interest Fee',
             $htmlContent
         );
 
@@ -142,6 +142,123 @@ class OrderViewContext extends RawMinkContext
         );
 
         sleep(3);
+    }
+
+    /**
+     * @Then I see the customer payment information using :paymentMethod
+     */
+    public function iSeeTheCustomerPaymentInformationUsingThePaymenMethod($paymentMethod)
+    {
+        $session = $this->getSession();
+        $page = $session->getPage();
+
+        $session->wait(3000);
+
+        $elementIdentifier = '#payment-progress-opcheckout';
+        if (getenv('MAGENTO_VERSION') === '1.7.0.2') {
+            $elementIdentifier = '#checkout-progress-wrapper';
+        }
+        $element = $page->find('css', $elementIdentifier);
+
+        \PHPUnit_Framework_TestCase::assertInstanceOf(
+            'Behat\Mink\Element\NodeElement',
+            $element
+        );
+        \PHPUnit_Framework_TestCase::assertContains(
+            $paymentMethod,
+            $element->getHtml()
+        );
+    }
+
+    /**
+     * @Then I see the customer selected :installment installments
+     */
+    public function iSeeTheCustomerPaymentInformationWithInstallments($installment)
+    {
+        $page = $this->getSession()->getPage();
+
+        $elementIdentifier = '#payment-progress-opcheckout';
+        if (getenv('MAGENTO_VERSION') === '1.7.0.2') {
+            $elementIdentifier = '#checkout-progress-wrapper';
+        }
+        $element = $page->find('css', $elementIdentifier);
+        \PHPUnit_Framework_TestCase::assertInstanceOf(
+            'Behat\Mink\Element\NodeElement',
+            $element
+        );
+
+        $htmlContent = $element->getHtml();
+
+        \PHPUnit_Framework_TestCase::assertContains(
+            'Installments',
+            $htmlContent
+        );
+        \PHPUnit_Framework_TestCase::assertContains(
+            $installment,
+            $htmlContent
+        );
+    }
+
+    /**
+     * @Then I, as a registered user, navigate to My Account
+     */
+    public function iNavigateToMyAccountPage()
+    {
+        $session = $this->getSession();
+
+        $session->visit(getenv('MAGENTO_URL') . 'index.php/customer/account/');
+    }
+
+    /**
+     * @Then click on my Order
+     */
+    public function iClickOnMyOrder()
+    {
+        $page = $this->getSession()->getPage();
+
+        $page->find('css', '#my-orders-table tbody tr td span a')->click();
+    }
+
+    /**
+     * @Then I see my payment method selection as :paymentMethod
+     */
+    public function iSeeMyPaymentMethodSelectionAs($paymentMethod)
+    {
+        $page = $this->getSession()->getPage();
+
+        $element = $page->find('css', '.box-payment');
+        \PHPUnit_Framework_TestCase::assertInstanceOf(
+            'Behat\Mink\Element\NodeElement',
+            $element
+        );
+
+        $htmlContent = $element->getHtml();
+
+        \PHPUnit_Framework_TestCase::assertContains(
+            $paymentMethod,
+            $htmlContent
+        );
+    }
+
+    /**
+     * @Then I see my installment selection as :installment
+     */
+    public function iSeeMyInstallmentSelection($installment)
+    {
+        $page = $this->getSession()->getPage();
+
+        $element = $page->find('css', '.box-payment');
+        \PHPUnit_Framework_TestCase::assertInstanceOf(
+            'Behat\Mink\Element\NodeElement',
+            $element
+        );
+
+        $htmlContent = $element->getHtml();
+
+        \PHPUnit_Framework_TestCase::assertContains(
+            $installment,
+            $htmlContent
+        );
     }
 
     /**
