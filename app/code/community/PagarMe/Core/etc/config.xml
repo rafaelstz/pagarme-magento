@@ -67,7 +67,27 @@
                 </args>
             </pagarme_core>
         </routers>
+        <translate>
+            <modules>
+                <pagarme_core>
+                    <files>
+                        <default>PagarMe_Core.csv</default>
+                    </files>
+                </pagarme_core>
+            </modules>
+        </translate>
     </frontend>
+    <adminhtml>
+        <translate>
+            <modules>
+                <pagarme_core>
+                    <files>
+                        <default>PagarMe_Core.csv</default>
+                    </files>
+                </pagarme_core>
+            </modules>
+        </translate>
+    </adminhtml>
     <default>
         <payment>
             <pagarme_checkout>
