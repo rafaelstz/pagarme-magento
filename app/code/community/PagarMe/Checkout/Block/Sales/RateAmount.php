@@ -23,7 +23,7 @@ class PagarMe_Checkout_Block_Sales_RateAmount extends Mage_Core_Block_Abstract
     {
         $rateAmount = $this->getRateAmount();
 
-        if (!is_null($rateAmount)) {
+        if (!is_null($rateAmount) && $rateAmount > 0) {
             $total = new Varien_Object([
                 'code' => 'pagarme_checkout_rate_amount',
                 'field' => 'pagarme_checkout_rate_amount',

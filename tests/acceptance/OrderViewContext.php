@@ -254,27 +254,6 @@ class OrderViewContext extends RawMinkContext
     }
 
     /**
-     * @Then I see my rate amount
-     */
-    public function iSeeMyRateAmount()
-    {
-        $page = $this->getSession()->getPage();
-
-        $element = $page->find('css', '.pagarme_checkout_rate_amount');
-        \PHPUnit_Framework_TestCase::assertInstanceOf(
-            'Behat\Mink\Element\NodeElement',
-            $element
-        );
-
-        $htmlContent = $element->getHtml();
-
-        \PHPUnit_Framework_TestCase::assertContains(
-            'Interest Fee',
-            $htmlContent
-        );
-    }
-
-    /**
      * @AfterScenario
      */
     public function tearDown()

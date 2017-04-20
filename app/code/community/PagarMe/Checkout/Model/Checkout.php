@@ -98,9 +98,8 @@ class PagarMe_Checkout_Model_Checkout extends Mage_Payment_Model_Method_Abstract
 
         $infoInstance->unsAdditionalInformation('token');
 
-        $pagarMeSdk = Mage::getModel(
-            'pagarme_core/sdk_adapter'
-            )->getPagarMeSdk();
+        $pagarMeSdk = Mage::getModel('pagarme_core/sdk_adapter')
+            ->getPagarMeSdk();
 
         $transaction = $pagarMeSdk->transaction()->get($token);
 
@@ -117,7 +116,6 @@ class PagarMe_Checkout_Model_Checkout extends Mage_Payment_Model_Method_Abstract
 
             throw $exception;
         }
-
 
         $subTotal = $payment->getOrder()->getSubtotal();
         $subtotalWithDiscount = $payment->getOrder()->getQuote()->getSubtotalWithDiscount();
@@ -175,17 +173,16 @@ class PagarMe_Checkout_Model_Checkout extends Mage_Payment_Model_Method_Abstract
         $infoInstance
     ) {
         $installments = 1;
-        if ($transaction instanceof PagarMe\Sdk\Transaction\CreditCardTransaction) {
-            $installments = $transaction->getInstallments();
-        }
-
+        $rateAmount = 0;
+        $interestRate = 0;
         $totalAmount = Mage::helper('pagarme_core')
             ->parseAmountToFloat($transaction->getAmount());
-        $rateAmount = ($totalAmount - $order->getBaseGrandTotal());
 
-        $interestRate = $infoInstance->getAdditionalInformation('interest_rate');
-        if ($rateAmount <= 0) {
-            $interestRate = 0;
+        if ($transaction instanceof PagarMe\Sdk\Transaction\CreditCardTransaction) {
+            $installments = $transaction->getInstallments();
+
+            $rateAmount = ($totalAmount - $order->getBaseGrandTotal());
+            $interestRate = $infoInstance->getAdditionalInformation('interest_rate');
         }
 
         Mage::getModel('pagarme_core/transaction')
