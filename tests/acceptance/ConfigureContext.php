@@ -483,7 +483,9 @@ class ConfigureContext extends RawMinkContext
     public function tearDown()
     {
         $this->adminUser->delete();
-        $this->customer->delete();
+        $customer = \Mage::getModel('customer/customer')
+            ->load($this->customer->getId());
+        $customer->delete();
         $this->product->delete();
         $this->restorePagarMeSettings();
     }
