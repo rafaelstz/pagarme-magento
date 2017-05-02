@@ -266,7 +266,9 @@ class OrderViewContext extends RawMinkContext
      */
     public function tearDown()
     {
-        $this->customer->delete();
+        $customer = \Mage::getModel('customer/customer')
+            ->load($this->customer->getId());
+        $customer->delete();
         $this->product->delete();
         $this->restorePagarMeSettings();
     }

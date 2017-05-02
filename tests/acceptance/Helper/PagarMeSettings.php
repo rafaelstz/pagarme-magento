@@ -30,7 +30,8 @@ trait PagarMeSettings
             'credit_card_helper_text' => '',
             'ui_color' => '',
             'header_text' => '',
-            'checkout_button_text' => ''
+            'checkout_button_text' => '',
+            'payment_action' => 'authorize_capture'
         ];
     }
 }
