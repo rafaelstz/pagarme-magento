@@ -496,8 +496,8 @@ class CheckoutContext extends RawMinkContext
      */
     public function tearDown()
     {
-        $this->customer->delete();
-        $this->product->delete();
-        $this->restorePagarMeSettings();
+        // $this->customer->delete();
+        // $this->product->delete();
+        // $this->restorePagarMeSettings();
     }
 }

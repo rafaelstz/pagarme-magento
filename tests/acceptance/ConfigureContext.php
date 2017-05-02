@@ -10,7 +10,8 @@ class ConfigureContext extends RawMinkContext
     use PagarMe\Magento\Test\Helper\PagarMeSettings;
     use PagarMe\Magento\Test\Helper\CustomerDataProvider;
     use PagarMe\Magento\Test\Helper\ProductDataProvider;
-    use PagarMe\Magento\Test\Helper\AdminDataProvider;
+
+    const ADMIN_PASSWORD = 'admin123';
 
     private $adminUser;
 
@@ -44,7 +45,23 @@ class ConfigureContext extends RawMinkContext
      */
     public function aAdminUser()
     {
-        $this->adminUser = $this->createAdminUser();
+        $this->adminUser = Mage::getModel('admin/user')
+            ->setData(
+                array(
+                    'username'  => mktime() . '_admin',
+                    'firstname' => 'Admin',
+                    'lastname'  => 'Admin',
+                    'email'     => mktime() . '@admin.com',
+                    'password'  => self::ADMIN_PASSWORD,
+                    'is_active' => 1
+                )
+            )->save();
+
+        $this->adminUser->setRoleIds(
+            array(1)
+        )
+        ->setRoleUserId($this->adminUser->getUserId())
+        ->saveRelations();
     }
 
     /**
@@ -76,7 +93,7 @@ class ConfigureContext extends RawMinkContext
         $inputLogin->setValue($this->adminUser->getUsername());
 
         $inputPassword = $page->find('named', array('id', 'login'));
-        $inputPassword->setValue($this->getAdminPassword());
+        $inputPassword->setValue(self::ADMIN_PASSWORD);
 
         $page->pressButton('Login');
     }
