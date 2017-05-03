@@ -23,12 +23,12 @@ class OneStepCheckoutContext extends RawMinkContext
      */
     public function setUp()
     {
-        $adminUser = $this->createAdminUser();
+        $this->adminUser = $this->createAdminUser();
 
-        $this->setupInovarti($adminUser);
+        $this->setupInovarti($this->adminUser);
         $this->setupCustomer();
         $this->setupProduct();
-        $this->setupPagarMe($adminUser);
+        $this->setupPagarMe($this->adminUser);
     }
 
     /**
@@ -36,9 +36,8 @@ class OneStepCheckoutContext extends RawMinkContext
      */
     public function iAmOnCheckoutPageUsingInovartiOneStepCheckout()
     {
-        //login user
-        //add item to cart
-        //go to checkout page
+        $this->setupCart();
+        $this->loginOnOneStepCheckout();
     }
 
     /**
@@ -109,6 +108,8 @@ class OneStepCheckoutContext extends RawMinkContext
      */
     public function tearDown()
     {
+        $this->loginOnAdmin($this->adminUser);
+        $this->goToSystemSettings();
         $this->disableInovartiOneStepCheckout();
     }
 
@@ -172,5 +173,42 @@ class OneStepCheckoutContext extends RawMinkContext
         )->setValue(PAGARME_ENCRYPTION_KEY);
 
         $page->pressButton('Save Config');
+    }
+
+    private function setupCart()
+    {
+        $session = $this->getSession();
+
+        $session->visit(getenv('MAGENTO_URL'));
+        $page = $session->getPage();
+
+        $page->clickLink($this->product->getName());
+
+        $page->pressButton(
+            Mage::helper('pagarme_checkout')->__('Add to Cart')
+        );
+
+        $page->pressButton(
+            Mage::helper('pagarme_checkout')->__('Proceed to Checkout')
+        );
+    }
+
+    private function loginOnOneStepCheckout()
+    {
+        $page = $this->getSession()->getPage();
+
+        $page->fillField(
+            Mage::helper('pagarme_checkout')->__('Email Address'),
+            $this->customer->getEmail()
+        );
+
+        $page->fillField(
+            Mage::helper('pagarme_checkout')->__('Password'),
+            $this->customer->getPassword()
+        );
+
+        $page->pressButton('Login');
+
+        $this->getSession()->wait(2000);
     }
 }
