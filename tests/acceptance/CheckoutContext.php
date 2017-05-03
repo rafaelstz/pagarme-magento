@@ -496,11 +496,8 @@ class CheckoutContext extends RawMinkContext
      */
     public function tearDown()
     {
-        $customer = \Mage::getModel('customer/customer')
-            ->load($this->customer->getId());
-        $customer->delete();
+        $this->customer->delete();
         $this->product->delete();
-
         $this->restorePagarMeSettings();
     }
 }
