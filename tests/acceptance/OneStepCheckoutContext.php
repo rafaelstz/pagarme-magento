@@ -151,6 +151,11 @@ class OneStepCheckoutContext extends RawMinkContext
         $page->find('css', '#payment_pagarme_settings-head')->click();
 
         $page->find(
+            'css',
+            '#payment_pagarme_settings_active'
+            )->selectOption(1);
+
+        $page->find(
             'named',
             array(
                 'id',
