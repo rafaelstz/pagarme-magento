@@ -23,24 +23,12 @@ class OneStepCheckoutContext extends RawMinkContext
      */
     public function setUp()
     {
-        $this->adminUser = $this->createAdminUser();
-        $this->loginOnAdmin($this->adminUser);
-        $this->goToSystemSettings();
-        $this->enableInovartiOneStepCheckout();
+        $adminUser = $this->createAdminUser();
 
-        $this->customer = $this->getCustomer();
-        $this->customer->save();
-
-        $this->customerAddress = $this->getCustomerAddress();
-        $this->customerAddress->setCustomerId($this->customer->getId());
-        $this->customerAddress->save();
-
-        $this->product = $this->getProduct();
-        $this->product->save();
-
-        $stock = $this->getProductStock();
-        $stock->assignProduct($this->product);
-        $stock->save();
+        $this->setupInovarti($adminUser);
+        $this->setupCustomer();
+        $this->setupProduct();
+        $this->setupPagarMe($adminUser);
     }
 
     /**
@@ -48,7 +36,6 @@ class OneStepCheckoutContext extends RawMinkContext
      */
     public function iAmOnCheckoutPageUsingInovartiOneStepCheckout()
     {
-        //configure Pagar.me
         //login user
         //add item to cart
         //go to checkout page
@@ -123,5 +110,62 @@ class OneStepCheckoutContext extends RawMinkContext
     public function tearDown()
     {
         $this->disableInovartiOneStepCheckout();
+    }
+
+    private function setupCustomer()
+    {
+        $this->customer = $this->getCustomer();
+        $this->customer->save();
+
+        $this->customerAddress = $this->getCustomerAddress();
+        $this->customerAddress->setCustomerId($this->customer->getId());
+        $this->customerAddress->save();
+    }
+
+    private function setupProduct()
+    {
+        $this->product = $this->getProduct();
+        $this->product->save();
+
+        $stock = $this->getProductStock();
+        $stock->assignProduct($this->product);
+        $stock->save();
+    }
+
+    private function setupInovarti($adminUser)
+    {
+        $this->loginOnAdmin($adminUser);
+        $this->goToSystemSettings();
+        $this->enableInovartiOneStepCheckout();
+    }
+
+    private function setupPagarMe($adminUser)
+    {
+        $this->loginOnAdmin($adminUser);
+        $this->goToSystemSettings();
+
+        $session = $this->getSession();
+        $page = $session->getPage();
+
+        $page->find('named', array('link', 'Payment Methods'))->click();
+        $page->find('css', '#payment_pagarme_settings-head')->click();
+
+        $page->find(
+            'named',
+            array(
+                'id',
+                'payment_pagarme_settings_api_key'
+            )
+        )->setValue(PAGARME_API_KEY);
+
+        $page->find(
+            'named',
+            array(
+                'id',
+                'payment_pagarme_settings_encryption_key'
+            )
+        )->setValue(PAGARME_ENCRYPTION_KEY);
+
+        $page->pressButton('Save Config');
     }
 }

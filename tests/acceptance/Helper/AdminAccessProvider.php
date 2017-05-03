@@ -8,8 +8,12 @@ trait AdminAccessProvider
     {
         $session = $this->getSession();
         $session->visit(getenv('MAGENTO_URL') . 'index.php/admin');
-
         $page = $session->getPage();
+
+        if ($page->find('css', '.link-logout')) {
+            return true;
+        }
+
         $inputLogin = $page->find('named', array('id', 'username'));
         $inputLogin->setValue($adminUser->getUsername());
 
