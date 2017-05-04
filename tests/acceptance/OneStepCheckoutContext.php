@@ -13,25 +13,20 @@ class OneStepCheckoutContext extends RawMinkContext
     use PagarMe\Magento\Test\Helper\PagarMeSettings;
     use PagarMe\Magento\Test\Helper\ProductDataProvider;
     use PagarMe\Magento\Test\Helper\Interaction;
+    use PagarMe\Magento\Test\Helper\Configuration\Inovarti;
 
-    protected $adminUser;
     protected $pagarMeCheckout;
     protected $product;
-
-    const INOVARTI_CHECKOUT_ON  = 1;
-    const INOVARTI_CHECKOUT_OFF = 0;
 
     /**
      * @BeforeScenario
      */
     public function setUp()
     {
-        $this->adminUser = $this->createAdminUser();
-
-        $this->setupInovarti($this->adminUser);
+        $this->setupInovarti();
         $this->setupCustomer();
         $this->setupProduct();
-        $this->setupPagarMe($this->adminUser);
+        $this->setupPagarMe();
     }
 
     /**
@@ -143,52 +138,11 @@ class OneStepCheckoutContext extends RawMinkContext
         );
     }
 
-    private function enableInovartiOneStepCheckout()
-    {
-        $this->switchInovartiOneStepCheckout(self::INOVARTI_CHECKOUT_ON);
-    }
-
-    private function disableInovartiOneStepCheckout()
-    {
-        $this->switchInovartiOneStepCheckout(self::INOVARTI_CHECKOUT_OFF);
-    }
-
-    private function switchInovartiOneStepCheckout($option)
-    {
-        $page = $this->getSession()->getPage();
-
-        $page->find(
-                'named',
-                array(
-                    'link',
-                    'One Step Checkout'
-                )
-            )->click();
-
-        $inovartiSettingsHeader = $page->find(
-            'css',
-            '#onestepcheckout_general-head'
-        );
-
-        if (!$inovartiSettingsHeader->hasClass('open')) {
-            $inovartiSettingsHeader->click();
-        }
-
-        $page->find(
-            'css',
-            '#onestepcheckout_general_is_enabled'
-            )->selectOption($option);
-
-        $page->pressButton('Save Config');
-    }
-
     /**
      * @AfterScenario
      */
     public function tearDown()
     {
-        $this->loginOnAdmin($this->adminUser);
-        $this->goToSystemSettings();
         $this->disableInovartiOneStepCheckout();
     }
 
@@ -212,46 +166,22 @@ class OneStepCheckoutContext extends RawMinkContext
         $stock->save();
     }
 
-    private function setupInovarti($adminUser)
+    private function setupInovarti()
     {
-        $this->loginOnAdmin($adminUser);
-        $this->goToSystemSettings();
         $this->enableInovartiOneStepCheckout();
     }
 
-    private function setupPagarMe($adminUser)
+    private function setupPagarMe()
     {
-        $this->loginOnAdmin($adminUser);
-        $this->goToSystemSettings();
-
-        $session = $this->getSession();
-        $page = $session->getPage();
-
-        $page->find('named', array('link', 'Payment Methods'))->click();
-        $page->find('css', '#payment_pagarme_settings-head')->click();
-
-        $page->find(
-            'css',
-            '#payment_pagarme_settings_active'
-            )->selectOption(1);
-
-        $page->find(
-            'named',
-            array(
-                'id',
-                'payment_pagarme_settings_api_key'
-            )
-        )->setValue(PAGARME_API_KEY);
-
-        $page->find(
-            'named',
-            array(
-                'id',
-                'payment_pagarme_settings_encryption_key'
-            )
-        )->setValue(PAGARME_ENCRYPTION_KEY);
-
-        $page->pressButton('Save Config');
+        \Mage::getModel('core/config')->saveConfig('payment/pagarme_settings/active', 1);
+        \Mage::getModel('core/config')->saveConfig('payment/paga
+            rme_settings/encryption_key',
+            PAGARME_API_KEY
+        );
+        \Mage::getModel('core/config')->saveConfig(
+            'payment/pagarme_settings/encryption_key',
+            PAGARME_ENCRYPTION_KEY
+        );
     }
 
     private function setupCart()
