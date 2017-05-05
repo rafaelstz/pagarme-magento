@@ -1,10 +1,10 @@
 Feature: One Step Checkout Pagar.me
-    As a seller that use Magento
-    I want to allow that purchases must be paid using Checkout Pagar.me
+    As a customer
+    I want use PagarMe Checkout
     And One Step Checkout
-    To make sales
+    To make purchase
 
-    Scenario: Make a purchase by boleto
+    Scenario: Make a purchase by boleto without discount
         Given I am on checkout page using Inovarti One Step Checkout
         When I confirm payment
         Then the purchase must be created with success
