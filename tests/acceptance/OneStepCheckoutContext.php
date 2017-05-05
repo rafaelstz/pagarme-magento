@@ -175,7 +175,7 @@ class OneStepCheckoutContext extends RawMinkContext
     {
         \Mage::getModel('core/config')->saveConfig('payment/pagarme_settings/active', 1);
         \Mage::getModel('core/config')->saveConfig('payment/paga
-            rme_settings/encryption_key',
+            rme_settings/api_key',
             PAGARME_API_KEY
         );
         \Mage::getModel('core/config')->saveConfig(

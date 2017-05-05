@@ -11,7 +11,6 @@ trait AdminDataProvider
 
     public function createAdminUser()
     {
-
         $adminUser = \Mage::getModel('admin/user')
             ->setData(
                 array(
