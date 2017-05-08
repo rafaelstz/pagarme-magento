@@ -37,3 +37,8 @@ default:
         - OrderViewContext
         - CheckoutContext
         - ConfigureContext
+    one_step_checkout:
+      paths:
+        - %paths.base%/tests/acceptance/features/one_step_checkout.feature
+      contexts:
+        - OneStepCheckoutContext

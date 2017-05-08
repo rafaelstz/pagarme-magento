@@ -11,6 +11,7 @@ class CheckoutContext extends RawMinkContext
     use PagarMe\Magento\Test\Helper\CustomerDataProvider;
     use PagarMe\Magento\Test\Helper\ProductDataProvider;
     use PagarMe\Magento\Test\Helper\PagarMeCheckoutSwitch;
+    use PagarMe\Magento\Test\Helper\Configuration\Inovarti;
 
     private $customer;
 
@@ -46,6 +47,8 @@ class CheckoutContext extends RawMinkContext
             'payment/pagarme_settings/max_installments',
             12
         );
+
+        $this->disableInovartiOneStepCheckout();
 
         $this->magentoUrl = getenv('MAGENTO_URL');
         $this->session = $this->getSession();
@@ -496,11 +499,8 @@ class CheckoutContext extends RawMinkContext
      */
     public function tearDown()
     {
-        $customer = \Mage::getModel('customer/customer')
-            ->load($this->customer->getId());
-        $customer->delete();
+        $this->customer->delete();
         $this->product->delete();
-
         $this->restorePagarMeSettings();
     }
 }
