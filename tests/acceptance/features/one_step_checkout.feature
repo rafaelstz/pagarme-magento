@@ -1,6 +1,6 @@
 Feature: One Step Checkout Pagar.me
     As a customer
-    I want use PagarMe Checkout
+    I want to use PagarMe Checkout
     And One Step Checkout
     To make purchase
 
@@ -46,3 +46,8 @@ Feature: One Step Checkout Pagar.me
         And place order
         Then the purchase must be created with success
         And a link to boleto must be provided
+
+    Scenario: Make a purchase by credit card without fee
+        Given a webstore with Inovarti One Step Checkout enabled
+        When I make the purchase with "Cartão de crédito"
+        Then the purchase must be created with success
