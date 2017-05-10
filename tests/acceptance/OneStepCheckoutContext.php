@@ -122,6 +122,7 @@ class OneStepCheckoutContext extends RawMinkContext
     }
 
     /**
+<<<<<<< 0685ba93126dd03748b8054f24bdce50a37d4f0a
      * @Given I Am on the checkout page using Inovarti One Step Checkout
      */
     public function iAmOnCheckoutPageUsingInovartiOneStepCheckout()
