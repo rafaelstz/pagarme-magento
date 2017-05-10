@@ -22,10 +22,7 @@
 
 ## Campo customizado para CPF / Cnpj
 
-* Por padrão o módulo trabalha com o CPF / Cnpj pelo campo taxvat, mais caso você utilize algum campo customizado para estes fields, basta que você configure os campos em ``` sistema > Configuração > Formas de Pagamento > Pagar.me - Configuração``` e informe no campo CPF o name do input customizado de CPF e em CPNJ o name do input customizado do CNPJ.
-
-## Observações
-* Por padrão o modulo utiliza 4 linhas em um endereço(```Sistema > Configuração > Configuração do cliente > Opções de Nome e Endereço``` e o campo ```Número de linhas em um endereço de rua``` com valor ```4```) respectivamente a ```street```, ```street_number```, ```complementary``` e ```neighborhood```.  Mas não se preocupe, caso esteja utilizando diferente do padrão, você pode utilizar o observer ```pagarme_get_customer_info_from_order_after``` e definir os valores de acordo com o seu Magento
+* Por padrão o módulo trabalha com o CPF / Cnpj pelo campo taxvat, mas caso você utilize algum campo customizado para estes fields, basta que você configure os campos em ``` sistema > Configuração > Formas de Pagamento > Pagar.me - Configuração``` e informe no campo CPF o name do input customizado de CPF e em CPNJ o name do input customizado do CNPJ.
 
 ## Configuração
 
