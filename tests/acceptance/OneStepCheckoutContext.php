@@ -349,9 +349,9 @@ class OneStepCheckoutContext extends RawMinkContext
     }
 
     /**
-     * @Then the percentual interest of :interestRate over :installments isntallments must be informed on checkout
+     * @Then the percentual interest of :interestRate over :installments installments must be informed on checkout
      */
-    public function thePercentualInterestOfOverIsntallmentsMustBeInformedOnCheckout($interestRate, $installments)
+    public function thePercentualInterestOfOverInstallmentsMustBeInformedOnCheckout($interestRate, $installments)
     {
         $page = $this->getSession()->wait(10000);
         $subTotal = preg_replace(

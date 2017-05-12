@@ -51,7 +51,7 @@ Feature: One Step Checkout Pagar.me
         Given "<rate>" interest rate for multi installment payment
         And I am on checkout page using Inovarti One Step Checkout
         When I confirm payment using "<number>" installments
-        Then the percentual interest of "<rate>" over "<number>" isntallments must be informed on checkout
+        Then the percentual interest of "<rate>" over "<number>" installments must be informed on checkout
         Examples:
         | rate  | number    |
         | 3     | 9         |
