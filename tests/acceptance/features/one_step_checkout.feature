@@ -47,7 +47,6 @@ Feature: One Step Checkout Pagar.me
         Then the purchase must be created with success
         And a link to boleto must be provided
 
-    @new
     Scenario Outline: Display interest rate when applied
         Given "<rate>" interest rate for multi installment payment
         And I am on checkout page using Inovarti One Step Checkout
