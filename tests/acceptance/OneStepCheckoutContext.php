@@ -186,11 +186,12 @@ class OneStepCheckoutContext extends RawMinkContext
      */
     public function placeOrder()
     {
+        $page = $this->getSession()->wait(1000);
         $this->getSession()->getPage()->pressButton(
             Mage::helper('pagarme_checkout')->__('Place Order')
         );
 
-        $page = $this->getSession()->wait(10000);
+        $page = $this->getSession()->wait(8000);
     }
 
     /**
