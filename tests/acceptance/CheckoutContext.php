@@ -186,6 +186,10 @@ class CheckoutContext extends RawMinkContext
         );
 
         $this->pagarMeCheckout = $this->session->getPage();
+        $this->waitForElement(
+            '.choose-method-button-container',
+            2000
+        );
         $this->pagarMeCheckout->pressButton($paymentMethod);
     }
 
