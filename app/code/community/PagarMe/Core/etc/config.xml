@@ -97,7 +97,6 @@
                 <title>Pagarme Checkout</title>
                 <allowspecific>0</allowspecific>
                 <payment_methods>credit_card,boleto</payment_methods>
-                <payment_action>authorize</payment_action>
             </pagarme_checkout>
             <pagarme_settings>
                 <button_text>Realizar pagamento</button_text>
@@ -108,6 +107,10 @@
                 <button_text>Realizar pagamento</button_text>
                 <boleto_discount>0</boleto_discount>
                 <boleto_discount_mode>no_discount</boleto_discount_mode>
+                <payment_methods>credit_card,boleto</payment_methods>
+                <payment_action>authorize_capture</payment_action>
+                <capture_customer_data>false</capture_customer_data>
+                <allowed_credit_card_brands>visa,mastercard,amex,hipercard,aura,jcb,diners,elo</allowed_credit_card_brands>
             </pagarme_settings>
         </payment>
     </default>
