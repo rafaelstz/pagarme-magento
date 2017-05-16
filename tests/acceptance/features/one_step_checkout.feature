@@ -50,4 +50,6 @@ Feature: One Step Checkout Pagar.me
     Scenario: Make a purchase by credit card without fee
         Given a webstore with Inovarti One Step Checkout enabled
         When I make the purchase with "Cartão de crédito"
+        And I confirm payment
+        And place order
         Then the purchase must be created with success
