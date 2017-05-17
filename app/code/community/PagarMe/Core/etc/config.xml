@@ -97,6 +97,7 @@
                 <title>Pagarme Checkout</title>
                 <allowspecific>0</allowspecific>
                 <payment_methods>credit_card,boleto</payment_methods>
+                <payment_action>authorize</payment_action>
             </pagarme_checkout>
             <pagarme_settings>
                 <button_text>Realizar pagamento</button_text>
