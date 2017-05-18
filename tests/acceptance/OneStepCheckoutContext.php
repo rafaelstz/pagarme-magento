@@ -269,9 +269,7 @@ class OneStepCheckoutContext extends RawMinkContext
 
         $this->getSession()->switchToIframe();
 
-        $page = $this->getSession()->wait(7000);
-
-
+        $this->getSession()->wait(10000);
     }
 
     /**
@@ -279,12 +277,11 @@ class OneStepCheckoutContext extends RawMinkContext
      */
     public function placeOrder()
     {
-        $page = $this->getSession()->wait(1000);
-
         $this->getSession()->getPage()->pressButton(
             Mage::helper('pagarme_checkout')->__('Place Order')
         );
-        $page = $this->getSession()->wait(8000);
+
+        $this->getSession()->wait(10000);
     }
 
     /**
