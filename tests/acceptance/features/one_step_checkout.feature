@@ -101,8 +101,8 @@ Feature: One Step Checkout Pagar.me
         Then the purchase must be created with success
 
     Scenario: Make a purchase by credit card without fee
-        Given a webstore with Inovarti One Step Checkout enabled
-        When I make the purchase with "Cartão de crédito"
-        And I confirm payment
+        Given "0" interest rate for multi installment payment
+        And I am on checkout page using Inovarti One Step Checkout
+        When I confirm payment using "5" installments
         And place order
         Then the purchase must be created with success
