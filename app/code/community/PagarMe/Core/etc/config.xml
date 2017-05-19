@@ -111,7 +111,7 @@
                 <payment_methods>credit_card,boleto</payment_methods>
                 <payment_action>authorize_capture</payment_action>
                 <capture_customer_data>false</capture_customer_data>
-                <allowed_credit_card_brands>visa,mastercard,amex,hipercard,aura,jcb,diners,elo</allowed_credit_card_brands>
+                <allowed_credit_card_brands>visa,mastercard,amex,hipercard,aura,jcb,diners,elo,discover</allowed_credit_card_brands>
             </pagarme_settings>
         </payment>
     </default>
