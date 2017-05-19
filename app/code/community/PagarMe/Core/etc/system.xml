@@ -171,6 +171,7 @@
                         </credit_card_helper_text>
                         <ui_color translate="label">
                             <label>Payment primary color</label>
+                            <comment>Hexadecimal color - Example: #00ff00</comment>
                             <frontend_type>text</frontend_type>
                             <sort_order>320</sort_order>
                             <show_in_default>1</show_in_default>
