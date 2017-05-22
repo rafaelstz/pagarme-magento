@@ -269,9 +269,7 @@ class OneStepCheckoutContext extends RawMinkContext
 
         $this->getSession()->switchToIframe();
 
-        $page = $this->getSession()->wait(7000);
-
-
+        $this->getSession()->wait(10000);
     }
 
     /**
@@ -283,7 +281,7 @@ class OneStepCheckoutContext extends RawMinkContext
             Mage::helper('pagarme_checkout')->__('Place Order')
         );
 
-        $page = $this->getSession()->wait(10000);
+        $this->getSession()->wait(10000);
     }
 
     /**
@@ -334,6 +332,161 @@ class OneStepCheckoutContext extends RawMinkContext
             )->getAttribute('href')
         );
     }
+
+    /**
+     * @Given :interestRate interest rate for multi installment payment
+     */
+    public function interestRateForMultiInstallmentPayment($interestRate)
+    {
+        \Mage::getModel('core/config')->saveConfig(
+            'payment/pagarme_settings/interest_rate',
+            $interestRate
+        );
+
+        \Mage::getModel('core/config')->saveConfig(
+            'payment/pagarme_settings/free_installments',
+            1
+        );
+
+        \Mage::getModel('core/config')->saveConfig(
+            'payment/pagarme_settings/max_installments',
+            12
+        );
+
+        \Mage::getConfig()->cleanCache();
+    }
+
+    /**
+     * @When I confirm payment using :installments installments
+     */
+    public function iConfirmPaymentUsingInstallments($installments)
+    {
+        $page = $this->getSession()->getPage();
+
+        $page->find('css', '#p_method_pagarme_checkout')->click();
+        $this->getSession()->wait(5000);
+
+        $button = $page->find('css', '#pagarme-checkout-fill-info-button');
+
+        $page->find('css', '#pagarme-checkout-fill-info-button')->click();
+        $this->getSession()->wait(5000);
+
+        $this->getSession()->switchToIframe(
+            $page->find('css', 'iframe')->getAttribute('name')
+        );
+
+        $this->pagarMeCheckout = $this->getSession()->getPage();
+        $this->getSession()->wait(1000);
+        $this->pagarMeCheckout->pressButton('Cartão de crédito');
+
+        $this->waitForElement(
+            '#pagarme-modal-box-step-buyer-information',
+            1000
+        );
+
+        $this->pagarMeCheckout->find(
+            'css',
+            '#pagarme-modal-box-step-buyer-information .pagarme-modal-box-next-step'
+        )->click();
+
+        $this->waitForElement(
+            '#pagarme-modal-box-step-customer-address-information',
+            1000
+        );
+
+        $this->pagarMeCheckout->find(
+            'css',
+            '#pagarme-modal-box-step-customer-address-information .pagarme-modal-box-next-step'
+        )->click();
+
+        $this->getSession()->wait(1000);
+        $this->pagarMeCheckout->find(
+            'css',
+            '#pagarme-modal-box-credit-card-number'
+        )->setValue('4111111111111111');
+
+        $this->pagarMeCheckout->find(
+            'css',
+            '#pagarme-modal-box-credit-card-name'
+        )->setValue($this->customer->getName());
+
+        $this->pagarMeCheckout->find(
+            'css',
+            '#pagarme-modal-box-credit-card-expiration'
+        )->setValue('1019');
+
+        $this->pagarMeCheckout->find(
+            'css',
+            '#pagarme-modal-box-credit-card-cvv'
+        )->setValue('123');
+
+
+        $field = $this->pagarMeCheckout->find(
+            'css',
+            "[data-value='$installments']"
+        );
+
+        $field->click();
+
+        $this->pagarMeCheckout->find(
+            'css',
+            '#pagarme-modal-box-step-credit-card-information .pagarme-modal-box-next-step'
+        )->click();
+
+        $this->getSession()->switchToIframe();
+
+        $page = $this->getSession()->wait(7000);
+    }
+
+    /**
+     * @Then the percentual interest of :interestRate over :installments installments must be informed on checkout
+     */
+    public function thePercentualInterestOfOverInstallmentsMustBeInformedOnCheckout($interestRate, $installments)
+    {
+        $page = $this->getSession()->wait(10000);
+        $subTotal = preg_replace(
+            "/[^0-9,.]/",
+            "",
+            $this->getSession()->getPage()->find(
+                'xpath',
+                '//*[@class="onestepcheckout-cart-table"]//tfoot//tr[1]//td//span'
+                )
+            ->getText()
+        );
+
+        $shipping = preg_replace(
+            "/[^0-9,.]/",
+            "",
+            $this->getSession()->getPage()->find(
+                'xpath',
+                '//*[@class="onestepcheckout-cart-table"]//tfoot//tr[2]//td//span'
+                )
+            ->getText()
+        );
+
+        $interest = preg_replace(
+            "/[^0-9,.]/",
+            "",
+            $this->getSession()->getPage()->find(
+                'xpath',
+                '//*[@class="onestepcheckout-cart-table"]//tfoot//tr[3]//td//span'
+                )
+            ->getText()
+        );
+
+        $subTotalWithoutInterest = $subTotal + $shipping;
+
+        $totalInterest = ($interestRate/100) * $installments;
+
+        $interestAmount = $subTotalWithoutInterest * $totalInterest;
+        $interestAmount = round($interestAmount, 2);
+
+        \PHPUnit_Framework_TestCase::assertEquals(
+            $interestAmount,
+            $interest
+        );
+    }
+
 
     /**
      * @AfterScenario
