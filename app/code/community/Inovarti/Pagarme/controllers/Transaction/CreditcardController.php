@@ -33,7 +33,9 @@ class Inovarti_Pagarme_Transaction_CreditcardController
 
                 foreach ($order->getInvoiceCollection() as $invoice) {
                     $invoice->setRequestedCaptureCase(Mage_Sales_Model_Order_Invoice::CAPTURE_ONLINE);
-                    $invoice->capture();
+                    $invoice->pay();
+                    $invoice->getOrder()->setState(Mage_Sales_Model_Order::STATE_PROCESSING, true, 'Invoice defined as paid via Creditcard postback.');
+
                     Mage::getModel('core/resource_transaction')
                         ->addObject($invoice)
                         ->addObject($invoice->getOrder())
@@ -42,6 +44,7 @@ class Inovarti_Pagarme_Transaction_CreditcardController
 
                 $invoice->sendEmail();
                 $order->addStatusHistoryComment($this->__('Approved by Pagarme via Creditcard postback.'))->save();
+
                 return $this->getResponse()->setBody('ok');
             }
 
