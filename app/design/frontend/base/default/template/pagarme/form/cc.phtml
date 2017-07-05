@@ -166,6 +166,10 @@ Event.observe($('<?php echo $_code ?>_cc_cid'), 'keyup', function(){
         pagarmeValidateFields();
     });
 
+    Event.observe($('<?php echo $_code ?>_cc_cid'), 'keyup', function(){
+        pagarmeValidateFields();
+    })
+
     var changeElement = false;
     document.on('click', function(evt, elm){
         if (elm.match('#<?php echo $_code ?>_cc_number') || elm.match('#<?php echo $_code ?>_cc_owner') || elm.match('#<?php echo $_code ?>_cc_cid') ){
