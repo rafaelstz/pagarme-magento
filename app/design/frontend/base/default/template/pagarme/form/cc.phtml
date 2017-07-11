@@ -92,15 +92,6 @@
         <label id="pagarme-cardhash-success" class="a-center" style="display:none;"><?php echo __('All right!'); ?></label>
     </li>
 </ul>
-<?php if($this->hasVerification()): ?>
-<script type="text/javascript">
-//<![CDATA[
-Event.observe($('<?php echo $_code ?>_cc_cid'), 'keyup', function(){
-    if (this.value.length > 3) $('<?php echo $_code ?>_installments').focus ();
-});
-//]]>
-</script>
-<?php endif; ?>
 <script type="text/javascript">
 //<![CDATA[
     pagarmeValidateFields = function() {
@@ -165,6 +156,10 @@ Event.observe($('<?php echo $_code ?>_cc_cid'), 'keyup', function(){
     $(document).on('click','#payment-continue',function(){
         pagarmeValidateFields();
     });
+
+    Event.observe($('<?php echo $_code ?>_cc_cid'), 'keyup', function(){
+        pagarmeValidateFields();
+    })
 
     var changeElement = false;
     document.on('click', function(evt, elm){
