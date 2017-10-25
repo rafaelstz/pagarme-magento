@@ -98,20 +98,30 @@
                 <payment_methods>credit_card,boleto</payment_methods>
                 <payment_action>authorize</payment_action>
             </pagarme_checkout>
+            <pagarme_creditcard>
+                <active>1</active>
+                <model>pagarme_creditcard/creditcard</model>
+                <order_status>pending</order_status>
+                <allowspecific>0</allowspecific>
+                <payment_methods>credit_card,boleto</payment_methods>
+                <payment_action>authorize</payment_action>
+            </pagarme_creditcard>
             <pagarme_settings>
-                <title>Pagarme Checkout</title>
-                <button_text>Realizar pagamento</button_text>
-                <interest_rate>0</interest_rate>
-                <free_installments>1</free_installments>
-                <max_installments>1</max_installments>
-                <capture_customer_data>true</capture_customer_data>
-                <button_text>Realizar pagamento</button_text>
+                <checkout_title>Pagarme Checkout</checkout_title>
+                <checkout_button_text>Realizar pagamento</checkout_button_text>
+                <creditcard_interest_rate>0</creditcard_interest_rate>
+                <creditcard_free_installments>1</creditcard_free_installments>
+                <creditcard_max_installments>1</creditcard_max_installments>
+                <creditcard_allowed_creditcard_brands>visa,mastercard,amex,hipercard,aura,jcb,diners,elo,discover</creditcard_allowed_creditcard_brands>
+                <creditcard_title>Pagamento com cartão de crédito</creditcard_title>
+                <checkout_capture_customer_data>true</checkout_capture_customer_data>
+                <checkout_button_text>Realizar pagamento</checkout_button_text>
                 <boleto_discount>0</boleto_discount>
                 <boleto_discount_mode>no_discount</boleto_discount_mode>
-                <payment_methods>credit_card,boleto</payment_methods>
+                <boleto_title>Pagamento com boleto</boleto_title>
+                <checkout_payment_methods>credit_card,boleto</checkout_payment_methods>
                 <payment_action>authorize_capture</payment_action>
-                <capture_customer_data>false</capture_customer_data>
-                <allowed_credit_card_brands>visa,mastercard,amex,hipercard,aura,jcb,diners,elo,discover</allowed_credit_card_brands>
+                <checkout_capture_customer_data>false</checkout_capture_customer_data>
             </pagarme_settings>
         </payment>
     </default>

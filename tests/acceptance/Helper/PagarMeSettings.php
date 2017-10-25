@@ -18,21 +18,24 @@ trait PagarMeSettings
     public function getDefaultSettings()
     {
         return [
-            'active' => '1',
-            'payment_method' => 'credit_card,boleto',
-            'capture_customer_data' => 'true',
-            'payment_button_text' => '',
-            'interest_rate' => '0',
-            'free_installments' => '1',
-            'max_installments' => '1',
-            'allowed_credit_card_brands' => 'visa,mastercard,amex,hipercard,aura,jcb,diners,elo',
-            'boleto_helper_text' => '',
-            'credit_card_helper_text' => '',
-            'ui_color' => '',
-            'header_text' => '',
+            'checkout_active' => '1',
+            'checkout_payment_methods' => 'credit_card,boleto',
+            'checkout_capture_customer_data' => 'true',
+            'checkout_payment_button_text' => '',
+            'creditcard_interest_rate' => '0',
+            'creditcard_free_installments' => '1',
+            'creditcard_max_installments' => '1',
+            'creditcard_allowed_credit_card_brands' => 'visa,mastercard,amex,hipercard,aura,jcb,diners,elo',
+            'checkout_boleto_helper_text' => '',
+            'checkout_credit_card_helper_text' => '',
+            'checkout_ui_color' => '',
+            'checkout_header_text' => '',
             'checkout_button_text' => '',
             'payment_action' => 'authorize_capture',
-            'title' => 'Pagar.me Checkout'
+            'checkout_title' => 'Pagar.me Checkout',
+            'creditcard_title' => 'Cartão de crédito Pagar.me',
+            'transparent_payment_methods' => 'credit_card',
+            'transparent_active' => '1'
         ];
     }
 }

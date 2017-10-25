@@ -15,6 +15,11 @@ default:
         - %paths.base%/tests/acceptance/features/configure.feature
       contexts:
         - ConfigureContext
+    credit_card:
+      paths:
+        - %paths.base%/tests/acceptance/features/credit_card.feature
+      contexts:
+        - CreditCardContext
     checkout:
       paths:
         - %paths.base%/tests/acceptance/features/checkout.feature
@@ -30,8 +35,8 @@ default:
         - %paths.base%/tests/acceptance/features/payment_method_availability.feature
       contexts:
         - PaymentMethodAvailabilityContext
-    one_step_checkout:
-      paths:
-        - %paths.base%/tests/acceptance/features/one_step_checkout.feature
-      contexts:
-        - OneStepCheckoutContext
+    #one_step_checkout:
+    #  paths:
+    #    - %paths.base%/tests/acceptance/features/one_step_checkout.feature
+    #  contexts:
+    #    - OneStepCheckoutContext

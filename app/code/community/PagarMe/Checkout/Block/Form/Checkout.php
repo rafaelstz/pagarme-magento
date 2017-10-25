@@ -32,7 +32,7 @@ class PagarMe_Checkout_Block_Form_Checkout extends Mage_Payment_Block_Form
      */
     public function getEncryptionKey()
     {
-        return Mage::getStoreConfig('payment/pagarme_settings/encryption_key');
+        return Mage::getStoreConfig('payment/pagarme_settings/general_encryption_key');
     }
 
     /**
@@ -43,7 +43,7 @@ class PagarMe_Checkout_Block_Form_Checkout extends Mage_Payment_Block_Form
     public function getButtonText()
     {
         return Mage::getStoreConfig(
-            'payment/pagarme_settings/button_text'
+            'payment/pagarme_settings/checkout_button_text'
         );
     }
 
@@ -104,7 +104,7 @@ class PagarMe_Checkout_Block_Form_Checkout extends Mage_Payment_Block_Form
      */
     public function getAvailablePaymentMethods()
     {
-        return Mage::getStoreConfig('payment/pagarme_settings/payment_methods');
+        return Mage::getStoreConfig('payment/pagarme_settings/checkout_payment_methods');
     }
 
     public function hasFixedDiscountOnBoleto()
@@ -143,7 +143,7 @@ class PagarMe_Checkout_Block_Form_Checkout extends Mage_Payment_Block_Form
         $helper = Mage::helper('pagarme_core');
 
         $cardBrands = \Mage::getStoreConfig(
-            'payment/pagarme_settings/allowed_credit_card_brands'
+            'payment/pagarme_settings/creditcard_allowed_credit_card_brands'
         );
 
         $config = [
@@ -164,31 +164,31 @@ class PagarMe_Checkout_Block_Form_Checkout extends Mage_Payment_Block_Form
             'customerAddressState' => $billingAddress->getRegion(),
             'brands' => $cardBrands,
             'boletoHelperText' => Mage::getStoreConfig(
-                'payment/pagarme_settings/boleto_helper_text'
+                'payment/pagarme_settings/checkout_boleto_helper_text'
             ),
             'creditCardHelperText' => Mage::getStoreConfig(
-                'payment/pagarme_settings/credit_card_helper_text'
+                'payment/pagarme_settings/checkout_credit_card_helper_text'
             ),
             'uiColor' => Mage::getStoreConfig(
-                'payment/pagarme_settings/ui_color'
+                'payment/pagarme_settings/checkout_ui_color'
             ),
             'headerText' => Mage::getStoreConfig(
-                'payment/pagarme_settings/header_text'
+                'payment/pagarme_settings/checkout_header_text'
             ),
             'paymentButtonText' => Mage::getStoreConfig(
-                'payment/pagarme_settings/payment_button_text'
+                'payment/pagarme_settings/checkout_payment_button_text'
             ),
             'interestRate' => Mage::getStoreConfig(
-                'payment/pagarme_settings/interest_rate'
+                'payment/pagarme_settings/creditcard_interest_rate'
             ),
             'maxInstallments' => Mage::getStoreConfig(
-                'payment/pagarme_settings/max_installments'
+                'payment/pagarme_settings/creditcard_max_installments'
             ),
             'freeInstallments' => Mage::getStoreConfig(
-                'payment/pagarme_settings/free_installments'
+                'payment/pagarme_settings/creditcard_free_installments'
             ),
             'customerData' => Mage::getStoreConfig(
-                'payment/pagarme_settings/capture_customer_data'
+                'payment/pagarme_settings/checkout_capture_customer_data'
             )
         ];
 
