@@ -113,6 +113,22 @@ class PagarMe_Core_Helper_Data extends Mage_Core_Helper_Abstract
      *
      * @return string
      */
+    public function getDocumentType($quote)
+    {
+        $documentNumber = $quote->getCustomerTaxvat();
+
+        if(strlen($documentNumber) == 11) {
+            return 'cpf';
+        }
+
+        return 'cnpj';
+    }
+
+    /**
+     * @param Mage_Sales_Model_Quote $quote
+     *
+     * @return string
+     */
     public function getCustomerNameFromQuote($quote)
     {
         return implode([

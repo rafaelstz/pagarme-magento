@@ -14,7 +14,7 @@ class PostbackContext extends MinkContext
     use PagarMe\Magento\Test\Helper\CustomerDataProvider;
     use PagarMe\Magento\Test\Helper\ProductDataProvider;
     use PagarMe\Magento\Test\Helper\PostbackDataProvider;
-    use PagarMe\Magento\Test\Helper\PagarMeCheckoutSwitch;
+    use PagarMe\Magento\Test\Helper\PagarMeSwitch;
 
     /**
      * @BeforeScenario
@@ -32,10 +32,10 @@ class PostbackContext extends MinkContext
         $this->product->save();
 
         \Mage::getConfig()
-            ->saveConfig('payment/pagarme_settings/api_key', PAGARME_API_KEY);
+            ->saveConfig('payment/pagarme_settings/general_api_key', PAGARME_API_KEY);
 
         \Mage::getConfig()
-            ->saveConfig('payment/pagarme_settings/encryption_key', PAGARME_ENCRYPTION_KEY);
+            ->saveConfig('payment/pagarme_settings/general_encryption_key', PAGARME_ENCRYPTION_KEY);
 
         $this->enablePagarmeCheckout();
     }
@@ -113,7 +113,7 @@ class PostbackContext extends MinkContext
 
         $payload = "id={$transactionId}&current_status={$currentStatus}";
 
-        $apiKey = \Mage::getStoreConfig('payment/pagarme_settings/api_key');
+        $apiKey = \Mage::getStoreConfig('payment/pagarme_settings/general_api_key');
 
         $hash = hash_hmac($algorithm, $payload, $apiKey);
 

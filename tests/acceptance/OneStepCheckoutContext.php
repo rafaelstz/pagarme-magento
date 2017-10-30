@@ -389,17 +389,17 @@ class OneStepCheckoutContext extends RawMinkContext
     public function interestRateForMultiInstallmentPayment($interestRate)
     {
         \Mage::getModel('core/config')->saveConfig(
-            'payment/pagarme_settings/interest_rate',
+            'payment/pagarme_settings/creditcard_interest_rate',
             $interestRate
         );
 
         \Mage::getModel('core/config')->saveConfig(
-            'payment/pagarme_settings/free_installments',
+            'payment/pagarme_settings/creditcard_free_installments',
             1
         );
 
         \Mage::getModel('core/config')->saveConfig(
-            'payment/pagarme_settings/max_installments',
+            'payment/pagarme_settings/creditcard_max_installments',
             12
         );
 
@@ -580,13 +580,13 @@ class OneStepCheckoutContext extends RawMinkContext
 
     private function setupPagarMe()
     {
-        \Mage::getModel('core/config')->saveConfig('payment/pagarme_settings/active', 1);
+        \Mage::getModel('core/config')->saveConfig('payment/pagarme_settings/checkout_active', 1);
         \Mage::getModel('core/config')->saveConfig(
-            'payment/pagarme_settings/api_key',
+            'payment/pagarme_settings/general_api_key',
             PAGARME_API_KEY
         );
         \Mage::getModel('core/config')->saveConfig(
-            'payment/pagarme_settings/encryption_key',
+            'payment/pagarme_settings/general_encryption_key',
             PAGARME_ENCRYPTION_KEY
         );
     }
