@@ -12,6 +12,7 @@ class CheckoutContext extends RawMinkContext
     use PagarMe\Magento\Test\Helper\ProductDataProvider;
     use PagarMe\Magento\Test\Helper\PagarMeSwitch;
     use PagarMe\Magento\Test\Helper\Configuration\Inovarti;
+    use PagarMe\Magento\Test\Helper\SessionWait;
 
     private $customer;
 
@@ -54,14 +55,6 @@ class CheckoutContext extends RawMinkContext
         $stock->save();
 
         $this->enablePagarmeCheckout();
-    }
-
-    public function waitForElement($element, $timeout)
-    {
-        $this->session->wait(
-            $timeout,
-            "document.querySelector('${element}').style.display != 'none'"
-        );
     }
 
     /**

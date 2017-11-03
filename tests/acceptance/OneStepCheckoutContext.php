@@ -12,7 +12,7 @@ class OneStepCheckoutContext extends RawMinkContext
     use PagarMe\Magento\Test\Helper\CustomerDataProvider;
     use PagarMe\Magento\Test\Helper\PagarMeSettings;
     use PagarMe\Magento\Test\Helper\ProductDataProvider;
-    use PagarMe\Magento\Test\Helper\Interaction;
+    use PagarMe\Magento\Test\Helper\SessionWait;
     use PagarMe\Magento\Test\Helper\Configuration\Inovarti;
 
     protected $pagarMeCheckout;
