@@ -19,6 +19,8 @@ class CreditCardContext extends RawMinkContext
      */
     public function setUp()
     {
+        $config = Mage::getModel('core/config');
+
         $this->magentoUrl = getenv('MAGENTO_URL');
         $this->session = $this->getSession();
         $this->product = $this->getProduct();
@@ -107,8 +109,6 @@ class CreditCardContext extends RawMinkContext
     public function confirmBillingAndShippingAddressInformation()
     {
         $page = $this->session->getPage();
-
-        $this->session->wait(30000);
 
         $page->find('css', '#billing-buttons-container button')->press();
 
