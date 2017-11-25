@@ -65,7 +65,7 @@ class CreditCardContext extends RawMinkContext
         $page->clickLink($this->product->getName());
 
         $page->pressButton(
-            Mage::helper('pagarme_checkout')->__('Add to Cart')
+            Mage::helper('pagarme_modal')->__('Add to Cart')
         );
 
     }
@@ -78,7 +78,7 @@ class CreditCardContext extends RawMinkContext
         $page = $this->session->getPage();
 
         $page->pressButton(
-            Mage::helper('pagarme_checkout')->__('Proceed to Checkout')
+            Mage::helper('pagarme_modal')->__('Proceed to Checkout')
         );
 
     }
@@ -91,12 +91,12 @@ class CreditCardContext extends RawMinkContext
         $page = $this->session->getPage();
 
         $this->getSession()->getPage()->fillField(
-            Mage::helper('pagarme_checkout')->__('Email Address'),
+            Mage::helper('pagarme_modal')->__('Email Address'),
             $this->customer->getEmail()
         );
 
         $this->getSession()->getPage()->fillField(
-            Mage::helper('pagarme_checkout')->__('Password'),
+            Mage::helper('pagarme_modal')->__('Password'),
             $this->customer->getPassword()
         );
 
