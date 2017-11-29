@@ -12,6 +12,7 @@ class CreditCardContext extends RawMinkContext
     use PagarMe\Magento\Test\Helper\PagarMeSwitch;
     use PagarMe\Magento\Test\Helper\CustomerDataProvider;
     use PagarMe\Magento\Test\Helper\ProductDataProvider;
+    use PagarMe\Magento\Test\Helper\SessionWait;
 
     /**
      * @BeforeScenario
@@ -30,14 +31,6 @@ class CreditCardContext extends RawMinkContext
         $stock->save();
 
         $this->enablePagarmeTransparent();
-    }
-
-    public function waitForElement($element, $timeout)
-    {
-        $this->session->wait(
-            $timeout,
-            "document.querySelector('${element}').style.display != 'none'"
-        );
     }
 
     /**
