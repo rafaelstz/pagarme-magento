@@ -99,6 +99,33 @@ class PagarMe_Modal_Block_Form_Modal extends Mage_Payment_Block_Form
         $this->customer = $customer;
     }
 
+    private function getPostbackUrl()
+    {
+        $activePaymentMethods = array_map('trim', explode(',', $this->getAvailablePaymentMethods()));
+        $isCreditCardActive = in_array('credit_card', $activePaymentMethods);
+        $isBoletoActive = in_array('boleto', $activePaymentMethods);
+
+        if ($isCreditCardActive && $isBoletoActive) {
+            return '';
+        } else if ($isCreditCardActive) {
+            return $this->getCreditCardPostbackUrl();
+        } else if ($isBoletoActive) {
+            return $this->getBoletoPostbackUrl();
+        } else {
+            return '';
+        }
+    }
+
+    private function getCreditCardPostbackUrl()
+    {
+        return Mage::getBaseUrl() . 'pagarme_core/transaction_creditcard/postback';
+    }
+
+    private function getBoletoPostbackUrl()
+    {
+        return Mage::getBaseUrl() . 'pagarme_core/transaction_boleto/postback';
+    }
+
     /**
      * @return string
      */
@@ -189,7 +216,8 @@ class PagarMe_Modal_Block_Form_Modal extends Mage_Payment_Block_Form
             ),
             'customerData' => Mage::getStoreConfig(
                 'payment/pagarme_configurations/modal_capture_customer_data'
-            )
+            ),
+            'postbackUrl' => $this->getPostbackUrl()
         ];
 
         if ($this->hasFixedDiscountOnBoleto()) {

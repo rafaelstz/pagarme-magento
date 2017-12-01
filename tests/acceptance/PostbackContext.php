@@ -120,7 +120,7 @@ class PostbackContext extends MinkContext
         $signature = "{$algorithm}={$hash}";
 
         $urlForPostback = getenv('MAGENTO_URL')
-            . 'index.php/pagarme/transaction_'
+            . 'index.php/pagarme_core/transaction_'
             . $paymentMethod . '/postback';
 
         $client = new GuzzleHttp\Client();

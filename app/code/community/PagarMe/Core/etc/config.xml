@@ -63,7 +63,7 @@
                 <use>standard</use>
                 <args>
                     <module>PagarMe_Core</module>
-                    <frontName>pagarme</frontName>
+                    <frontName>pagarme_core</frontName>
                 </args>
             </pagarme_core>
         </routers>
