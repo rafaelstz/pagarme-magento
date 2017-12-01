@@ -30,7 +30,7 @@ trait PagarMeSettings
             'modal_credit_card_helper_text' => '',
             'modal_ui_color' => '',
             'modal_header_text' => '',
-            'modal_button_text' => '',
+            'modal_button_text' => 'Confirm your information',
             'payment_action' => 'authorize_capture',
             'modal_title' => 'Pagar.me Checkout',
             'creditcard_title' => 'Cartão de crédito Pagar.me',

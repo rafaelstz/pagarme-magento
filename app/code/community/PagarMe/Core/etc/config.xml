@@ -115,7 +115,6 @@
                 <creditcard_allowed_creditcard_brands>visa,mastercard,amex,hipercard,aura,jcb,diners,elo,discover</creditcard_allowed_creditcard_brands>
                 <creditcard_title>Pagamento com cartão de crédito</creditcard_title>
                 <modal_capture_customer_data>true</modal_capture_customer_data>
-                <modal_button_text>Realizar pagamento</modal_button_text>
                 <boleto_discount>0</boleto_discount>
                 <boleto_discount_mode>no_discount</boleto_discount_mode>
                 <boleto_title>Pagamento com boleto</boleto_title>

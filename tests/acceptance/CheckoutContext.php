@@ -155,11 +155,12 @@ class CheckoutContext extends RawMinkContext
         $this->waitForElement('#checkout-step-payment', 5000);
 
         $page->find('css', '#p_method_pagarme_modal')->click();
-        $page->pressButton(
-            Mage::getStoreConfig(
-                'payment/pagarme_configurations/modal_button_text'
-            )
-        );
+
+        $modalButtonText = Mage::getStoreConfig('payment/pagarme_configurations/modal_button_text');
+        $defaultModalButtonText = $this->getDefaultSettings()['modal_button_text'];
+        $modalButtonText = empty($modalButtonText) ? $defaultModalButtonText : $modalButtonText;
+
+        $page->pressButton($modalButtonText);
     }
 
      /**

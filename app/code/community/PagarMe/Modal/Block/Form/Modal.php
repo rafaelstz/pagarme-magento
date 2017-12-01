@@ -42,9 +42,12 @@ class PagarMe_Modal_Block_Form_Modal extends Mage_Payment_Block_Form
      */
     public function getButtonText()
     {
-        return Mage::getStoreConfig(
+        $configuredMessage = Mage::getStoreConfig(
           'payment/pagarme_configurations/modal_button_text'
         );
+        $defaultMessage = __('Confirm your information');
+
+        return empty($configuredMessage) ? $defaultMessage : $configuredMessage;
     }
 
     /**
