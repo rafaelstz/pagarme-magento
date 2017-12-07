@@ -32,7 +32,9 @@ class PagarMe_Modal_Block_Form_Modal extends Mage_Payment_Block_Form
      */
     public function getEncryptionKey()
     {
-        return Mage::getStoreConfig('payment/pagarme_configurations/general_encryption_key');
+        return Mage::getStoreConfig(
+            'payment/pagarme_configurations/general_encryption_key'
+        );
     }
 
     /**
@@ -108,15 +110,16 @@ class PagarMe_Modal_Block_Form_Modal extends Mage_Payment_Block_Form
         $isCreditCardActive = in_array('credit_card', $activePaymentMethods);
         $isBoletoActive = in_array('boleto', $activePaymentMethods);
 
-        if ($isCreditCardActive && $isBoletoActive) {
-            return '';
-        } else if ($isCreditCardActive) {
-            return $this->getCreditCardPostbackUrl();
-        } else if ($isBoletoActive) {
-            return $this->getBoletoPostbackUrl();
-        } else {
-            return '';
+        $postbackUrl = '';
+        if ($isCreditCardActive && !$isBoletoActive) {
+            $postbackUrl = $this->getCreditCardPostbackUrl();
         }
+
+        if ($isBoletoActive && !$isCreditCardActive) {
+            $postbackUrl = $this->getBoletoPostbackUrl();
+        }
+
+        return $postbackUrl;
     }
 
     private function getCreditCardPostbackUrl()
@@ -134,7 +137,9 @@ class PagarMe_Modal_Block_Form_Modal extends Mage_Payment_Block_Form
      */
     public function getAvailablePaymentMethods()
     {
-        return Mage::getStoreConfig('payment/pagarme_configurations/modal_payment_methods');
+        return Mage::getStoreConfig(
+            'payment/pagarme_configurations/modal_payment_methods'
+        );
     }
 
     public function hasFixedDiscountOnBoleto()

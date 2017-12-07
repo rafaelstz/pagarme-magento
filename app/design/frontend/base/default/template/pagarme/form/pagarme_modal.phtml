@@ -10,36 +10,36 @@
     <button id="pagarme-modal-fill-info-button" class="button" type="button">
         <span>
             <span>
-                <?php echo $this->getButtonText(); ?>
+                <?php echo __($this->getButtonText()); ?>
             </span>
         </span>
     </button>
 </ul>
 
 <script type="text/javascript" id="pagarme-modal">
-    var checkoutButton = $('pagarme-modal-fill-info-button')
+  var checkoutButton = $('pagarme-modal-fill-info-button')
 
-    if ($('pagarme_modal_payment_method').value !== "") {
-      checkoutButton.remove();
-    }
+  if ($('pagarme_modal_payment_method').value !== '') {
+    checkoutButton.remove()
+  }
 
-    checkoutButton && checkoutButton.observe("click", function (event){
-        var pagarmeCheckoutSettings = <?= json_encode($this->getCheckoutConfig()) ?>;
+  checkoutButton && checkoutButton.observe('click', function (event) {
+    var pagarmeCheckoutSettings = <?= json_encode($this->getCheckoutConfig()) ?>;
 
-        var checkoutPagarme = new PagarMeCheckout.Checkout({
-            "encryption_key" : "<?= $this->getEncryptionKey() ?>",
-            success: function (response) {
-                $('pagarme_modal_token').value = response['token'];
-                $('pagarme_modal_payment_method').value = response['payment_method'];
-                $('pagarme_modal_interest_rate').value = pagarmeCheckoutSettings.interestRate;
-                checkoutButton.remove();
+    var checkoutPagarme = new PagarMeCheckout.Checkout({
+      'encryption_key': "<?= $this->getEncryptionKey() ?>",
+      success: function (response) {
+        $('pagarme_modal_token').value = response['token']
+        $('pagarme_modal_payment_method').value = response['payment_method']
+        $('pagarme_modal_interest_rate').value = pagarmeCheckoutSettings.interestRate
+        checkoutButton.remove()
 
-                if (typeof OSCPayment !== undefined) {
-                    OSCPayment.savePayment();
-                }
-            }
-        });
+        if (typeof OSCPayment !== undefined) {
+          OSCPayment.savePayment()
+        }
+      }
+    })
 
-        checkoutPagarme.open(pagarmeCheckoutSettings);
-    });
+    checkoutPagarme.open(pagarmeCheckoutSettings)
+  })
 </script>

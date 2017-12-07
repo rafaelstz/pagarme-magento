@@ -47,7 +47,8 @@ class PagarMe_Checkout_Block_Form_CheckoutTest extends PHPUnit_Framework_TestCas
             'maxInstallments' => Mage::getStoreConfig('payment/pagarme_configurations/creditcard_max_installments'
             ),
             'freeInstallments' => Mage::getStoreConfig('payment/pagarme_configurations/creditcard_free_installments'
-            )
+            ),
+            'postbackUrl' => '',
         ];
 
         $customer = Mage::getModel('customer/customer')
@@ -90,9 +91,8 @@ class PagarMe_Checkout_Block_Form_CheckoutTest extends PHPUnit_Framework_TestCas
             ->setCustomerTaxvat($checkoutConfig['customerDocumentNumber']);
         $quote->setBillingAddress($address);
 
-        $checkoutBlock = new PagarMe_Checkout_Block_Form_Checkout();
+        $checkoutBlock = new PagarMe_Modal_Block_Form_Modal();
         $checkoutBlock->setQuote($quote);
-
         $this->assertEquals(
             $checkoutConfig,
             $checkoutBlock->getCheckoutConfig()

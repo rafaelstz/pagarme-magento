@@ -33,6 +33,7 @@ class PagarMe_Modal_Block_Sales_RateAmount extends Mage_Core_Block_Abstract
 
             $this->getParentBlock()->addTotalBefore($total, 'grand_total');
         }
+
         return $this;
     }
 }
