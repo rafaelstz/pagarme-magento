@@ -12,6 +12,8 @@ class PagarMe_CreditCard_Model_Creditcard extends Mage_Payment_Model_Method_Abst
     protected $_canUseForMultishipping = true;
     protected $_canManageRecurringProfiles = true;
 
+    const PAGARME_MAX_INSTALLMENTS = 12;
+
     /**
      * @param type $quote
      *
@@ -58,11 +60,52 @@ class PagarMe_CreditCard_Model_Creditcard extends Mage_Payment_Model_Method_Abst
         return $this;
     }
 
+    /**
+     * Returns max installments defined on admin
+     *
+     * @return int
+     */
+    public function getMaxInstallments()
+    {
+        return (int) Mage::getStoreConfig(
+            'payment/pagarme_configurations/creditcard_max_installments'
+        );
+    }
+
+    /**
+     * Check if installments is between 1 and the defined max installments
+     *
+     * @param int $installments
+     *
+     * @return bool
+     */
+    public function isInstallmentsValid($installments)
+    {
+        if ($installments <= 0) {
+            return false;
+        }
+
+        if ($installments > self::PAGARME_MAX_INSTALLMENTS) {
+            return false;
+        }
+
+        if ($installments > $this->getMaxInstallments()) {
+            return false;
+        }
+
+        return true;
+    }
+
     public function authorize(Varien_Object $payment, $amount)
     {
         $infoInstance = $this->getInfoInstance();
         $cardHash = $infoInstance->getAdditionalInformation('card_hash');
-        $installments = $infoInstance->getAdditionalInformation('installments');
+        $installments = (int)$infoInstance->getAdditionalInformation('installments');
+
+        if (!$this->isInstallmentsValid($installments)) {
+            return false;
+        }
+
         try {
             $card = Mage::getModel('pagarme_core/sdk_adapter')
                 ->getPagarMeSdk()
