@@ -281,7 +281,11 @@ class PagarMe_CreditCard_Model_Creditcard extends Mage_Payment_Model_Method_Abst
             Mage::getModel('pagarme_core/transaction')
                 ->saveTransactionInformation(
                     $order,
+<<<<<<< 8e28f98115fb762260dd5c4bf70a928d107a1348
                     $this->transaction,
+=======
+                    $transaction,
+>>>>>>> Adds configurable installments in the frontend
                     $infoInstance
                 );
         } catch (GenerateCardException $exception) {
