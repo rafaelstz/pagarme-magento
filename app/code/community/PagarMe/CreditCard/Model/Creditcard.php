@@ -31,10 +31,10 @@ class PagarMe_CreditCard_Model_Creditcard extends Mage_Payment_Model_Method_Abst
     }
 
    /**
-     * Retrieve payment method title
-     *
-     * @return string
-     */
+    * Retrieve payment method title
+    *
+    * @return string
+    */
     public function getTitle()
     {
         return Mage::getStoreConfig(
@@ -100,7 +100,9 @@ class PagarMe_CreditCard_Model_Creditcard extends Mage_Payment_Model_Method_Abst
     {
         $infoInstance = $this->getInfoInstance();
         $cardHash = $infoInstance->getAdditionalInformation('card_hash');
-        $installments = (int)$infoInstance->getAdditionalInformation('installments');
+        $installments = (int)$infoInstance->getAdditionalInformation(
+            'installments'
+        );
 
         if (!$this->isInstallmentsValid($installments)) {
             return false;
@@ -115,7 +117,7 @@ class PagarMe_CreditCard_Model_Creditcard extends Mage_Payment_Model_Method_Abst
             $error = json_decode($exception->getMessage());
             $error = json_decode($error);
 
-            $response = array_reduce($error->errors, function($carry, $item) {
+            $response = array_reduce($error->errors, function ($carry, $item) {
                 return is_null($carry) ? $item->message : $carry."\n".$item->message;
             });
 
@@ -169,26 +171,27 @@ class PagarMe_CreditCard_Model_Creditcard extends Mage_Payment_Model_Method_Abst
                     false
                 );
 
-            $transaction = $pagarmeSdk->transaction()->capture($authorizedTransaction);
+            $transaction = $pagarmeSdk
+                ->transaction()
+                ->capture($authorizedTransaction);
+
             Mage::getModel('pagarme_core/transaction')
                 ->saveTransactionInformation(
-                    $order, 
-                    $transaction, 
+                    $order,
+                    $transaction,
                     $infoInstance
                 );
-
         } catch (\Exception $exception) {
             $json = json_decode($exception->getMessage());
             $json = json_decode($json);
 
-            $response = array_reduce($json->errors, function($carry, $item) {
+            $response = array_reduce($json->errors, function ($carry, $item) {
                 return is_null($carry)
                     ? $item->message : $carry."\n".$item->message;
             });
 
             Mage::throwException($response);
         }
-
 
         return $this;
     }
@@ -200,5 +203,4 @@ class PagarMe_CreditCard_Model_Creditcard extends Mage_Payment_Model_Method_Abst
             ->transaction()
             ->capture($authorizedTransaction);
     }
-    
 }

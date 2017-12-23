@@ -32,6 +32,12 @@ class PagarMeCreditCardModelCreditcardTest extends PHPUnit_Framework_TestCase
         );
     }
 
+    /**
+     * Returns installments with expected return from isInstallmentsValid
+     * method
+     *
+     * @return array
+     */
     public function installments()
     {
         return [
@@ -48,7 +54,10 @@ class PagarMeCreditCardModelCreditcardTest extends PHPUnit_Framework_TestCase
      * @test
      * @dataProvider installments
      */
-    public function installmentsMustBeInAValidRange($installments, $shouldReturn)
+    public function installmentsMustBeInAValidRange(
+        $installments,
+        $shouldReturn
+    )
     {
         $this->assertEquals(
             $shouldReturn,
