@@ -39,31 +39,28 @@ class PagarMeCreditCardModelCreditcardTest extends PHPUnit_Framework_TestCase
      *
      * @return array
      */
-    public function installments()
+    public function invalidInstallments()
     {
+        $installmentsBellowRange = 0;
+        $installmentsAboveRange = 7;
+        $installmentsAbovePagarmeRange = 13;
+
         return [
-            [0, false],
-            [5, true],
-            [7, false],
-            [13, false]
+            [$installmentsBellowRange],
+            [$installmentsAboveRange],
+            [$installmentsAbovePagarmeRange]
         ];
     }
     /**
      * @param int $installments
-     * @param bool $shouldReturn
      *
      * @test
-     * @dataProvider installments
+     * @dataProvider invalidInstallments
+     * @expectedException PagarMe_CreditCard_Model_Exception_InvalidInstallments
      */
-    public function installmentsMustBeInAValidRange(
-        $installments,
-        $shouldReturn
-    )
+    public function installmentsMustBeInAValidRange($installments)
     {
-        $this->assertEquals(
-            $shouldReturn,
-            $this->creditCardModel->isInstallmentsValid($installments)
-        );
+        $this->creditCardModel->isInstallmentsValid($installments);
     }
 
     public function getSdkMock($cardHash = '')
