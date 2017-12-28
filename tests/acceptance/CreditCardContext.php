@@ -113,7 +113,11 @@ class CreditCardContext extends RawMinkContext
     public function loginWithRegisteredUser()
     {
         $page = $this->session->getPage();
+<<<<<<< 18b43d560ba925e893567ff7cee536804dbbd137
         $page->fillField(
+=======
+        $this->getSession()->getPage()->fillField(
+>>>>>>> test: credit card tests refactor
             Mage::helper('pagarme_modal')->__('Email Address'),
             $this->customer->getEmail()
         );
@@ -151,6 +155,7 @@ class CreditCardContext extends RawMinkContext
 
         $this->waitForElement('#checkout-step-payment', 5000);
 
+        $this->session->wait(3000);
         $page->find('css', '#p_method_pagarme_creditcard')->click();
     }
 
@@ -221,13 +226,22 @@ class CreditCardContext extends RawMinkContext
     }
 
     /**
+<<<<<<< 18b43d560ba925e893567ff7cee536804dbbd137
      * @When I should see only installment options up to :maxInstallments
+=======
+     * @Then I should see only installment options up to :maxInstallments
+>>>>>>> test: credit card tests refactor
      */
     public function iShouldSeeOnlyInstallmentOptionsUpTo($maxInstallments)
     {
         $this->assertSession()->elementsCount(
+<<<<<<< 18b43d560ba925e893567ff7cee536804dbbd137
             'css',
             '#pagarme_creditcard_creditcard_installments > option',
+=======
+            'css', 
+            '#pagarme_creditcard_creditcard_installments > option', 
+>>>>>>> test: credit card tests refactor
             intval($maxInstallments)
         );
         $this->assertThereIsEveryOptionValueUntil(
@@ -251,6 +265,11 @@ class CreditCardContext extends RawMinkContext
      */
     public function afterEveryScenario()
     {
+<<<<<<< 18b43d560ba925e893567ff7cee536804dbbd137
         Mage::getSingleton('customer/session')->logout();
+=======
+        $page = $this->session->getPage();
+        $page->find('css', 'a[title="Log Out"]')->click();
+>>>>>>> test: credit card tests refactor
     }
 }
