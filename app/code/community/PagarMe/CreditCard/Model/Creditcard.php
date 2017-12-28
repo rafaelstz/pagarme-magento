@@ -12,7 +12,31 @@ class PagarMe_CreditCard_Model_Creditcard extends Mage_Payment_Model_Method_Abst
     protected $_canUseForMultishipping = true;
     protected $_canManageRecurringProfiles = true;
 
+    protected $sdk;
+
     const PAGARME_MAX_INSTALLMENTS = 12;
+
+    public function __construct($sdk = null)
+    {
+        if (is_null($sdk)) {
+            $this->sdk = Mage::getModel('pagarme_core/sdk_adapter')
+                 ->getPagarMeSdk();
+        }
+        parent::__construct();
+    }
+
+    /**
+     * @param \PagarMe\Sdk\PagarMe $sdk
+     * @return \PagarMe_CreditCard_Model_Creditcard
+     *
+     * @codeCoverageIgnore
+     */
+    public function setSdk(\PagarMe\Sdk\PagarMe $sdk)
+    {
+        $this->sdk = $sdk;
+
+        return $this;
+    }
 
     /**
      * @param type $quote
@@ -96,6 +120,33 @@ class PagarMe_CreditCard_Model_Creditcard extends Mage_Payment_Model_Method_Abst
         return true;
     }
 
+    /**
+     * @param string $cardHash
+     *
+     * @return PagarMe\Sdk\Card\Card
+     * @throws PagarMe_CreditCard_Model_Exception_GenerateCard
+     */
+    public function generateCard($cardHash)
+    {
+        try {
+            $card = $this->sdk
+                ->card()
+                ->createFromHash($cardHash);
+            return $card;
+        } catch (\Exception $exception) {
+            $error = json_decode($exception->getMessage());
+            $error = json_decode($error);
+
+            $response = array_reduce($error->errors, function ($carry, $item) {
+                return is_null($carry) ? $item->message : $carry."\n".$item->message;
+            });
+
+            throw new PagarMe_CreditCard_Model_Exception_GenerateCard(
+                $response
+            );
+        }
+    }
+
     public function authorize(Varien_Object $payment, $amount)
     {
         $infoInstance = $this->getInfoInstance();
@@ -109,19 +160,9 @@ class PagarMe_CreditCard_Model_Creditcard extends Mage_Payment_Model_Method_Abst
         }
 
         try {
-            $card = Mage::getModel('pagarme_core/sdk_adapter')
-                ->getPagarMeSdk()
-                ->card()
-                ->createFromHash($cardHash);
-        } catch (\Exception $exception) {
-            $error = json_decode($exception->getMessage());
-            $error = json_decode($error);
-
-            $response = array_reduce($error->errors, function ($carry, $item) {
-                return is_null($carry) ? $item->message : $carry."\n".$item->message;
-            });
-
-            Mage::throwException($response);
+            $card = $this->generateCard($cardHash);
+        } catch (\PagarMe_CreditCard_Model_Exception_GenerateCard $exception) {
+            Mage::throwException($exception->getMessage());
         }
 
         $quote = Mage::getSingleton('checkout/session')->getQuote();
