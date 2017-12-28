@@ -12,11 +12,19 @@ class PagarMe_CreditCard_Model_Creditcard extends Mage_Payment_Model_Method_Abst
     protected $_canUseForMultishipping = true;
     protected $_canManageRecurringProfiles = true;
 
+    /**
+     * @var \PagarMe\Sdk\PagarMe
+     */
     protected $sdk;
+
+    /**
+     * @var PagarMe\Sdk\Transaction\CreditCardTransaction
+     */
+    protected $transaction;
 
     const PAGARME_MAX_INSTALLMENTS = 12;
 
-    public function __construct($sdk = null)
+    public function __construct(PagarMeSdk $sdk = null)
     {
         if (is_null($sdk)) {
             $this->sdk = Mage::getModel('pagarme_core/sdk_adapter')
@@ -158,62 +166,52 @@ class PagarMe_CreditCard_Model_Creditcard extends Mage_Payment_Model_Method_Abst
 
     public function authorize(Varien_Object $payment, $amount)
     {
-        $infoInstance = $this->getInfoInstance();
-        $cardHash = $infoInstance->getAdditionalInformation('card_hash');
-        $installments = (int)$infoInstance->getAdditionalInformation(
-            'installments'
-        );
-
         try {
+            $infoInstance = $this->getInfoInstance();
+            $cardHash = $infoInstance->getAdditionalInformation('card_hash');
+            $installments = (int)$infoInstance->getAdditionalInformation(
+                'installments'
+            );
+
+            $quote = Mage::getSingleton('checkout/session')->getQuote();
+            $helper = Mage::helper('pagarme_core');
+
+            $billingAddress = $quote->getBillingAddress();
+
             $this->isInstallmentsValid($installments);
             $card = $this->generateCard($cardHash);
-        } catch (\PagarMe_CreditCard_Model_Exception_GenerateCard $exception) {
-            Mage::throwException($exception->getMessage());
-        } catch (
-            \PagarMe_CreditCard_Model_Exception_InvalidInstallments $exception
-        ) {
-            Mage::throwException($exception->getMessage());
-        }
 
-        $quote = Mage::getSingleton('checkout/session')->getQuote();
+            if ($billingAddress == false) {
+                return false;
+            }
 
-        $helper = Mage::helper('pagarme_core');
+            $telephone = $billingAddress->getTelephone();
 
-        $billingAddress = $quote->getBillingAddress();
+            $customer = $helper->prepareCustomerData([
+                'pagarme_modal_customer_document_number' => $quote->getCustomerTaxvat(),
+                'pagarme_modal_customer_document_type' => $helper->getDocumentType($quote),
+                'pagarme_modal_customer_name' => $helper->getCustomerNameFromQuote($quote),
+                'pagarme_modal_customer_email' => $quote->getCustomerEmail(),
+                'pagarme_modal_customer_born_at' => $quote->getDob(),
+                'pagarme_modal_customer_address_street_1' => $billingAddress->getStreet(1),
+                'pagarme_modal_customer_address_street_2' => $billingAddress->getStreet(2),
+                'pagarme_modal_customer_address_street_3' => $billingAddress->getStreet(3),
+                'pagarme_modal_customer_address_street_4' => $billingAddress->getStreet(4),
+                'pagarme_modal_customer_address_city' => $billingAddress->getCity(),
+                'pagarme_modal_customer_address_state' => $billingAddress->getRegion(),
+                'pagarme_modal_customer_address_zipcode' => $billingAddress->getPostcode(),
+                'pagarme_modal_customer_address_country' => $billingAddress->getCountry(),
+                'pagarme_modal_customer_phone_ddd' => $helper->getDddFromPhoneNumber($telephone),
+                'pagarme_modal_customer_phone_number' => $helper->getPhoneWithoutDdd($telephone),
+                'pagarme_modal_customer_gender' => $quote->getGender()
+            ]);
 
-        if ($billingAddress == false) {
-            return false;
-        }
+            $customerPagarMe = $helper->buildCustomer($customer);
 
-        $telephone = $billingAddress->getTelephone();
+            $order = $payment->getOrder();
 
-        $customer = $helper->prepareCustomerData([
-            'pagarme_modal_customer_document_number' => $quote->getCustomerTaxvat(),
-            'pagarme_modal_customer_document_type' => $helper->getDocumentType($quote),
-            'pagarme_modal_customer_name' => $helper->getCustomerNameFromQuote($quote),
-            'pagarme_modal_customer_email' => $quote->getCustomerEmail(),
-            'pagarme_modal_customer_born_at' => $quote->getDob(),
-            'pagarme_modal_customer_address_street_1' => $billingAddress->getStreet(1),
-            'pagarme_modal_customer_address_street_2' => $billingAddress->getStreet(2),
-            'pagarme_modal_customer_address_street_3' => $billingAddress->getStreet(3),
-            'pagarme_modal_customer_address_street_4' => $billingAddress->getStreet(4),
-            'pagarme_modal_customer_address_city' => $billingAddress->getCity(),
-            'pagarme_modal_customer_address_state' => $billingAddress->getRegion(),
-            'pagarme_modal_customer_address_zipcode' => $billingAddress->getPostcode(),
-            'pagarme_modal_customer_address_country' => $billingAddress->getCountry(),
-            'pagarme_modal_customer_phone_ddd' => $helper->getDddFromPhoneNumber($telephone),
-            'pagarme_modal_customer_phone_number' => $helper->getPhoneWithoutDdd($telephone),
-            'pagarme_modal_customer_gender' => $quote->getGender()
-        ]);
-
-        $customerPagarMe = $helper->buildCustomer($customer);
-
-        $order = $payment->getOrder();
-        try {
-            $pagarmeSdk = Mage::getModel('pagarme_core/sdk_adapter')
-                ->getPagarMeSdk();
-
-            $authorizedTransaction = $pagarmeSdk->transaction()
+            $this->transaction = $this->sdk
+                ->transaction()
                 ->creditCardTransaction(
                     $helper->parseAmountToInteger($quote->getGrandTotal()),
                     $card,
@@ -222,16 +220,18 @@ class PagarMe_CreditCard_Model_Creditcard extends Mage_Payment_Model_Method_Abst
                     false
                 );
 
-            $transaction = $pagarmeSdk
-                ->transaction()
-                ->capture($authorizedTransaction);
-
             Mage::getModel('pagarme_core/transaction')
                 ->saveTransactionInformation(
                     $order,
-                    $transaction,
+                    $this->transaction,
                     $infoInstance
                 );
+        } catch (\PagarMe_CreditCard_Model_Exception_GenerateCard $exception) {
+            Mage::throwException($exception->getMessage());
+        } catch (
+            \PagarMe_CreditCard_Model_Exception_InvalidInstallments $exception
+        ) {
+            Mage::throwException($exception->getMessage());
         } catch (\Exception $exception) {
             $json = json_decode($exception->getMessage());
             $json = json_decode($json);
@@ -249,9 +249,8 @@ class PagarMe_CreditCard_Model_Creditcard extends Mage_Payment_Model_Method_Abst
 
     public function capture(Varien_Object $payment, $amount)
     {
-        $transaction = Mage::getModel('pagarme_core/sdk_adapter')
-            ->getPagarMeSdk()
+        $this->transaction = $this->sdk
             ->transaction()
-            ->capture($authorizedTransaction);
+            ->capture($this->transaction);
     }
 }
