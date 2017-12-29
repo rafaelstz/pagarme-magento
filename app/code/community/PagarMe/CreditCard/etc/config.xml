@@ -6,6 +6,15 @@
         </PagarMe_CreditCard>
     </modules>
     <global>
+        <sales>
+            <quote>
+                <totals>
+                    <pagarme_creditcard_interest>
+                        <class>pagarme_creditcard/quote_address_total_creditCardInterestAmount</class>
+                    </pagarme_creditcard_interest>
+                </totals>
+            </quote>
+        </sales>
         <models>
             <pagarme_creditcard>
                 <class>PagarMe_CreditCard_Model</class>

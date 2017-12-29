@@ -74,7 +74,13 @@
                 class="input-text required-entry"
             >
             <?php foreach ($this->getInstallments() as $installmentNumber => $installmentInfo) : ?>
-                <option value="<?= $installmentNumber ?>"><?= $installmentNumber ?></option>
+            <option value="<?= $installmentNumber ?>">
+                <?=
+                    $installmentNumber . 'x - (' . 
+                    $installmentInfo['installment_amount'] . ' x ' . 
+                    $installmentNumber . ')'
+                ?>
+            </option>
             <?php endforeach; ?>
             </select>
         </div>
