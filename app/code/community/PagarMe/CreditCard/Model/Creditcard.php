@@ -1,6 +1,10 @@
 <?php
+use Mage_Payment_Model_Method_Abstract as ModelMethodAbstract;
+use \PagarMe\Sdk\PagarMe as PagarMeSdk;
+use PagarMe_CreditCard_Model_Exception_InvalidInstallments as InvalidInstallmentsException;
+use PagarMe_CreditCard_Model_Exception_GenerateCard as GenerateCardException;
 
-class PagarMe_CreditCard_Model_Creditcard extends Mage_Payment_Model_Method_Abstract
+class PagarMe_CreditCard_Model_Creditcard extends ModelMethodAbstract
 {
     protected $_code = 'pagarme_creditcard';
     protected $_formBlockType = 'pagarme_creditcard/form_creditcard';
@@ -39,7 +43,7 @@ class PagarMe_CreditCard_Model_Creditcard extends Mage_Payment_Model_Method_Abst
      *
      * @codeCoverageIgnore
      */
-    public function setSdk(\PagarMe\Sdk\PagarMe $sdk)
+    public function setSdk(PagarMeSdk $sdk)
     {
         $this->sdk = $sdk;
 
@@ -108,20 +112,21 @@ class PagarMe_CreditCard_Model_Creditcard extends Mage_Payment_Model_Method_Abst
      * Check if installments is between 1 and the defined max installments
      *
      * @param int $installments
-     * @throws PagarMe_CreditCard_Model_Exception_InvalidInstallments
      *
-     * @return bool
+     * @throws InvalidInstallmentsException
+     *
+     * @return void
      */
     public function isInstallmentsValid($installments)
     {
         if ($installments <= 0) {
-            throw new PagarMe_CreditCard_Model_Exception_InvalidInstallments(
+            throw new InvalidInstallmentsException(
                 'Installments number should be greater than zero'
             );
         }
 
         if ($installments > self::PAGARME_MAX_INSTALLMENTS) {
-            throw new PagarMe_CreditCard_Model_Exception_InvalidInstallments(
+            throw new InvalidInstallmentsException(
                 'Installments number should be lower than twelve'
             );
         }
@@ -131,7 +136,7 @@ class PagarMe_CreditCard_Model_Creditcard extends Mage_Payment_Model_Method_Abst
                 'Installments number should be greater than zero',
                 $this->getMaxInstallments()
             );
-            throw new PagarMe_CreditCard_Model_Exception_InvalidInstallments(
+            throw new InvalidInstallmentsException(
                 $message
             );
         }
@@ -141,7 +146,7 @@ class PagarMe_CreditCard_Model_Creditcard extends Mage_Payment_Model_Method_Abst
      * @param string $cardHash
      *
      * @return PagarMe\Sdk\Card\Card
-     * @throws PagarMe_CreditCard_Model_Exception_GenerateCard
+     * @throws GenerateCardException
      */
     public function generateCard($cardHash)
     {
@@ -158,7 +163,7 @@ class PagarMe_CreditCard_Model_Creditcard extends Mage_Payment_Model_Method_Abst
                 return is_null($carry) ? $item->message : $carry."\n".$item->message;
             });
 
-            throw new PagarMe_CreditCard_Model_Exception_GenerateCard(
+            throw new GenerateCardException(
                 $response
             );
         }
@@ -226,11 +231,9 @@ class PagarMe_CreditCard_Model_Creditcard extends Mage_Payment_Model_Method_Abst
                     $this->transaction,
                     $infoInstance
                 );
-        } catch (\PagarMe_CreditCard_Model_Exception_GenerateCard $exception) {
+        } catch (GenerateCardException $exception) {
             Mage::throwException($exception->getMessage());
-        } catch (
-            \PagarMe_CreditCard_Model_Exception_InvalidInstallments $exception
-        ) {
+        } catch (InvalidInstallmentsException $exception) {
             Mage::throwException($exception->getMessage());
         } catch (\Exception $exception) {
             $json = json_decode($exception->getMessage());
