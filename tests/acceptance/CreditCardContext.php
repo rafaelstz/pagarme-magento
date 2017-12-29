@@ -2,7 +2,7 @@
 
 use Behat\MinkExtension\Context\RawMinkContext;
 use Behat\Behat\Tester\Exception\PendingException;
-
+use PagarMe_CreditCard_Model_CurrentOrder as CurrentOrder;
 require_once __DIR__ . '/../bootstrap.php';
 require_once __DIR__ . '/../../vendor/autoload.php';
 
@@ -68,6 +68,20 @@ class CreditCardContext extends RawMinkContext
             'payment/pagarme_configurations/creditcard_max_installments',
             $maxInstallments
         );
+    }
+
+    /**
+     * @When I set interest rate to :interestRate
+     */
+    public function iSetInterestRateTo($interestRate)
+    {
+        $config = Mage::getModel('core/config');
+
+        $config->saveConfig(
+            'payment/pagarme_configurations/creditcard_interest_rate',
+            $interestRate
+        );
+
     }
 
     /**
@@ -235,13 +249,8 @@ class CreditCardContext extends RawMinkContext
     public function iShouldSeeOnlyInstallmentOptionsUpTo($maxInstallments)
     {
         $this->assertSession()->elementsCount(
-<<<<<<< 18b43d560ba925e893567ff7cee536804dbbd137
             'css',
             '#pagarme_creditcard_creditcard_installments > option',
-=======
-            'css', 
-            '#pagarme_creditcard_creditcard_installments > option', 
->>>>>>> test: credit card tests refactor
             intval($maxInstallments)
         );
         $this->assertThereIsEveryOptionValueUntil(
@@ -250,8 +259,10 @@ class CreditCardContext extends RawMinkContext
         );
     }
 
-    private function  assertThereIsEveryOptionValueUntil($maxValue, $selectCssSelector)
-    {
+    private function assertThereIsEveryOptionValueUntil(
+        $maxValue, 
+        $selectCssSelector
+    ) {
         for ($value = 1; $value <= $maxValue; $value++) {
             $this->assertSession()->elementExists(
                 'css',
@@ -261,15 +272,37 @@ class CreditCardContext extends RawMinkContext
     }
 
     /**
+     * @Then the purchase must be created with value based on both :installments and :interestRate
+     */
+    public function thePurchaseMustBeCreatedWithValueBasedOnBothAnd(
+        $installments,
+        $interestRate
+    ) {
+        $page = $this->session->getPage();
+        $checkoutTotalAmount = $page->find(
+            'css',
+            'tr.last:not(.first) .price'
+        )->getText();
+        \PHPUnit_Framework_TestCase::assertEquals(
+            $checkoutTotalAmount,
+            'R$27.44'
+        );
+    }
+
+    /**
      * @AfterScenario
      */
     public function afterEveryScenario()
     {
+<<<<<<< 2aaf51d2a149082490d2db2f2c0ebfb4a2f6e126
 <<<<<<< 18b43d560ba925e893567ff7cee536804dbbd137
         Mage::getSingleton('customer/session')->logout();
 =======
         $page = $this->session->getPage();
         $page->find('css', 'a[title="Log Out"]')->click();
 >>>>>>> test: credit card tests refactor
+=======
+        Mage::getSingleton('customer/session')->logout();
+>>>>>>> Tests for frontend
     }
 }
