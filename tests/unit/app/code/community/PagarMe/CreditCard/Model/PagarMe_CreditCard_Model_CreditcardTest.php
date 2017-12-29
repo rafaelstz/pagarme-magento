@@ -5,6 +5,8 @@
  */
 
 use PagarMe\Sdk\Card\Card;
+use PagarMe_CreditCard_Model_Exception_TransactionsInstallmentsDivergent as TransactionsInstallmentsDivergent;
+use PagarMe\Sdk\Transaction\CreditCardTransaction;
 
 class PagarMeCreditCardModelCreditcardTest extends PHPUnit_Framework_TestCase
 {
@@ -66,7 +68,12 @@ class PagarMeCreditCardModelCreditcardTest extends PHPUnit_Framework_TestCase
     public function getSdkMock($cardHash = '')
     {
         $sdkMock = $this->getMockBuilder('\PagarMe\Sdk\PagarMe')
-                        ->setMethods(['card', 'createFromHash'])
+                        ->setMethods([
+                            'card',
+                            'createFromHash',
+                            'transaction',
+                            'creditCardTransaction'
+                        ])
                         ->getMock();
 
         $sdkMock->expects($this->any())
@@ -122,5 +129,46 @@ class PagarMeCreditCardModelCreditcardTest extends PHPUnit_Framework_TestCase
 
         $creditCardModel->generateCard($cardHash);
         $creditCardModel->generateCard($cardHash);
+    }
+
+    /**
+     * @test
+     * @expectedException PagarMe_CreditCard_Model_Exception_TransactionsInstallmentsDivergent
+     */
+    public function mustThrowAnExceptionIfInstallmentsIsDifferent()
+    {
+        $sdk = $this->getSdkMock();
+
+        $transaction = new CreditCardTransaction(['installments' => 2]);
+
+        $sdk->expects($this->any())
+            ->method('transaction')
+            ->willReturnSelf();
+
+        $sdk->expects($this->any())
+            ->method('creditCardTransaction')
+            ->willReturn($transaction);
+
+        $creditCardModel = Mage::getModel('pagarme_creditcard/creditcard');
+        $creditCardModel->setSdk($sdk);
+
+        $card = $this->getMockBuilder('PagarMe\Sdk\Card\Card')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $customer = $this->getMockBuilder(
+            'PagarMe\Sdk\Customer\Customer'
+            )
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $expectedInstallments = 3;
+        $creditCardModel->createTransaction(
+            $card,
+            $customer,
+            $expectedInstallments,
+            false
+        );
+        $creditCardModel->checkInstallments();
     }
 }

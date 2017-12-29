@@ -3,6 +3,7 @@ use Mage_Payment_Model_Method_Abstract as ModelMethodAbstract;
 use \PagarMe\Sdk\PagarMe as PagarMeSdk;
 use PagarMe_CreditCard_Model_Exception_InvalidInstallments as InvalidInstallmentsException;
 use PagarMe_CreditCard_Model_Exception_GenerateCard as GenerateCardException;
+use PagarMe_CreditCard_Model_Exception_TransactionsInstallmentsDivergent as TransactionsInstallmentsDivergent;
 
 class PagarMe_CreditCard_Model_Creditcard extends ModelMethodAbstract
 {
@@ -172,6 +173,48 @@ class PagarMe_CreditCard_Model_Creditcard extends ModelMethodAbstract
         }
     }
 
+    /**
+     * @param int $installments
+     * @return void
+     * @throws TransactionsInstallmentsDivergent
+     */
+    public function checkInstallments($installments)
+    {
+        if ($this->transaction->getInstallments() != $installments) {
+            throw new TransactionsInstallmentsDivergent(
+                'Installments is Diverging'
+            );
+        }
+    }
+
+    /**
+     * @param \PagarMe\Sdk\Card\Card $card
+     * @param \PagarMe\Sdk\Customer\Customer $customer
+     * @param int $installments
+     * @param bool $capture
+     * @return self
+     */
+    public function createTransaction(
+        \PagarMe\Sdk\Card\Card $card,
+        \PagarMe\Sdk\Customer\Customer $customer,
+        $installments = 1,
+        $capture = false
+    ) {
+        $quote = Mage::getSingleton('checkout/session')->getQuote();
+        $this->transaction = $this->sdk
+            ->transaction()
+            ->creditCardTransaction(
+                $this->pagarmeCoreHelper
+                    ->parseAmountToInteger($quote->getGrandTotal()),
+                $card,
+                $customer,
+                $installments,
+                $capture
+            );
+
+        return $this;
+    }
+    
     public function authorize(Varien_Object $payment, $amount)
     {
         try {
@@ -227,6 +270,7 @@ class PagarMe_CreditCard_Model_Creditcard extends ModelMethodAbstract
                     $installments,
                     false
                 );
+            $this->checkInstallments($installments);
 
             $order = $payment->getOrder();
             Mage::getModel('pagarme_core/transaction')
