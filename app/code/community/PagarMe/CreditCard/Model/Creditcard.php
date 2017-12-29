@@ -25,6 +25,7 @@ class PagarMe_CreditCard_Model_Creditcard extends ModelMethodAbstract
      * @var PagarMe\Sdk\Transaction\CreditCardTransaction
      */
     protected $transaction;
+    protected $pagarmeCoreHelper;
 
     const PAGARME_MAX_INSTALLMENTS = 12;
 
@@ -34,6 +35,8 @@ class PagarMe_CreditCard_Model_Creditcard extends ModelMethodAbstract
             $this->sdk = Mage::getModel('pagarme_core/sdk_adapter')
                  ->getPagarMeSdk();
         }
+
+        $this->pagarmeCoreHelper = Mage::helper('pagarme_core');
         parent::__construct();
     }
 
@@ -179,7 +182,7 @@ class PagarMe_CreditCard_Model_Creditcard extends ModelMethodAbstract
             );
 
             $quote = Mage::getSingleton('checkout/session')->getQuote();
-            $helper = Mage::helper('pagarme_core');
+
 
             $billingAddress = $quote->getBillingAddress();
 
@@ -192,10 +195,10 @@ class PagarMe_CreditCard_Model_Creditcard extends ModelMethodAbstract
 
             $telephone = $billingAddress->getTelephone();
 
-            $customer = $helper->prepareCustomerData([
+            $customer = $this->pagarmeCoreHelper->prepareCustomerData([
                 'pagarme_modal_customer_document_number' => $quote->getCustomerTaxvat(),
-                'pagarme_modal_customer_document_type' => $helper->getDocumentType($quote),
-                'pagarme_modal_customer_name' => $helper->getCustomerNameFromQuote($quote),
+                'pagarme_modal_customer_document_type' => $this->pagarmeCoreHelper->getDocumentType($quote),
+                'pagarme_modal_customer_name' => $this->pagarmeCoreHelper->getCustomerNameFromQuote($quote),
                 'pagarme_modal_customer_email' => $quote->getCustomerEmail(),
                 'pagarme_modal_customer_born_at' => $quote->getDob(),
                 'pagarme_modal_customer_address_street_1' => $billingAddress->getStreet(1),
@@ -206,25 +209,26 @@ class PagarMe_CreditCard_Model_Creditcard extends ModelMethodAbstract
                 'pagarme_modal_customer_address_state' => $billingAddress->getRegion(),
                 'pagarme_modal_customer_address_zipcode' => $billingAddress->getPostcode(),
                 'pagarme_modal_customer_address_country' => $billingAddress->getCountry(),
-                'pagarme_modal_customer_phone_ddd' => $helper->getDddFromPhoneNumber($telephone),
-                'pagarme_modal_customer_phone_number' => $helper->getPhoneWithoutDdd($telephone),
+                'pagarme_modal_customer_phone_ddd' => $this->pagarmeCoreHelper->getDddFromPhoneNumber($telephone),
+                'pagarme_modal_customer_phone_number' => $this->pagarmeCoreHelper->getPhoneWithoutDdd($telephone),
                 'pagarme_modal_customer_gender' => $quote->getGender()
             ]);
 
-            $customerPagarMe = $helper->buildCustomer($customer);
-
-            $order = $payment->getOrder();
+            $customerPagarMe = $this->pagarmeCoreHelper
+                ->buildCustomer($customer);
 
             $this->transaction = $this->sdk
                 ->transaction()
                 ->creditCardTransaction(
-                    $helper->parseAmountToInteger($quote->getGrandTotal()),
+                    $this->pagarmeCoreHelper
+                        ->parseAmountToInteger($quote->getGrandTotal()),
                     $card,
                     $customerPagarMe,
                     $installments,
                     false
                 );
 
+            $order = $payment->getOrder();
             Mage::getModel('pagarme_core/transaction')
                 ->saveTransactionInformation(
                     $order,
