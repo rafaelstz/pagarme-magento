@@ -131,13 +131,13 @@ class PagarMe_CreditCard_Model_Creditcard extends ModelMethodAbstract
 
         if ($installments > self::PAGARME_MAX_INSTALLMENTS) {
             throw new InvalidInstallmentsException(
-                'Installments number should be lower than twelve'
+                'Installments number should be lower than Pagar.Me limit'
             );
         }
 
         if ($installments > $this->getMaxInstallments()) {
             $message = sprintf(
-                'Installments number should be greater than zero',
+                'Installments number should not be greater than %d',
                 $this->getMaxInstallments()
             );
             throw new InvalidInstallmentsException(
@@ -233,6 +233,12 @@ class PagarMe_CreditCard_Model_Creditcard extends ModelMethodAbstract
             $card = $this->generateCard($cardHash);
 
             if ($billingAddress == false) {
+                Mage::logException(
+                    sprintf(
+                        'Undefined Billing address: %s',
+                        $billingAddress
+                    )
+                );
                 return false;
             }
 
@@ -280,9 +286,11 @@ class PagarMe_CreditCard_Model_Creditcard extends ModelMethodAbstract
                     $infoInstance
                 );
         } catch (GenerateCardException $exception) {
-            Mage::throwException($exception->getMessage());
+            Mage::logException($exception->getMessage());
         } catch (InvalidInstallmentsException $exception) {
-            Mage::throwException($exception->getMessage());
+            Mage::logException($exception);
+        } catch (TransactionsInstallmentsDivergent $exception) {
+            Mage::logException($exception);
         } catch (\Exception $exception) {
             $json = json_decode($exception->getMessage());
             $json = json_decode($json);
