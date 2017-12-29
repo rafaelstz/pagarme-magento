@@ -30,7 +30,7 @@ class PagarMe_Core_Model_Transaction extends Mage_Core_Model_Abstract
         $totalAmount = Mage::helper('pagarme_core')
             ->parseAmountToFloat($transaction->getAmount());
 
-        if ($transaction instanceof PagarMe\Sdk\Transaction\CreditCardTransaction) {
+        if ($transaction instanceof PagarMe\Sdk\Transaction\AbstractTransaction) {
             $installments = $transaction->getInstallments();
 
             $rateAmount = ($totalAmount - $order->getBaseGrandTotal());
