@@ -5,7 +5,6 @@
  */
 
 use PagarMe\Sdk\Card\Card;
-use PagarMe_CreditCard_Model_Exception_TransactionsInstallmentsDivergent as TransactionsInstallmentsDivergent;
 use PagarMe\Sdk\Transaction\CreditCardTransaction;
 
 class PagarMeCreditCardModelCreditcardTest extends PHPUnit_Framework_TestCase
@@ -17,7 +16,7 @@ class PagarMeCreditCardModelCreditcardTest extends PHPUnit_Framework_TestCase
         $this->creditCardModel = $this->getMockBuilder(
             'PagarMe_CreditCard_Model_Creditcard'
         )->setMethods(['getMaxInstallments'])
-         ->getMock();
+        ->getMock();
 
         $this->creditCardModel
             ->method('getMaxInstallments')
@@ -43,14 +42,14 @@ class PagarMeCreditCardModelCreditcardTest extends PHPUnit_Framework_TestCase
      */
     public function invalidInstallments()
     {
-        $installmentsBellowRange = 0;
-        $installmentsAboveRange = 7;
-        $installmentsAbovePagarmeRange = 13;
+        $installmentBellowRange = 0;
+        $installmentAboveRange = 7;
+        $installmentAbovePagarmeRange = 13;
 
         return [
-            [$installmentsBellowRange],
-            [$installmentsAboveRange],
-            [$installmentsAbovePagarmeRange]
+            [$installmentBellowRange],
+            [$installmentAboveRange],
+            [$installmentAbovePagarmeRange]
         ];
     }
     /**
@@ -68,22 +67,22 @@ class PagarMeCreditCardModelCreditcardTest extends PHPUnit_Framework_TestCase
     public function getSdkMock($cardHash = '')
     {
         $sdkMock = $this->getMockBuilder('\PagarMe\Sdk\PagarMe')
-                        ->setMethods([
-                            'card',
-                            'createFromHash',
-                            'transaction',
-                            'creditCardTransaction'
-                        ])
-                        ->getMock();
+            ->setMethods([
+                'card',
+                'createFromHash',
+                'transaction',
+                'creditCardTransaction'
+            ])
+            ->getMock();
 
         $sdkMock->expects($this->any())
-                ->method('card')
-                ->willReturnSelf();
+            ->method('card')
+            ->willReturnSelf();
 
         $sdkMock->expects($this->any())
-                ->method('createFromHash')
-                ->with($cardHash)
-                ->willReturn(new Card([]));
+            ->method('createFromHash')
+            ->with($cardHash)
+            ->willReturn(new Card([]));
 
         return $sdkMock;
     }

@@ -1,11 +1,10 @@
 <?php
-use Mage_Payment_Model_Method_Abstract as ModelMethodAbstract;
 use \PagarMe\Sdk\PagarMe as PagarMeSdk;
 use PagarMe_CreditCard_Model_Exception_InvalidInstallments as InvalidInstallmentsException;
 use PagarMe_CreditCard_Model_Exception_GenerateCard as GenerateCardException;
 use PagarMe_CreditCard_Model_Exception_TransactionsInstallmentsDivergent as TransactionsInstallmentsDivergent;
 
-class PagarMe_CreditCard_Model_Creditcard extends ModelMethodAbstract
+class PagarMe_CreditCard_Model_Creditcard extends Mage_Payment_Model_Method_Abstract
 {
     protected $_code = 'pagarme_creditcard';
     protected $_formBlockType = 'pagarme_creditcard/form_creditcard';
