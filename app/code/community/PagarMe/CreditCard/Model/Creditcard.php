@@ -30,7 +30,7 @@ class PagarMe_CreditCard_Model_Creditcard extends ModelMethodAbstract
 
     const PAGARME_MAX_INSTALLMENTS = 12;
 
-    public function __construct(PagarMeSdk $sdk = null)
+    public function __construct($attributes, PagarMeSdk $sdk = null)
     {
         if (is_null($sdk)) {
             $this->sdk = Mage::getModel('pagarme_core/sdk_adapter')
@@ -38,7 +38,7 @@ class PagarMe_CreditCard_Model_Creditcard extends ModelMethodAbstract
         }
 
         $this->pagarmeCoreHelper = Mage::helper('pagarme_core');
-        parent::__construct();
+        parent::__construct($attributes);
     }
 
     /**
