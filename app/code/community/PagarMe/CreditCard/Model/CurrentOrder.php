@@ -20,10 +20,10 @@ class PagarMe_CreditCard_Model_CurrentOrder
         return $this->pagarMeSdk->getPagarMeSdk()
             ->calculation()
             ->calculateInstallmentsAmount(
-                $amount,
-                $interestRate,
-                $freeInstallments,
-                $maxInstallments
+                $amount ?: 0,
+                $interestRate ?: 0,
+                $freeInstallments ?: 0,
+                $maxInstallments ?: 1
             );
     }
 
