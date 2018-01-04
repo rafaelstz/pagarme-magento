@@ -39,6 +39,15 @@
                 </pagarme_creditcard>
             </updates>
         </layout>
+        <translate>
+            <modules>
+                <pagarme_creditcard>
+                    <files>
+                        <default>PagarMe_Creditcard.csv</default>
+                    </files>
+                </pagarme_creditcard>
+            </modules>
+        </translate>
     </frontend>
     <default>
         <payment>

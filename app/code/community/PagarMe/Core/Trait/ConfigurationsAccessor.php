@@ -2,10 +2,25 @@
 
 trait PagarMe_Core_Trait_ConfigurationsAccessor
 {
+
+    private function isTransparentCheckoutActiveStoreConfig()
+    {
+        return $this->getConfigurationWithName(
+            'pagarme_configurations/transparent_active'
+        );
+    }
+
+    private function getCreditcardTitleStoreConfig()
+    {
+        return $this->getConfigurationWithName(
+            'pagarme_configurations/creditcard_title'
+        );
+    }
+
     private function getMaxInstallmentStoreConfig()
     {
         return $this->getConfigurationWithName(
-            'pagarme_configurations/max_installments'
+            'pagarme_configurations/creditcard_max_installments'
         );
     }
 
@@ -19,14 +34,14 @@ trait PagarMe_Core_Trait_ConfigurationsAccessor
     private function getFreeInstallmentStoreConfig()
     {
         return $this->getConfigurationWithName(
-            'pagarme_configurations/free_installments'
+            'pagarme_configurations/creditcard_free_installments'
         );
     }
 
     private function getInterestRateStoreConfig()
     {
         return $this->getConfigurationWithName(
-            'pagarme_configurations/interest_rate'
+            'pagarme_configurations/creditcard_interest_rate'
         );
     }
 

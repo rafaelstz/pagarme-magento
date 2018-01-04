@@ -20,10 +20,10 @@ class PagarMe_CreditCard_Model_CurrentOrder
         return $this->pagarMeSdk->getPagarMeSdk()
             ->calculation()
             ->calculateInstallmentsAmount(
-                $amount ?: 0,
-                $interestRate ?: 0,
-                $freeInstallments ?: 0,
-                $maxInstallments ?: 1
+                $amount,
+                $interestRate,
+                $freeInstallments,
+                $maxInstallments
             );
     }
 
@@ -32,7 +32,7 @@ class PagarMe_CreditCard_Model_CurrentOrder
     //Pode levar à demora de mostrar os métodos de pagamento
     public function productsTotalValueInCents()
     {
-        $subtotalPunctuated = $this->quote->getData()['subtotal'];
-        return preg_replace('/[^0-9]/', '', $subtotalPunctuated);
+        $total = $this->quote->getTotals()['subtotal']->getValue();
+        return Mage::helper('pagarme_core')->parseAmountToInteger($total);
     }
 }

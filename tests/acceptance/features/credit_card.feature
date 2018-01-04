@@ -33,6 +33,7 @@ Feature: Credit Card
         | 3                 |
         | 1                 |
 
+    @only
     Scenario Outline: Make a purchase by credit card with interest and installments
         Given a registered user
         When I set max installments to "<max_installments>"
@@ -43,8 +44,8 @@ Feature: Credit Card
         And login with registered user
         And confirm billing and shipping address information
         And choose pay with transparent checkout using credit card
+        And I choose "<max_installments>"
         And I confirm my payment information
-        And place order
         Then the purchase must be created with value based on both "<max_installments>" and "<interest_rate>"
         Examples:
         | max_installments | interest_rate |

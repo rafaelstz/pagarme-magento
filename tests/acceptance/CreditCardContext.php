@@ -127,11 +127,7 @@ class CreditCardContext extends RawMinkContext
     public function loginWithRegisteredUser()
     {
         $page = $this->session->getPage();
-<<<<<<< 18b43d560ba925e893567ff7cee536804dbbd137
         $page->fillField(
-=======
-        $this->getSession()->getPage()->fillField(
->>>>>>> test: credit card tests refactor
             Mage::helper('pagarme_modal')->__('Email Address'),
             $this->customer->getEmail()
         );
@@ -199,6 +195,17 @@ class CreditCardContext extends RawMinkContext
     }
 
     /**
+     * @When I choose :maxInstallments
+     */
+    public function iChooseMaxInstallments($maxInstallments)
+    {
+        $page = $this->session->getPage();
+
+        $page->find('css', '#pagarme_creditcard_creditcard_installments')
+            ->selectOption($maxInstallments);
+    }
+
+    /**
      * @When place order
      */
     public function placeOrder()
@@ -240,11 +247,7 @@ class CreditCardContext extends RawMinkContext
     }
 
     /**
-<<<<<<< 18b43d560ba925e893567ff7cee536804dbbd137
      * @When I should see only installment options up to :maxInstallments
-=======
-     * @Then I should see only installment options up to :maxInstallments
->>>>>>> test: credit card tests refactor
      */
     public function iShouldSeeOnlyInstallmentOptionsUpTo($maxInstallments)
     {
@@ -278,6 +281,7 @@ class CreditCardContext extends RawMinkContext
         $installments,
         $interestRate
     ) {
+        $this->session->wait(2000);
         $page = $this->session->getPage();
         $checkoutTotalAmount = $page->find(
             'css',
@@ -294,15 +298,6 @@ class CreditCardContext extends RawMinkContext
      */
     public function afterEveryScenario()
     {
-<<<<<<< 2aaf51d2a149082490d2db2f2c0ebfb4a2f6e126
-<<<<<<< 18b43d560ba925e893567ff7cee536804dbbd137
         Mage::getSingleton('customer/session')->logout();
-=======
-        $page = $this->session->getPage();
-        $page->find('css', 'a[title="Log Out"]')->click();
->>>>>>> test: credit card tests refactor
-=======
-        Mage::getSingleton('customer/session')->logout();
->>>>>>> Tests for frontend
     }
 }

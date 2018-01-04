@@ -25,8 +25,8 @@ class PagarMe_Creditcard_Block_Form_CreditCard extends Mage_Payment_Block_Form_C
         );
 
         return $currentOrder->calculateInstallments(
-            $this->getFreeInstallmentsStoreConfig(),
-            $this->getMaxInstallmentsStoreConfig(),
+            $this->getMaxInstallmentStoreConfig(),
+            $this->getFreeInstallmentStoreConfig(),
             $this->getInterestRateStoreConfig()
         );
     }
