@@ -14,9 +14,9 @@ class PagarMe_CreditCard_Model_Quote_Address_Total_CreditCardInterestAmount
     {
         parent::collect($address);
         if ($this->shouldDoSomethig($address)) {
+            $paymentMethodParameters = Mage::app()->getRequest()->getPost()['payment'];
             $address->setDiscountAmount(0);
             $address->setBaseDiscountAmount(0);
-            $paymentMethodParameters = Mage::app()->getRequest()->getPost()['payment'];
             $this->interestValue = $this->interestAmountInReals(
                 Mage::getSingleton('checkout/session')->getQuote(),
                 $paymentMethodParameters
@@ -24,20 +24,13 @@ class PagarMe_CreditCard_Model_Quote_Address_Total_CreditCardInterestAmount
 
             $this->_addAmount($this->interestValue);
             $this->_addBaseAmount($this->interestValue);
-
-            Mage::log('Calculed!');
-            Mage::log('Payment Parameters: ' . json_encode($paymentMethodParameters));
         }
-        Mage::log('collect!');
-        Mage::log($this->interestValue);
 
         return $this;
     }
 
     public function fetch(Mage_Sales_Model_Quote_Address $address)
     {
-        Mage::log('fetch!');
-        Mage::log($this->interestValue);
         if ($this->shouldDoSomethig($address)) {
             $address->addTotal(array(
                 'code' => $this->getCode(),
@@ -81,8 +74,18 @@ class PagarMe_CreditCard_Model_Quote_Address_Total_CreditCardInterestAmount
 
         $addressUsedIsShipping = $address->getAddressType() == 'shipping';
 
-        $interestRateIsntZero = $this->getInterestRateStoreConfig() > 0;
+        $paymentMethodParameters = Mage::app()->getRequest()->getPost();
+        $requestWasFromAfterPaymentMethod = array_key_exists('payment', $paymentMethodParameters)
+            && array_key_exists('installments', $paymentMethodParameters['payment']);
+
+        $interestRateIsntZero = $this->getFreeInstallmentStoreConfig() > 0;
+
+        $installments = !$requestWasFromAfterPaymentMethod ? -1 :
+            $paymentMethodParameters['payment']['installments'];
+        $paymentIsntInterestFree = $installments > $this->getFreeInstallmentStoreConfig();
+
         return $paymentMethodUsedWasPagarme && $addressUsedIsShipping
-            && $interestRateIsntZero;
+            && $interestRateIsntZero && $requestWasFromAfterPaymentMethod
+            && $paymentIsntInterestFree;
     }
 }

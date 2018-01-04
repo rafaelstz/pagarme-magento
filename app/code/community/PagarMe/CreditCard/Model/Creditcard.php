@@ -131,7 +131,7 @@ class PagarMe_CreditCard_Model_Creditcard extends Mage_Payment_Model_Method_Abst
             );
         }
 
-        if ($installments > $this->getMaxInstallments()) {
+        if ($installments > $this->getMaxInstallmentStoreConfig()) {
             $message = sprintf(
                 'Installments number should not be greater than %d',
                 $this->getMaxInstallments()
@@ -235,7 +235,7 @@ class PagarMe_CreditCard_Model_Creditcard extends Mage_Payment_Model_Method_Abst
 
             $telephone = $billingAddress->getTelephone();
 
-            $customer = $this->buildCustomerInformation($quote, $billingAddress, $telephone);
+            $customerPagarMe = $this->buildCustomerInformation($quote, $billingAddress, $telephone);
             $this->transaction = $this->sdk
                 ->transaction()
                 ->creditCardTransaction(
@@ -257,10 +257,13 @@ class PagarMe_CreditCard_Model_Creditcard extends Mage_Payment_Model_Method_Abst
                 );
         } catch (GenerateCardException $exception) {
             Mage::logException($exception->getMessage());
+            Mage::throwException($exception);
         } catch (InvalidInstallmentsException $exception) {
             Mage::logException($exception);
+            Mage::throwException($exception);
         } catch (TransactionsInstallmentsDivergent $exception) {
             Mage::logException($exception);
+            Mage::throwException($exception);
         } catch (\Exception $exception) {
             $json = json_decode($exception->getMessage());
             $json = json_decode($json);
