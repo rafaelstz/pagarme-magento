@@ -69,7 +69,7 @@ class PagarMe_Modal_Block_Info_Modal extends Mage_Payment_Block_Info
     /**
      * @return Varien_Object
      */
-    protected function _prepareSpecificInformation()
+    protected function _prepareSpecificInformation($transport = null)
     {
         $specificInformation = [];
 
