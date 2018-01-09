@@ -14,4 +14,9 @@
             <action method="addJs" ifconfig="payment/pagarme_configurations/transparent_active"><script>pagarme/creditcard.js</script></action>
         </reference>
     </checkout_onepage_index>
+    <sales_order_view>
+        <reference name="order_totals">
+            <block type="pagarme_creditcard/sales_RateAmount" name="pagarme_creditcard.rateamount"/>
+        </reference>
+    </sales_order_view>
 </layout>
