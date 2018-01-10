@@ -151,8 +151,8 @@ class PagarMe_Modal_Model_Modal extends Mage_Payment_Model_Method_Abstract
 
         Mage::getModel('pagarme_core/transaction')
             ->saveTransactionInformation(
-                $order, 
-                $transaction, 
+                $order,
+                $transaction,
                 $infoInstance
             );
 

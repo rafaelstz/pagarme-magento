@@ -50,3 +50,13 @@ Feature: Credit Card
         Examples:
         | max_installments | interest_rate |
         | 10               | 10            |
+
+    @order_view_interest
+    Scenario Outline: Check the interest in the order details page
+        Given a registered user
+        And a created order with installment value of "<installments>" and interest of "<interest_rate>"
+        When I check the order interest amount in its detail page
+        Then the interest value should consider the values "<installments>" and "<interest_rate>"
+        Examples:
+        | installments | interest_rate |
+        | 10           | 10            |

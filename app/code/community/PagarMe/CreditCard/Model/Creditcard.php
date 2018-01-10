@@ -121,7 +121,7 @@ class PagarMe_CreditCard_Model_Creditcard extends Mage_Payment_Model_Method_Abst
     {
         if ($installments <= 0) {
             throw new InvalidInstallmentsException(
-                'Installments number should be greater than zero'
+                'Installments number should be greater than zero. Was: ' . $installments
             );
         }
 
