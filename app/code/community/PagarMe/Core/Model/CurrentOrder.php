@@ -1,6 +1,6 @@
 <?php
 
-class PagarMe_CreditCard_Model_CurrentOrder
+class PagarMe_Core_Model_CurrentOrder
 {
 
     private $quote;
@@ -17,6 +17,7 @@ class PagarMe_CreditCard_Model_CurrentOrder
         $interestRate
     ){
         $amount = $this->productsTotalValueInCents();
+        Mage::log($interestRate);
         return $this->pagarMeSdk->getPagarMeSdk()
             ->calculation()
             ->calculateInstallmentsAmount(
@@ -42,7 +43,7 @@ class PagarMe_CreditCard_Model_CurrentOrder
         return Mage::helper('pagarme_core')->parseAmountToFloat($total);
     }
 
-    public function rateAmount($installmentsValue, $freeInstallments, $interestRate)
+    public function rateAmountInReals($installmentsValue, $freeInstallments, $interestRate)
     {
         $installments = $this->calculateInstallments(
             $installmentsValue,
@@ -50,7 +51,8 @@ class PagarMe_CreditCard_Model_CurrentOrder
             $interestRate
         );
 
-        $installmentTotal = $installments['installments'][$installmentsValue]['amount'];
-        return $installmentTotal;
+        $installmentTotal = $installments[$installmentsValue]['total_amount'];
+        return Mage::helper('pagarme_core')->parseAmountToFloat(
+            $installmentTotal - $this->productsTotalValueInCents());
     }
 }

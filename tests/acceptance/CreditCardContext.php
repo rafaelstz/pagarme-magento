@@ -13,7 +13,6 @@ class CreditCardContext extends RawMinkContext
     use PagarMe\Magento\Test\Helper\CustomerDataProvider;
     use PagarMe\Magento\Test\Helper\ProductDataProvider;
     use PagarMe\Magento\Test\Helper\SessionWait;
-    use PagarMe\Magento\Test\Helper\Customer;
 
     /**
      * @BeforeScenario
@@ -349,10 +348,10 @@ class CreditCardContext extends RawMinkContext
         $installments,
         $interestRate
     ) {
-        $this->waitForElement('.pagarme_modal_rate_amount', 3000);
+        $this->waitForElement('.pagarme_creditcard_rate_amount', 3000);
         $page = $this->session->getPage();
         $interestAmount = $page
-            ->find('css', '.pagarme_modal_rate_amount .price')
+            ->find('css', '.pagarme_creditcard_rate_amount .price')
             ->getText();
 
         \PHPUnit_Framework_TestCase::assertEquals(

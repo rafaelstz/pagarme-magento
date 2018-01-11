@@ -9,6 +9,8 @@ class PagarMe_CreditCard_Model_Creditcard extends Mage_Payment_Model_Method_Abst
 
     use PagarMe_Core_Trait_ConfigurationsAccessor;
 
+    const PAGARME_CREDITCARD = 'pagarme_creditcard';
+
     protected $_code = 'pagarme_creditcard';
     protected $_formBlockType = 'pagarme_creditcard/form_creditcard';
     protected $_infoBlockType = 'pagarme_creditcard/info_creditcard';
@@ -265,6 +267,8 @@ class PagarMe_CreditCard_Model_Creditcard extends Mage_Payment_Model_Method_Abst
             Mage::logException($exception);
             Mage::throwException($exception);
         } catch (\Exception $exception) {
+            Mage::logException('Exception autorizing:');
+            Mage::logException($exception);
             $json = json_decode($exception->getMessage());
             $json = json_decode($json);
 
