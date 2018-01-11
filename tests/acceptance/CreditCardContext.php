@@ -14,6 +14,10 @@ class CreditCardContext extends RawMinkContext
     use PagarMe\Magento\Test\Helper\ProductDataProvider;
     use PagarMe\Magento\Test\Helper\SessionWait;
 
+    use PagarMe\Magento\Test\CreditCard\AdminInterestRateCheck;
+
+    private $createdOrderId;
+
     /**
      * @BeforeScenario
      */
@@ -83,6 +87,10 @@ class CreditCardContext extends RawMinkContext
         $this->iConfirmMyPaymentInformation();
         $this->placeOrder();
         $this->thePurchaseMustBePaidWithSuccess();
+        $this->waitForElement('.col-main a:first-of-type', 2000);
+        $this->createdOrderId = $this->session->getPage()
+            ->find('css', '.col-main a:first-of-type')
+            ->getText();
     }
 
     /**
@@ -113,6 +121,19 @@ class CreditCardContext extends RawMinkContext
 
         $this->session
             ->visit($this->magentoUrl . 'sales/order/view/order_id/' . $order->getId());
+    }
+
+    /**
+     * @When I check the order interest amount in its admin detail page
+     */
+    public function iCheckTheOrderInterestAmountInItsAdminDetailPage()
+    {
+        $order = Mage::getModel('sales/order')
+            ->load($this->createdOrderId, 'increment_id');
+        $this->session
+            ->visit(
+                $this->magentoUrl . 'admin/sales_order/view/order_id/' . $order->getId()
+            );
     }
 
     /**
