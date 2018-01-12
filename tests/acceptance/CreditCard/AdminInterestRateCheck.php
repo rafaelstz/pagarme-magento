@@ -45,10 +45,10 @@ trait AdminInterestRateCheck
         $installments,
         $interestRate
     ) {
-        $this->waitForElement('#pagarme_order_info_rate_amount', 3000);
+        $this->waitForElement('#pagarme_creditcard_order_info_rate_amount', 3000);
         $page = $this->session->getPage();
         $interestAmount = $page
-            ->find('css', '#pagarme_order_info_rate_amount td:last-of-type')
+            ->find('css', '#pagarme_creditcard_order_info_rate_amount td:last-of-type')
             ->getText();
 
         \PHPUnit_Framework_TestCase::assertEquals(

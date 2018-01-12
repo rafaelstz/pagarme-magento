@@ -1,5 +1,28 @@
+<?php
+    $transaction = \Mage::getModel('pagarme_core/service_order')
+        ->getTransactionByOrderId($this->getOrder()->getId());
 
-<tr id="pagarme_order_info_rate_amount">
-    <td class="label">Rate Amount</td>
-    <td>Eita</td>
-</tr>
+    $paymentMethodWasCreditCard = $this->getOrder()->getPayment()->getMethod() ===
+        PagarMe_CreditCard_Model_Creditcard::PAGARME_CREDITCARD;
+    $paymentHasInterest = $transaction->getRateAmount() > 0;
+    $shouldShow = $paymentMethodWasCreditCard && $paymentHasInterest;
+?>
+
+<?php if ($shouldShow): ?>
+    <tr id="pagarme_creditcard_order_info_rate_amount">
+        <td class="label">
+            <?=
+                Mage::helper('pagarme_creditcard')
+                    ->__('Installments related Interest')
+            ?>
+        </td>
+        <td>
+            <?=
+                $this->displayPrices(
+                    $transaction->getRateAmount(),
+                    $transaction->getRateAmount()
+                )
+            ?>
+        </td>
+    </tr>
+<?php endif; ?>

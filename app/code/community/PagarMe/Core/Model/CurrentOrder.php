@@ -17,7 +17,6 @@ class PagarMe_Core_Model_CurrentOrder
         $interestRate
     ){
         $amount = $this->productsTotalValueInCents();
-        Mage::log($interestRate);
         return $this->pagarMeSdk->getPagarMeSdk()
             ->calculation()
             ->calculateInstallmentsAmount(
