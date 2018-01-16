@@ -1,6 +1,6 @@
 <?php
 
-use PagarMe_CreditCard_Model_CurrentOrder as CurrentOrder;
+use PagarMe_Core_Model_CurrentOrder as CurrentOrder;
 
 class PagarMe_CreditCard_Model_Quote_Address_Total_CreditCardInterestAmount
     extends Mage_Sales_Model_Quote_Address_Total_Abstract

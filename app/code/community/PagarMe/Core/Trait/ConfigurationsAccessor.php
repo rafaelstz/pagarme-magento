@@ -1,11 +1,13 @@
 <?php
 
+    use PagarMe_Core_Model_Exception_ConfigurationsDoesntExists as ConfigurationDoesntExists;
+
 trait PagarMe_Core_Trait_ConfigurationsAccessor
 {
 
     private function isTransparentCheckoutActiveStoreConfig()
     {
-        return $this->getConfigurationWithName(
+        return (bool) $this->getConfigurationWithName(
             'pagarme_configurations/transparent_active'
         );
     }
@@ -19,7 +21,7 @@ trait PagarMe_Core_Trait_ConfigurationsAccessor
 
     private function getMaxInstallmentStoreConfig()
     {
-        return $this->getConfigurationWithName(
+        return (int) $this->getConfigurationWithName(
             'pagarme_configurations/creditcard_max_installments'
         );
     }
@@ -33,20 +35,22 @@ trait PagarMe_Core_Trait_ConfigurationsAccessor
 
     private function getFreeInstallmentStoreConfig()
     {
-        return $this->getConfigurationWithName(
+        return (int) $this->getConfigurationWithName(
             'pagarme_configurations/creditcard_free_installments'
         );
     }
 
     private function getInterestRateStoreConfig()
     {
-        return $this->getConfigurationWithName(
+        return (float) $this->getConfigurationWithName(
             'pagarme_configurations/creditcard_interest_rate'
         );
     }
 
     private function getConfigurationWithName($name)
     {
+        Mage::log('olha isso');
+        Mage::log(Mage::getStoreConfig('nem_existe') == null);
         return Mage::getStoreConfig("payment/{$name}");
     }
 

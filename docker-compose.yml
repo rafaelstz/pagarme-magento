@@ -23,7 +23,10 @@ services:
         env_file: .env
 
     magento:
-        image: pagarme/magento:master
+        image: magneto:1
+        build:
+            dockerfile: ./Dockerfile
+            context: ./
         env_file: .env
         volumes:
             - .:/opt/docker/magento/module/

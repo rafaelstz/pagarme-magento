@@ -1,6 +1,6 @@
 <?php
 
-use PagarMe_CreditCard_Model_CurrentOrder as CurrentOrder;
+use PagarMe_Core_Model_CurrentOrder as CurrentOrder;
 
 class PagarMe_Creditcard_Block_Form_CreditCard extends Mage_Payment_Block_Form_Cc
 {

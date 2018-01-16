@@ -6,8 +6,10 @@ class PagarMe_Core_Model_CurrentOrder
     private $quote;
     private $pagarMeSdk;
 
-    public function __construct($quote, $pagarMeSdk)
-    {
+    public function __construct(
+        Mage_Sales_Model_Quote $quote,
+        PagarMe_Core_Model_Sdk_Adapter $pagarMeSdk
+    ) {
         $this->quote = $quote;
         $this->pagarMeSdk = $pagarMeSdk;
     }

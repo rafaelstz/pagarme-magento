@@ -2,7 +2,7 @@
 
 use Behat\MinkExtension\Context\RawMinkContext;
 use Behat\Behat\Tester\Exception\PendingException;
-use PagarMe_CreditCard_Model_CurrentOrder as CurrentOrder;
+use PagarMe_Core_Model_CurrentOrder as CurrentOrder;
 require_once __DIR__ . '/../bootstrap.php';
 require_once __DIR__ . '/../../vendor/autoload.php';
 
@@ -253,7 +253,7 @@ class CreditCardContext extends RawMinkContext
 
         $this->waitForElement('#checkout-step-payment', 5000);
 
-        $this->session->wait(3000);
+        $this->waitForElement('#p_method_pagarme_creditcard', 3000);
         $page->find('css', '#p_method_pagarme_creditcard')->click();
     }
 
