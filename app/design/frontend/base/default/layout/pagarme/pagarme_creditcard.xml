@@ -19,4 +19,9 @@
             <block type="pagarme_creditcard/sales_RateAmount" name="pagarme_creditcard.rateamount"/>
         </reference>
     </sales_order_view>
+    <sales_email_order_items>
+        <reference name="order_totals">
+            <block type="pagarme_creditcard/sales_RateAmount" name="pagarme_creditcard.rateamount"/>
+        </reference>
+    </sales_email_order_items>
 </layout>

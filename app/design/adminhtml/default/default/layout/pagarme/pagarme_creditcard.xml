@@ -2,7 +2,7 @@
 <layout>
     <adminhtml_sales_order_view>
         <reference name="order_totals">
-            <block name="pagarme_creditcard_rate_amount" type="adminhtml/sales_order_totals_item" template="pagarme/creditcard/interest_rate/rate_amount.phtml"/>
+            <block type="pagarme_creditcard/sales_RateAmount" name="pagarme_creditcard.rateamount"/>
         </reference>
     </adminhtml_sales_order_view>
 </layout>
