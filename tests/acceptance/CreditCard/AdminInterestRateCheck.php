@@ -45,11 +45,19 @@ trait AdminInterestRateCheck
         $installments,
         $interestRate
     ) {
-        $this->waitForElement('#pagarme_creditcard_order_info_rate_amount', 3000);
+        $interestAmountLabel = \Mage::helper('pagarme_creditcard')
+            ->__("Installments related interest");
+        $interestAmountElementXpath = "//td[contains(text(), '${interestAmountLabel}')]/following-sibling::td/span[@class='price']";
         $page = $this->session->getPage();
+        $this->waitForElementXpath(
+            $interestAmountElementXpath,
+            5
+        );
         $interestAmount = $page
-            ->find('css', '#pagarme_creditcard_order_info_rate_amount td:last-of-type')
-            ->getText();
+            ->find(
+                'xpath',
+                $interestAmountElementXpath
+            )->getText();
 
         \PHPUnit_Framework_TestCase::assertEquals(
             $interestAmount,
