@@ -1,12 +1,7 @@
 FROM pagarme/magento
 
-RUN apt-get update; exit 0
-RUN apt-get -y install vim sendmail
-
-
 COPY ./magentosmtp /opt/docker/magentosmtp
-RUN /opt/docker/magentosmtp
+COPY ./start2 /opt/docker/start2
 
-EXPOSE 25
-
-ENTRYPOINT ["/opt/docker/scripts/start"]
+ENTRYPOINT ["/usr/bin/env"]
+CMD ["bash", "/opt/docker/start2"]
