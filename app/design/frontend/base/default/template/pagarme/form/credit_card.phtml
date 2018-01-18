@@ -75,10 +75,14 @@
             >
             <?php foreach ($this->getInstallments() as $installmentNumber => $installmentInfo) : ?>
             <option value="<?= $installmentNumber ?>">
-                <?=
-                    $installmentNumber . 'x - (' . 
-                    $installmentInfo['installment_amount'] . ' x ' . 
-                    $installmentNumber . ')'
+                <?php
+                    echo sprintf(
+                        '%sx - (%s x R$%s)',
+                        $installmentNumber,
+                        $installmentNumber,
+                        Mage::helper('pagarme_core')
+                            ->parseAmountToFloat($installmentInfo['installment_amount'])
+                    );
                 ?>
             </option>
             <?php endforeach; ?>
