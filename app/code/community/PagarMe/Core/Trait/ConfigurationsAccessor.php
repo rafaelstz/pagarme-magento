@@ -49,8 +49,6 @@ trait PagarMe_Core_Trait_ConfigurationsAccessor
 
     private function getConfigurationWithName($name)
     {
-        Mage::log('olha isso');
-        Mage::log(Mage::getStoreConfig('nem_existe') == null);
         return Mage::getStoreConfig("payment/{$name}");
     }
 

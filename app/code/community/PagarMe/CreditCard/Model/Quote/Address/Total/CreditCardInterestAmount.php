@@ -10,10 +10,20 @@ class PagarMe_CreditCard_Model_Quote_Address_Total_CreditCardInterestAmount
 
     private $interestValue;
 
+    /**
+     * The class is called for the two addresses (billing and shipping)
+     * This prevents the method from adding the interest two times
+     */
     public function collect(Mage_Sales_Model_Quote_Address $address)
     {
         parent::collect($address);
-        if ($this->shouldDoSomethig($address)) {
+        if (
+            $this->paymentMethodUsedWasPagarme($address) &&
+            $this->addressUsedIsShipping($address) &&
+            $this->wasCalledAfterPaymentMethodSelection() &&
+            $this->interestRateIsntZero() &&
+            $this->paymentIsntInterestFree()
+        ) {
             $paymentMethodParameters = Mage::app()->getRequest()->getPost()['payment'];
             $address->setDiscountAmount(0);
             $address->setBaseDiscountAmount(0);
@@ -31,7 +41,13 @@ class PagarMe_CreditCard_Model_Quote_Address_Total_CreditCardInterestAmount
 
     public function fetch(Mage_Sales_Model_Quote_Address $address)
     {
-        if ($this->shouldDoSomethig($address)) {
+        if (
+            $this->paymentMethodUsedWasPagarme($address) &&
+            $this->addressUsedIsShipping($address) &&
+            $this->wasCalledAfterPaymentMethodSelection() &&
+            $this->interestRateIsntZero() &&
+            $this->paymentIsntInterestFree()
+        ) {
             $address->addTotal(array(
                 'code' => $this->getCode(),
                 'title' => __('Installments related Interest'),
@@ -62,30 +78,37 @@ class PagarMe_CreditCard_Model_Quote_Address_Total_CreditCardInterestAmount
         return $helper->parseAmountToFloat($interestInCents);
     }
 
-    /**
-     * The class is called for the two addresses (billing and shipping)
-     * This prevents the method from adding the interest two times
-     */
-    private function shouldDoSomethig(
+    private function paymentMethodUsedWasPagarme(
         Mage_Sales_Model_Quote_Address $address
     ) {
         $quote = $address->getQuote();
-        $paymentMethodUsedWasPagarme = $quote->getPayment()->getMethod() == 'pagarme_creditcard';
+        return $quote->getPayment()->getMethod() == 'pagarme_creditcard';
+    }
 
-        $addressUsedIsShipping = $address->getAddressType() == 'shipping';
+    private function addressUsedIsShipping(
+        Mage_Sales_Model_Quote_Address $address
+    ) {
+        return $address->getAddressType() == 'shipping';
+    }
 
+    private function wasCalledAfterPaymentMethodSelection()
+    {
         $paymentMethodParameters = Mage::app()->getRequest()->getPost();
-        $requestWasFromAfterPaymentMethod = array_key_exists('payment', $paymentMethodParameters)
+        return array_key_exists('payment', $paymentMethodParameters)
             && array_key_exists('installments', $paymentMethodParameters['payment']);
+    }
 
-        $interestRateIsntZero = $this->getFreeInstallmentStoreConfig() > 0;
+    private function interestRateIsntZero()
+    {
+        return $this->getFreeInstallmentStoreConfig() > 0;
+    }
 
-        $installments = !$requestWasFromAfterPaymentMethod ? -1 :
+    private function paymentIsntInterestFree()
+    {
+        $paymentMethodParameters = Mage::app()->getRequest()->getPost();
+        $installments = !$this->wasCalledAfterPaymentMethodSelection() ?
+            -1 :
             $paymentMethodParameters['payment']['installments'];
-        $paymentIsntInterestFree = $installments > $this->getFreeInstallmentStoreConfig();
-
-        return $paymentMethodUsedWasPagarme && $addressUsedIsShipping
-            && $interestRateIsntZero && $requestWasFromAfterPaymentMethod
-            && $paymentIsntInterestFree;
+        return $installments > $this->getFreeInstallmentStoreConfig();
     }
 }
