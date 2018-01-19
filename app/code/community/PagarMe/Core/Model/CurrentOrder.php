@@ -31,7 +31,6 @@ class PagarMe_Core_Model_CurrentOrder
 
     //Subtotal should be the sum of all items in the cart
     //there's also Basesubtotal = subtotal in the store's currency
-    //Pode levar à demora de mostrar os métodos de pagamento
     public function productsTotalValueInCents()
     {
         $total = $this->quote->getTotals()['subtotal']->getValue();
@@ -44,6 +43,7 @@ class PagarMe_Core_Model_CurrentOrder
         return Mage::helper('pagarme_core')->parseAmountToFloat($total);
     }
 
+    //May result in slowing the payment method view in the checkout
     public function rateAmountInBRL($installmentsValue, $freeInstallments, $interestRate)
     {
         $installments = $this->calculateInstallments(
