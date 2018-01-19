@@ -2,6 +2,7 @@ Feature: Credit Card
     As an administrator of a webstore
     I want to use the transparent checkout for credit card purchases with installments
     So that the clients on my store can buy their goods without knowing that the payment is resolved by Pagar.me
+
     Scenario: Make a purchase by credit card
         Given a registered user
         When I access the store page
@@ -34,22 +35,19 @@ Feature: Credit Card
         | 1                 |
 
     @only
-    Scenario Outline: Make a purchase by credit card with interest and installments
+    Scenario: Make a purchase by credit card with interest and installments
         Given a registered user
-        When I set max installments to "<max_installments>"
-        And I set interest rate to "<interest_rate>"
+        When I set max installments to 10
+        And I set interest rate to 10
         And I access the store page
         And add any product to basket
         And I go to checkout page
         And login with registered user
         And confirm billing and shipping address information
         And choose pay with transparent checkout using credit card
-        And I choose "<max_installments>"
+        And I choose 10
         And I confirm my payment information
-        Then the purchase must be created with value based on both "<max_installments>" and "<interest_rate>"
-        Examples:
-        | max_installments | interest_rate |
-        | 10               | 10            |
+        Then the purchase must be created with value based on both 10 and 10
 
     @order_view_interest
     Scenario Outline: Check the interest in the order details page

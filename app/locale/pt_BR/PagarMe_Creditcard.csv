@@ -1,1 +1,4 @@
 "Installments related Interest","Juros do parcelamento"
+"Installments number should be greater than zero. Was: ","Número de parcelas deveria ser maior que zero. Foram: "
+"Installments number should be lower than Pagar.Me limit","Número de parcelas deveria ser menor que 13"
+"Installments number should not be greater than %d","Número de parcelas não pode ser menor que %d"

@@ -113,19 +113,24 @@ class PagarMe_CreditCard_Model_Creditcard extends Mage_Payment_Model_Method_Abst
     {
         if ($installments <= 0) {
             throw new InvalidInstallmentsException(
-                'Installments number should be greater than zero. Was: ' . $installments
+                Mage::helper('pagarme_creditcard')
+                    ->__(
+                        'Installments number should be greater than zero. Was: '
+                    ) . $installments
             );
         }
 
         if ($installments > self::PAGARME_MAX_INSTALLMENTS) {
             throw new InvalidInstallmentsException(
-                'Installments number should be lower than Pagar.Me limit'
+                Mage::helper('pagarme_creditcard')
+                ->__('Installments number should be lower than Pagar.Me limit')
             );
         }
 
         if ($installments > $this->getMaxInstallmentStoreConfig()) {
             $message = sprintf(
-                'Installments number should not be greater than %d',
+                Mage::helper('pagarme_creditcard')
+                    ->__('Installments number should not be greater than %d'),
                 $this->getMaxInstallmentStoreConfig()
             );
             throw new InvalidInstallmentsException(
@@ -284,7 +289,8 @@ class PagarMe_CreditCard_Model_Creditcard extends Mage_Payment_Model_Method_Abst
     {
         Mage::logException(
             sprintf(
-                'Undefined Billing address: %s',
+                Mage::helper('pagarme_core')
+                    ->__('Undefined Billing address: %s'),
                 $billingAddress
             )
         );
