@@ -44,7 +44,7 @@ class PagarMe_Core_Model_Transaction extends Mage_Core_Model_Abstract
             $currentOrder = new CurrentOrder($quote, $pagarMeSdk);
             $interestRate = $this->getInterestRateStoreConfig();
             $rateAmount = $currentOrder
-                ->rateAmountInReals(
+                ->rateAmountInBRL(
                     $installments,
                     $this->getFreeInstallmentStoreConfig(),
                     $interestRate

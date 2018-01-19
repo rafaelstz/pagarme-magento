@@ -38,13 +38,13 @@ class PagarMe_Core_Model_CurrentOrder
         return Mage::helper('pagarme_core')->parseAmountToInteger($total);
     }
 
-    public function productsTotalValueInReals()
+    public function productsTotalValueInBRL()
     {
         $total = $this->productsTotalValueInCents();
         return Mage::helper('pagarme_core')->parseAmountToFloat($total);
     }
 
-    public function rateAmountInReals($installmentsValue, $freeInstallments, $interestRate)
+    public function rateAmountInBRL($installmentsValue, $freeInstallments, $interestRate)
     {
         $installments = $this->calculateInstallments(
             $installmentsValue,
