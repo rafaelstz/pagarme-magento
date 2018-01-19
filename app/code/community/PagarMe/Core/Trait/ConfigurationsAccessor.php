@@ -1,7 +1,5 @@
 <?php
 
-    use PagarMe_Core_Model_Exception_ConfigurationsDoesntExists as ConfigurationDoesntExists;
-
 trait PagarMe_Core_Trait_ConfigurationsAccessor
 {
 
