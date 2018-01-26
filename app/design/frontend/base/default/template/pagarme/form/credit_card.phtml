@@ -74,7 +74,17 @@
                 class="input-text required-entry"
             >
             <?php foreach ($this->getInstallments() as $installmentNumber => $installmentInfo) : ?>
-                <option value="<?= $installmentNumber ?>"><?= $installmentNumber ?></option>
+            <option value="<?= $installmentNumber ?>">
+                <?php
+                    echo sprintf(
+                        '%sx - (%s x R$%s)',
+                        $installmentNumber,
+                        $installmentNumber,
+                        Mage::helper('pagarme_core')
+                            ->parseAmountToFloat($installmentInfo['installment_amount'])
+                    );
+                ?>
+            </option>
             <?php endforeach; ?>
             </select>
         </div>

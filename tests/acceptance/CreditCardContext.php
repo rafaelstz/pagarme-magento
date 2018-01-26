@@ -2,7 +2,7 @@
 
 use Behat\MinkExtension\Context\RawMinkContext;
 use Behat\Behat\Tester\Exception\PendingException;
-
+use PagarMe_Core_Model_CurrentOrder as CurrentOrder;
 require_once __DIR__ . '/../bootstrap.php';
 require_once __DIR__ . '/../../vendor/autoload.php';
 
@@ -13,6 +13,10 @@ class CreditCardContext extends RawMinkContext
     use PagarMe\Magento\Test\Helper\CustomerDataProvider;
     use PagarMe\Magento\Test\Helper\ProductDataProvider;
     use PagarMe\Magento\Test\Helper\SessionWait;
+
+    use PagarMe\Magento\Test\CreditCard\AdminInterestRateCheck;
+
+    private $createdOrderId;
 
     /**
      * @BeforeScenario
@@ -58,6 +62,81 @@ class CreditCardContext extends RawMinkContext
     }
 
     /**
+     * @Given a created order with installment value of :installments and interest of :interestRate
+     */
+    public function aCreatedOrderWithInstallmentValueOfAndInterestOf(
+        $installments,
+        $interestRate
+    ) {
+        $this->iAccessTheStorePage();
+        $this->addAnyProductToBasket();
+        $this->iGoToCheckoutPage();
+        $this->loginWithRegisteredUser();
+        $this->confirmBillingAndShippingAddressInformation();
+        $this->choosePayWithTransparentCheckoutUsingCreditCard();
+        $config = Mage::getModel('core/config');
+        $config->saveConfig(
+            'payment/pagarme_configurations/creditcard_max_installments',
+            10
+        );
+        $config->saveConfig(
+            'payment/pagarme_configurations/creditcard_interest_rate',
+            10
+        );
+        $this->iChooseMaxInstallments(10);
+        $this->iConfirmMyPaymentInformation();
+        $this->placeOrder();
+        $this->thePurchaseMustBePaidWithSuccess();
+        $this->waitForElement('.col-main a:first-of-type', 2000);
+        $this->createdOrderId = $this->session->getPage()
+            ->find('css', '.col-main a:first-of-type')
+            ->getText();
+    }
+
+    /**
+     * @Given registered user logged
+     */
+    public function registeredUserLogged()
+    {
+        $this->session
+            ->visit($this->magentoUrl . 'customer/account/login');
+        $this->waitForElement('#email', 2000);
+        $this->loginWithRegisteredUser();
+    }
+
+    /**
+     * @When I check the order interest amount in its detail page
+     */
+    public function iCheckTheOrderInterestAmountInItsDetailPage()
+    {
+        $currentUser = Mage::getSingleton('customer/session')
+            ->getCustomer();
+        /**
+         *Might result in problems if the tests are parallel
+         */
+        $order = Mage::getModel('sales/order')->getCollection()
+            ->addFieldToSelect('*')
+            ->setOrder('created_at', 'desc')
+            ->getFirstItem();
+
+        $this->session
+            ->visit($this->magentoUrl . 'sales/order/view/order_id/' . $order->getId());
+    }
+
+    /**
+     * @When I check the order interest amount in its admin detail page
+     */
+    public function iCheckTheOrderInterestAmountInItsAdminDetailPage()
+    {
+        $order = Mage::getModel('sales/order')
+            ->load($this->createdOrderId, 'increment_id');
+        $this->session
+            ->visit(
+                $this->magentoUrl . 'admin/sales_order/view/order_id/' . $order->getId()
+            );
+    }
+
+    /**
      * @When I set max installments to :maxInstallments
      */
     public function iSetMaxInstallmentsTo($maxInstallments)
@@ -68,6 +147,20 @@ class CreditCardContext extends RawMinkContext
             'payment/pagarme_configurations/creditcard_max_installments',
             $maxInstallments
         );
+    }
+
+    /**
+     * @When I set interest rate to :interestRate
+     */
+    public function iSetInterestRateTo($interestRate)
+    {
+        $config = Mage::getModel('core/config');
+
+        $config->saveConfig(
+            'payment/pagarme_configurations/creditcard_interest_rate',
+            $interestRate
+        );
+
     }
 
     /**
@@ -105,6 +198,15 @@ class CreditCardContext extends RawMinkContext
             Mage::helper('pagarme_modal')->__('Proceed to Checkout')
         );
 
+    }
+
+    /**
+     * @When I access the my account page
+     */
+    public function iAccessTheMyAccountPage()
+    {
+        $this->session
+            ->visit($this->magentoUrl);
     }
 
     /**
@@ -151,6 +253,7 @@ class CreditCardContext extends RawMinkContext
 
         $this->waitForElement('#checkout-step-payment', 5000);
 
+        $this->waitForElement('#p_method_pagarme_creditcard', 3000);
         $page->find('css', '#p_method_pagarme_creditcard')->click();
     }
 
@@ -177,6 +280,17 @@ class CreditCardContext extends RawMinkContext
             'css',
             '#payment-buttons-container button'
         )->click();
+    }
+
+    /**
+     * @When I choose :maxInstallments
+     */
+    public function iChooseMaxInstallments($maxInstallments)
+    {
+        $page = $this->session->getPage();
+
+        $page->find('css', '#pagarme_creditcard_creditcard_installments')
+            ->selectOption($maxInstallments);
     }
 
     /**
@@ -236,14 +350,55 @@ class CreditCardContext extends RawMinkContext
         );
     }
 
-    private function  assertThereIsEveryOptionValueUntil($maxValue, $selectCssSelector)
-    {
+    private function assertThereIsEveryOptionValueUntil(
+        $maxValue, 
+        $selectCssSelector
+    ) {
         for ($value = 1; $value <= $maxValue; $value++) {
             $this->assertSession()->elementExists(
                 'css',
                 $selectCssSelector . " > option[value={$value}]"
             );
         }
+    }
+
+    /**
+     * @Then the interest value should consider the values :installments and :interestRate
+     */
+    public function theInterestValueShouldConsiderTheValuesAnd(
+        $installments,
+        $interestRate
+    ) {
+        $this->waitForElement('.pagarme_creditcard_rate_amount', 3000);
+        $page = $this->session->getPage();
+        $interestAmount = $page
+            ->find('css', '.pagarme_creditcard_rate_amount .price')
+            ->getText();
+
+        \PHPUnit_Framework_TestCase::assertEquals(
+            $interestAmount,
+            'R$11.22'
+        );
+
+    }
+
+    /**
+     * @Then the purchase must be created with value based on both :installments and :interestRate
+     */
+    public function thePurchaseMustBeCreatedWithValueBasedOnBothAnd(
+        $installments,
+        $interestRate
+    ) {
+        $this->session->wait(2000);
+        $page = $this->session->getPage();
+        $checkoutTotalAmount = $page->find(
+            'css',
+            'tr.last:not(.first) .price'
+        )->getText();
+        \PHPUnit_Framework_TestCase::assertEquals(
+            $checkoutTotalAmount,
+            'R$27.44'
+        );
     }
 
     /**

@@ -33,3 +33,39 @@ Feature: Credit Card
         | 12                |
         | 3                 |
         | 1                 |
+
+    @only
+    Scenario: Make a purchase by credit card with interest and installments
+        Given a registered user
+        When I set max installments to 10
+        And I set interest rate to 10
+        And I access the store page
+        And add any product to basket
+        And I go to checkout page
+        And login with registered user
+        And confirm billing and shipping address information
+        And choose pay with transparent checkout using credit card
+        And I choose 10
+        And I confirm my payment information
+        Then the purchase must be created with value based on both 10 and 10
+
+    @order_view_interest
+    Scenario Outline: Check the interest in the order details page
+        Given a registered user
+        And a created order with installment value of "<installments>" and interest of "<interest_rate>"
+        When I check the order interest amount in its detail page
+        Then the interest value should consider the values "<installments>" and "<interest_rate>"
+        Examples:
+        | installments | interest_rate |
+        | 10           | 10            |
+
+    @admin_order_view_interest
+    Scenario Outline: Check the interest in the order details page
+        Given a registered user
+        And a created order with installment value of "<installments>" and interest of "<interest_rate>"
+        When I login to the admin
+        And I check the order interest amount in its admin detail page
+        Then the admin interest value should consider the values "<installments>" and "<interest_rate>"
+        Examples:
+        | installments | interest_rate |
+        | 10           | 10            |

@@ -1,7 +1,12 @@
 <?php
 
+use PagarMe_Core_Model_CurrentOrder as CurrentOrder;
+
 class PagarMe_Core_Model_Transaction extends Mage_Core_Model_Abstract
 {
+
+    use PagarMe_Core_Trait_ConfigurationsAccessor;
+
     /**
      * @return type
      */
@@ -33,8 +38,17 @@ class PagarMe_Core_Model_Transaction extends Mage_Core_Model_Abstract
         if ($transaction instanceof PagarMe\Sdk\Transaction\CreditCardTransaction) {
             $installments = $transaction->getInstallments();
 
-            $rateAmount = ($totalAmount - $order->getBaseGrandTotal());
-            $interestRate = $infoInstance->getAdditionalInformation('interest_rate');
+            $quote = Mage::getModel('sales/quote')
+                ->load($order->getQuoteId());
+            $pagarMeSdk = Mage::getModel('pagarme_core/sdk_adapter');
+            $currentOrder = new CurrentOrder($quote, $pagarMeSdk);
+            $interestRate = $this->getInterestRateStoreConfig();
+            $rateAmount = $currentOrder
+                ->rateAmountInBRL(
+                    $installments,
+                    $this->getFreeInstallmentStoreConfig(),
+                    $interestRate
+                );
         }
 
         $this 
@@ -46,8 +60,5 @@ class PagarMe_Core_Model_Transaction extends Mage_Core_Model_Abstract
             ->setFutureValue($totalAmount)
             ->setRateAmount($rateAmount)
             ->save();
-
-        $order->setGrandTotal($totalAmount);
-        $order->save();
     }
 }

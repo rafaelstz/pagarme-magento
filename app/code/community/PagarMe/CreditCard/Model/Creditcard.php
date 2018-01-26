@@ -6,6 +6,11 @@ use PagarMe_CreditCard_Model_Exception_TransactionsInstallmentsDivergent as Tran
 
 class PagarMe_CreditCard_Model_Creditcard extends Mage_Payment_Model_Method_Abstract
 {
+
+    use PagarMe_Core_Trait_ConfigurationsAccessor;
+
+    const PAGARME_CREDITCARD = 'pagarme_creditcard';
+
     protected $_code = 'pagarme_creditcard';
     protected $_formBlockType = 'pagarme_creditcard/form_creditcard';
     protected $_infoBlockType = 'pagarme_creditcard/info_creditcard';
@@ -64,9 +69,7 @@ class PagarMe_CreditCard_Model_Creditcard extends Mage_Payment_Model_Method_Abst
             return false;
         }
 
-        return (bool) Mage::getStoreConfig(
-            'payment/pagarme_configurations/transparent_active'
-        );
+        return $this->isTransparentCheckoutActiveStoreConfig();
     }
 
    /**
@@ -76,9 +79,7 @@ class PagarMe_CreditCard_Model_Creditcard extends Mage_Payment_Model_Method_Abst
     */
     public function getTitle()
     {
-        return Mage::getStoreConfig(
-            'payment/pagarme_configurations/creditcard_title'
-        );
+        return $this->getCreditcardTitleStoreConfig();
     }
 
     /**
@@ -100,18 +101,6 @@ class PagarMe_CreditCard_Model_Creditcard extends Mage_Payment_Model_Method_Abst
     }
 
     /**
-     * Returns max installments defined on admin
-     *
-     * @return int
-     */
-    public function getMaxInstallments()
-    {
-        return (int) Mage::getStoreConfig(
-            'payment/pagarme_configurations/creditcard_max_installments'
-        );
-    }
-
-    /**
      * Check if installments is between 1 and the defined max installments
      *
      * @param int $installments
@@ -124,20 +113,25 @@ class PagarMe_CreditCard_Model_Creditcard extends Mage_Payment_Model_Method_Abst
     {
         if ($installments <= 0) {
             throw new InvalidInstallmentsException(
-                'Installments number should be greater than zero'
+                Mage::helper('pagarme_creditcard')
+                    ->__(
+                        'Installments number should be greater than zero. Was: '
+                    ) . $installments
             );
         }
 
         if ($installments > self::PAGARME_MAX_INSTALLMENTS) {
             throw new InvalidInstallmentsException(
-                'Installments number should be lower than Pagar.Me limit'
+                Mage::helper('pagarme_creditcard')
+                ->__('Installments number should be lower than Pagar.Me limit')
             );
         }
 
-        if ($installments > $this->getMaxInstallments()) {
+        if ($installments > $this->getMaxInstallmentStoreConfig()) {
             $message = sprintf(
-                'Installments number should not be greater than %d',
-                $this->getMaxInstallments()
+                Mage::helper('pagarme_creditcard')
+                    ->__('Installments number should not be greater than %d'),
+                $this->getMaxInstallmentStoreConfig()
             );
             throw new InvalidInstallmentsException(
                 $message
@@ -232,39 +226,13 @@ class PagarMe_CreditCard_Model_Creditcard extends Mage_Payment_Model_Method_Abst
             $card = $this->generateCard($cardHash);
 
             if ($billingAddress == false) {
-                Mage::logException(
-                    sprintf(
-                        'Undefined Billing address: %s',
-                        $billingAddress
-                    )
-                );
+                $this->throwBillingException();
                 return false;
             }
 
             $telephone = $billingAddress->getTelephone();
 
-            $customer = $this->pagarmeCoreHelper->prepareCustomerData([
-                'pagarme_modal_customer_document_number' => $quote->getCustomerTaxvat(),
-                'pagarme_modal_customer_document_type' => $this->pagarmeCoreHelper->getDocumentType($quote),
-                'pagarme_modal_customer_name' => $this->pagarmeCoreHelper->getCustomerNameFromQuote($quote),
-                'pagarme_modal_customer_email' => $quote->getCustomerEmail(),
-                'pagarme_modal_customer_born_at' => $quote->getDob(),
-                'pagarme_modal_customer_address_street_1' => $billingAddress->getStreet(1),
-                'pagarme_modal_customer_address_street_2' => $billingAddress->getStreet(2),
-                'pagarme_modal_customer_address_street_3' => $billingAddress->getStreet(3),
-                'pagarme_modal_customer_address_street_4' => $billingAddress->getStreet(4),
-                'pagarme_modal_customer_address_city' => $billingAddress->getCity(),
-                'pagarme_modal_customer_address_state' => $billingAddress->getRegion(),
-                'pagarme_modal_customer_address_zipcode' => $billingAddress->getPostcode(),
-                'pagarme_modal_customer_address_country' => $billingAddress->getCountry(),
-                'pagarme_modal_customer_phone_ddd' => $this->pagarmeCoreHelper->getDddFromPhoneNumber($telephone),
-                'pagarme_modal_customer_phone_number' => $this->pagarmeCoreHelper->getPhoneWithoutDdd($telephone),
-                'pagarme_modal_customer_gender' => $quote->getGender()
-            ]);
-
-            $customerPagarMe = $this->pagarmeCoreHelper
-                ->buildCustomer($customer);
-
+            $customerPagarMe = $this->buildCustomerInformation($quote, $billingAddress, $telephone);
             $this->transaction = $this->sdk
                 ->transaction()
                 ->creditCardTransaction(
@@ -286,11 +254,16 @@ class PagarMe_CreditCard_Model_Creditcard extends Mage_Payment_Model_Method_Abst
                 );
         } catch (GenerateCardException $exception) {
             Mage::logException($exception->getMessage());
+            Mage::throwException($exception);
         } catch (InvalidInstallmentsException $exception) {
             Mage::logException($exception);
+            Mage::throwException($exception);
         } catch (TransactionsInstallmentsDivergent $exception) {
             Mage::logException($exception);
+            Mage::throwException($exception);
         } catch (\Exception $exception) {
+            Mage::logException('Exception autorizing:');
+            Mage::logException($exception);
             $json = json_decode($exception->getMessage());
             $json = json_decode($json);
 
@@ -310,5 +283,43 @@ class PagarMe_CreditCard_Model_Creditcard extends Mage_Payment_Model_Method_Abst
         $this->transaction = $this->sdk
             ->transaction()
             ->capture($this->transaction);
+    }
+
+    private function throwBillingException()
+    {
+        Mage::logException(
+            sprintf(
+                Mage::helper('pagarme_core')
+                    ->__('Undefined Billing address: %s'),
+                $billingAddress
+            )
+        );
+    }
+
+    private function buildCustomerInformation($quote, $billingAddress, $telephone)
+    {
+        $customer = $this->pagarmeCoreHelper->prepareCustomerData([
+            'pagarme_modal_customer_document_number' => $quote->getCustomerTaxvat(),
+            'pagarme_modal_customer_document_type' => $this->pagarmeCoreHelper->getDocumentType($quote),
+            'pagarme_modal_customer_name' => $this->pagarmeCoreHelper->getCustomerNameFromQuote($quote),
+            'pagarme_modal_customer_email' => $quote->getCustomerEmail(),
+            'pagarme_modal_customer_born_at' => $quote->getDob(),
+            'pagarme_modal_customer_address_street_1' => $billingAddress->getStreet(1),
+            'pagarme_modal_customer_address_street_2' => $billingAddress->getStreet(2),
+            'pagarme_modal_customer_address_street_3' => $billingAddress->getStreet(3),
+            'pagarme_modal_customer_address_street_4' => $billingAddress->getStreet(4),
+            'pagarme_modal_customer_address_city' => $billingAddress->getCity(),
+            'pagarme_modal_customer_address_state' => $billingAddress->getRegion(),
+            'pagarme_modal_customer_address_zipcode' => $billingAddress->getPostcode(),
+            'pagarme_modal_customer_address_country' => $billingAddress->getCountry(),
+            'pagarme_modal_customer_phone_ddd' => $this->pagarmeCoreHelper->getDddFromPhoneNumber($telephone),
+            'pagarme_modal_customer_phone_number' => $this->pagarmeCoreHelper->getPhoneWithoutDdd($telephone),
+            'pagarme_modal_customer_gender' => $quote->getGender()
+        ]);
+
+        $customerPagarMe = $this->pagarmeCoreHelper
+            ->buildCustomer($customer);
+
+        return $customerPagarMe;
     }
 }

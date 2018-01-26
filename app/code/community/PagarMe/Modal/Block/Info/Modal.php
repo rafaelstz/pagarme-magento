@@ -69,16 +69,19 @@ class PagarMe_Modal_Block_Info_Modal extends Mage_Payment_Block_Info
     /**
      * @return Varien_Object
      */
-    protected function _prepareSpecificInformation()
+    protected function _prepareSpecificInformation($transport = null)
     {
         $specificInformation = [];
 
         $transaction = $this->getTransaction();
 
         if (!is_null($transaction)) {
-            $installments = $transaction->getInstallments();
-            if (is_null($installments)) {
-                $installments = 1;
+            $installments = 1;
+            if ($transaction instanceof \PagarMe\Sdk\Transaction\CreditCardTransaction) {
+                $installments = $transaction->getInstallments();
+                if (is_null($installments)) {
+                    $installments = 1;
+                }
             }
 
             $additionalInformation = $this->getInfo()

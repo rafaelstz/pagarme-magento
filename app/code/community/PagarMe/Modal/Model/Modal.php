@@ -41,6 +41,7 @@ class PagarMe_Modal_Model_Modal extends Mage_Payment_Model_Method_Abstract
 
     const PAGARME_MODAL_CREDIT_CARD = 'pagarme_modal_credit_card';
     const PAGARME_MODAL_BOLETO = 'pagarme_modal_boleto';
+    const PAGARME_MODAL = 'pagarme_modal';
 
     /**
      * @param type $quote
@@ -151,8 +152,8 @@ class PagarMe_Modal_Model_Modal extends Mage_Payment_Model_Method_Abstract
 
         Mage::getModel('pagarme_core/transaction')
             ->saveTransactionInformation(
-                $order, 
-                $transaction, 
+                $order,
+                $transaction,
                 $infoInstance
             );
 
