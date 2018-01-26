@@ -1,4 +1,6 @@
 <?php
+    $helper = Mage::helper('pagarme_modal');
+
     $transaction = \Mage::getModel('pagarme_core/service_order')
         ->getTransactionByOrderId($this->getOrder()->getId());
 
@@ -13,8 +15,7 @@
     <tr id="pagarme_modal_order_info_rate_amount">
         <td class="label">
             <?=
-                Mage::helper('pagarme_modal')
-                    ->__('Installments related Interest')
+                $helper->__('Installments related Interest')
             ?>
         </td>
         <td>

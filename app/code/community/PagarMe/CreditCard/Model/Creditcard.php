@@ -34,6 +34,7 @@ class PagarMe_CreditCard_Model_Creditcard extends Mage_Payment_Model_Method_Abst
      */
     protected $transaction;
     protected $pagarmeCoreHelper;
+    protected $pagarmeCreditCardHelper;
 
     const PAGARME_MAX_INSTALLMENTS = 12;
 
@@ -48,6 +49,7 @@ class PagarMe_CreditCard_Model_Creditcard extends Mage_Payment_Model_Method_Abst
         }
 
         $this->pagarmeCoreHelper = Mage::helper('pagarme_core');
+        $this->pagarmeCreditCardHelper = Mage::helper('pagarme_creditcard');
         parent::__construct($attributes);
     }
 
@@ -130,7 +132,7 @@ class PagarMe_CreditCard_Model_Creditcard extends Mage_Payment_Model_Method_Abst
         }
 
         if ($installments > self::PAGARME_MAX_INSTALLMENTS) {
-            $message = $this->pagarmeCoreHelper->__(
+            $message = $this->pagarmeCreditCardHelper->__(
                 'Installments number should be lower than Pagar.Me limit'
             );
             throw new InvalidInstallmentsException($message);

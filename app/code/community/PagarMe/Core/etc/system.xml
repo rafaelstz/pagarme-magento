@@ -150,7 +150,7 @@
                         </transparent_payment_methods>
 
                         <heading_visual_config translate="label">
-                            <label>Checkout Pagar.me</label>
+                            <label>Checkout Modal</label>
                             <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
                             <sort_order>40</sort_order>
                             <show_in_default>1</show_in_default>

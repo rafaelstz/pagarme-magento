@@ -17,7 +17,8 @@ class PagarMe_Core_Model_Quote_Address_Total_CreditCardInterestAmount
      */
     public function getLabel()
     {
-        return Mage::helper('pagarme_modal')->__('Interest fee');
+        return Mage::helper('pagarme_core')
+            ->__('Installments related Interest');
     }
 
     /**
@@ -34,21 +35,21 @@ class PagarMe_Core_Model_Quote_Address_Total_CreditCardInterestAmount
         if (!$this->shouldCollect()) {
             return $this;
         }
-                
+
         $quote = $address->getQuote();
         $subtotalAmount = $this->getSubtotal($quote);
-        
+
         $transaction = $this->getTransaction();
         $totalAmount = Mage::helper('pagarme_core')
             ->parseAmountToFloat($transaction->getAmount());
-        
+
         $this->interestAmount = $totalAmount - $subtotalAmount;
-        
+
         if ($this->interestAmount > 0) {
             $this->_addAmount($this->interestAmount);
             $this->_addBaseAmount($this->interestAmount);
         }
-        
+
         return $this;
     }
 

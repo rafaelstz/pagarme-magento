@@ -14,6 +14,8 @@ class PagarMe_Modal_Block_Form_Modal extends Mage_Payment_Block_Form
      */
     private $customer;
 
+    private $helper;
+
     /**
      * @codeCoverageIgnore
      *
@@ -23,6 +25,7 @@ class PagarMe_Modal_Block_Form_Modal extends Mage_Payment_Block_Form
     {
         parent::_construct();
         $this->setTemplate(self::TEMPLATE);
+        $this->helper = Mage::helper('pagarme_modal');
     }
 
     /**
@@ -47,7 +50,7 @@ class PagarMe_Modal_Block_Form_Modal extends Mage_Payment_Block_Form
         $configuredMessage = Mage::getStoreConfig(
           'payment/pagarme_configurations/modal_button_text'
         );
-        $defaultMessage = __('Confirm your information');
+        $defaultMessage = $this->helper->__('Confirm your information');
 
         return empty($configuredMessage) ? $defaultMessage : $configuredMessage;
     }
