@@ -24,13 +24,13 @@
 
         <tr>
             <th colspan="<?php echo $_colspan; ?>">
-                <strong>Additional Information</strong>
+                <strong><?php echo $helper->__('Additional Information');?></strong>
             </th>
             <td></td>
         </tr>
         <tr>
             <td class="a-right" colspan="<?php echo $_colspan; ?>">
-                <strong>Payment Method</strong>
+                <strong><?php echo $helper->__('Payment Method');?></strong>
             </td>
             <td>
                 <?= $helper->getPaymentMethodName() ?>
@@ -38,7 +38,7 @@
         </tr>
         <tr>
             <td class="a-right" colspan="<?php echo $_colspan; ?>">
-                <strong>Installments</strong>
+                <strong><?php echo $helper->__('Installments');?></strong>
             </td>
             <td id="pagarme-modal-installments">
                 <?= $transaction->getInstallments() ?: 1  ?>

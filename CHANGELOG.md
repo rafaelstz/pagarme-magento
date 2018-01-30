@@ -7,13 +7,12 @@ e esse projeto adere ao [Semantic Versioning](http://semver.org/spec/v2
 .0.0
 .html).
 
-## [Unreleased]
-
-- Compras parceladas com juros no checkout transparente
+## [3.4.2] - 2018-01-30
+## [FIXED]
+- Revisão das mensagens para tradução entre inglês e português (e vice versa)
 
 ## [3.4.1] - 2018-01-29
 ## [FIXED]
-
 - bug #250 Transações somente capturadas
 
 ## [3.4.0] - 2018-01-29
@@ -22,7 +21,7 @@ e esse projeto adere ao [Semantic Versioning](http://semver.org/spec/v2
 
 ## [3.3.0] - 2018-01-19
 ## [ADDED]
-- Configuração de juros em compras parceladas. Inclui 'parcelas sem juros',
+- Transações de cartão com juros em compras parceladas. Inclui 'parcelas sem juros',
 'juros' (am) e número máximo de parcelas.
 
 ## [3.2.0] - 2018-01-02

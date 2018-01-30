@@ -2,7 +2,7 @@
 <config>
     <modules>
         <PagarMe_Modal>
-            <version>3.4.0</version>
+            <version>3.4.2</version>
         </PagarMe_Modal>
     </modules>
     <global>
@@ -46,6 +46,15 @@
                 </pagarme_modal>
             </updates>
         </layout>
+        <translate>
+            <modules>
+                <pagarme_core>
+                    <files>
+                        <default>PagarMe_Modal.csv</default>
+                    </files>
+                </pagarme_core>
+            </modules>
+        </translate>
     </adminhtml>
     <frontend>
         <layout>
@@ -55,6 +64,15 @@
                 </pagarme_modal>
             </updates>
         </layout>
+        <translate>
+            <modules>
+                <pagarme_core>
+                    <files>
+                        <default>PagarMe_Modal.csv</default>
+                    </files>
+                </pagarme_core>
+            </modules>
+        </translate>
     </frontend>
     <default>
         <payment>

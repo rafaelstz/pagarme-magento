@@ -1,11 +1,15 @@
 <?php
 
+use \PagarMe\Sdk\Transaction\CreditCardTransaction as PagarMeCcTransaction;
+
 class PagarMe_Modal_Block_Info_Modal extends Mage_Payment_Block_Info
 {
     /**
      * @var \PagarMe\Sdk\Transaction\AbstractTransaction
      */
     protected $transaction;
+
+    private $helper;
 
     const PAYMENT_METHOD_CREDIT_CARD_LABEL = 'Cartão de Crédito';
     const PAYMENT_METHOD_BOLETO_LABEL = 'Boleto';
@@ -19,6 +23,7 @@ class PagarMe_Modal_Block_Info_Modal extends Mage_Payment_Block_Info
                 'pagarme/modal/order_info/payment_details.phtml'
             );
         }
+        $this->helper = Mage::helper('pagarme_modal');
     }
 
     /**
@@ -61,7 +66,7 @@ class PagarMe_Modal_Block_Info_Modal extends Mage_Payment_Block_Info
     public function getPaymentMethod()
     {
         return $this->transaction->getPaymentMethod()
-            == \PagarMe\Sdk\Transaction\CreditCardTransaction::PAYMENT_METHOD
+            == PagarMeCcTransaction::PAYMENT_METHOD
             ? self::PAYMENT_METHOD_CREDIT_CARD_LABEL
             : self::PAYMENT_METHOD_BOLETO_LABEL;
     }
@@ -77,7 +82,7 @@ class PagarMe_Modal_Block_Info_Modal extends Mage_Payment_Block_Info
 
         if (!is_null($transaction)) {
             $installments = 1;
-            if ($transaction instanceof \PagarMe\Sdk\Transaction\CreditCardTransaction) {
+            if ($transaction instanceof PagarMeCcTransaction) {
                 $installments = $transaction->getInstallments();
                 if (is_null($installments)) {
                     $installments = 1;
@@ -88,14 +93,16 @@ class PagarMe_Modal_Block_Info_Modal extends Mage_Payment_Block_Info
                 ->getAdditionalInformation();
 
             $specificInformation = array_merge($specificInformation, [
-                'Payment Method' => $this->getPaymentMethod(),
-                'Installments' => $installments
+                $this->helper->__('Payment Method') =>
+                    $this->helper->__($this->getPaymentMethod()),
+                $this->helper->__('Installments') => $installments
             ]);
 
             if ($this->getPaymentMethod() === self::PAYMENT_METHOD_CREDIT_CARD_LABEL
                 && $additionalInformation['interest_rate'] > 0
             ) {
-                $specificInformation['Interest Fee %'] = $additionalInformation['interest_rate'];
+                $specificInformation[$this->helper->__('Interest Rate (%am)')] =
+                    $additionalInformation['interest_rate'];
             }
         }
 

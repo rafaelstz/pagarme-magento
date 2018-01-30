@@ -12,7 +12,7 @@ class PagarMe_CreditCard_Block_Sales_RateAmount extends Mage_Core_Block_Abstract
                 'code' => 'pagarme_creditcard_rate_amount',
                 'field' => 'pagarme_creditcard_rate_amount',
                 'value' => $this->getRateAmount(),
-                'label' => __('Installments related interest'),
+                'label' => __('Installments related Interest'),
             ]);
 
             $this->getParentBlock()->addTotalBefore($total, 'grand_total');

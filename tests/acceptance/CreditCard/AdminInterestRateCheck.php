@@ -46,7 +46,7 @@ trait AdminInterestRateCheck
         $interestRate
     ) {
         $interestAmountLabel = \Mage::helper('pagarme_creditcard')
-            ->__("Installments related interest");
+            ->__("Installments related Interest");
         $interestAmountElementXpath = "//td[contains(text(), '${interestAmountLabel}')]/following-sibling::td/span[@class='price']";
         $page = $this->session->getPage();
         $this->waitForElementXpath(

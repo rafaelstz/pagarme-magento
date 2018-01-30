@@ -137,4 +137,12 @@ class PagarMe_Core_Helper_Data extends Mage_Core_Helper_Abstract
             $quote->getCustomerLastname()
         ], ' ');
     }
+
+    public function formatFloatToCurrentLocale($number)
+    {
+        $currencyHelper = Mage::getModel('directory/currency');
+        return $currencyHelper->formatTxt($number, [
+            'display' => Zend_Currency::NO_SYMBOL
+        ]);
+    }
 }

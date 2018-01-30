@@ -304,7 +304,7 @@ class CreditCardContext extends RawMinkContext
             ->getPage()
             ->pressButton(
                 Mage::helper('pagarme_creditcard')
-                ->__('Place Order')
+                    ->__('Place Order')
             );
     }
 
@@ -326,9 +326,8 @@ class CreditCardContext extends RawMinkContext
 
         \PHPUnit_Framework_TestCase::assertEquals(
             strtolower(
-                Mage::helper(
-                    'pagarme_creditcard'
-                )->__('Your order has been received.')
+                Mage::helper('pagarme_creditcard')
+                    ->__('Your order has been received.')
             ),
             strtolower($successMessage)
         );

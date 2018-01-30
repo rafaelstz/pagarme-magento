@@ -317,9 +317,8 @@ class CheckoutContext extends RawMinkContext
 
         \PHPUnit_Framework_TestCase::assertEquals(
             strtolower(
-                Mage::helper(
-                    'pagarme_modal'
-                )->__('Your order has been received.')
+                Mage::helper('pagarme_modal')
+                    ->__('Your order has been received.')
             ),
             strtolower($successMessage)
         );
@@ -356,7 +355,7 @@ class CheckoutContext extends RawMinkContext
     public function aLinkToBoletoMustBeProvided()
     {
         $page = $this->session->getPage();
-
+        $helper = Mage::helper('pagarme_modal');
         \PHPUnit_Framework_TestCase::assertContains(
             Mage::helper('pagarme_boleto')->__('Click the followed link to print your boleto'),
             $page->find(

@@ -351,9 +351,8 @@ class OneStepCheckoutContext extends RawMinkContext
 
         \PHPUnit_Framework_TestCase::assertEquals(
             strtolower(
-                Mage::helper(
-                    'pagarme_modal'
-                )->__('Your order has been received.')
+                Mage::helper('pagarme_modal')
+                    ->__('Your order has been received.')
             ),
             strtolower($successMessage)
         );
@@ -580,7 +579,9 @@ class OneStepCheckoutContext extends RawMinkContext
 
     private function setupPagarMe()
     {
-        \Mage::getModel('core/config')->saveConfig('payment/pagarme_configurations/checkout_active', 1);
+        \Mage::getModel('core/config')->saveConfig(
+            'payment/pagarme_configurations/checkout_active', 1
+        );
         \Mage::getModel('core/config')->saveConfig(
             'payment/pagarme_configurations/general_api_key',
             PAGARME_API_KEY
