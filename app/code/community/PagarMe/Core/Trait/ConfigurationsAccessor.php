@@ -26,7 +26,7 @@ trait PagarMe_Core_Trait_ConfigurationsAccessor
 
     public function getEncryptionKeyStoreConfig()
     {
-        return Mage::getStoreConfig(
+        return $this->getConfigurationWithName(
             'pagarme_configurations/general_encryption_key'
         );
     }
