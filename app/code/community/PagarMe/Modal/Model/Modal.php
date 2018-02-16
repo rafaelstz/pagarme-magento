@@ -134,7 +134,8 @@ class PagarMe_Modal_Model_Modal extends Mage_Payment_Model_Method_Abstract
                 ['order_id' => $order->getIncrementId()]
             );
         } catch (\Exception $exception) {
-            \Mage::logException($exception->getMessage());
+            \Mage::log($exception->getMessage());
+            \Mage::logException($exception);
 
             throw $exception;
         }

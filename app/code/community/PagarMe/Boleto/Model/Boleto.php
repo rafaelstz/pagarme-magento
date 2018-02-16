@@ -110,7 +110,7 @@ class PagarMe_Boleto_Model_Boleto extends Mage_Payment_Model_Method_Abstract
             $quote = Mage::getSingleton('checkout/session')->getQuote();
             $billingAddress = $quote->getBillingAddress();
             if ($billingAddress == false) {
-                Mage::logException(
+                Mage::log(
                     sprintf(
                         'Undefined Billing address: %s',
                         $billingAddress
