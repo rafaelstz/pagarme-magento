@@ -7,6 +7,10 @@ e esse projeto adere ao [Semantic Versioning](http://semver.org/spec/v2
 .0.0
 .html).
 
+## [3.5.0] - 2018-02-19
+## [ADDED]
+- Compatibilidade com OSC6 no método cartão transparente
+
 ## [3.4.2] - 2018-01-30
 ## [FIXED]
 - Revisão das mensagens para tradução entre inglês e português (e vice versa)

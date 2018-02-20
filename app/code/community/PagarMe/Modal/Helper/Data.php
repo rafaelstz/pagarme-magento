@@ -31,7 +31,8 @@ class PagarMe_Modal_Helper_Data extends Mage_Core_Helper_Abstract
                 return $this->transaction;
             }
         } catch (Exception $exception) {
-            Mage::logException($exception->getMessage());
+            Mage::log($exception->getMessage());
+            Mage::logException($exception);
         }
     }
 

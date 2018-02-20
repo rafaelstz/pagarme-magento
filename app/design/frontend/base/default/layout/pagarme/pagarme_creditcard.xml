@@ -9,6 +9,11 @@
             </block>
         </reference>
     </default>
+    <onestepcheckout_index_index>
+        <reference name="head">
+            <action method="addJs" ifconfig="payment/pagarme_configurations/transparent_active"><script>pagarme/creditcard-osc.js</script></action>
+        </reference>
+    </onestepcheckout_index_index>
     <checkout_onepage_index>
         <reference name="head">
             <action method="addJs" ifconfig="payment/pagarme_configurations/transparent_active"><script>pagarme/creditcard.js</script></action>

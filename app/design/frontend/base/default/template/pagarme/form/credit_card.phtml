@@ -97,6 +97,10 @@
         </div>
     </li>
 </ul>
+<script>
+    var pagarmeCreditcard = {}
+    pagarmeCreditcard.encryptionKey = "<?= $this->getEncryptionKeyStoreConfig(); ?>"
+</script>
 <div>
     <?= $this->getMethod()->getConfigData('message');?>
 </div>

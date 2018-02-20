@@ -279,18 +279,22 @@ class PagarMe_CreditCard_Model_Creditcard extends Mage_Payment_Model_Method_Abst
             $this->capture($payment, $amount);
 
         } catch (GenerateCardException $exception) {
-            Mage::logException($exception->getMessage());
+            Mage::log($exception->getMessage());
+            Mage::logException($exception);
             Mage::throwException($exception);
         } catch (InvalidInstallmentsException $exception) {
+            Mage::log($exception->getMessage());
             Mage::logException($exception);
             Mage::throwException($exception);
         } catch (TransactionsInstallmentsDivergent $exception) {
+            Mage::log($exception->getMessage());
             Mage::logException($exception);
             Mage::throwException($exception);
         } catch (CantCaptureTransaction $exception) {
+            Mage::log($exception->getMessage());
             Mage::logException($exception);
         } catch (\Exception $exception) {
-            Mage::logException('Exception autorizing:');
+            Mage::log('Exception autorizing:');
             Mage::logException($exception);
             $json = json_decode($exception->getMessage());
             $json = json_decode($json);
@@ -322,7 +326,7 @@ class PagarMe_CreditCard_Model_Creditcard extends Mage_Payment_Model_Method_Abst
 
     private function throwBillingException($billingAddress)
     {
-        Mage::logException(
+        Mage::log(
             sprintf(
                 Mage::helper('pagarme_core')
                     ->__('Undefined Billing address: %s'),
