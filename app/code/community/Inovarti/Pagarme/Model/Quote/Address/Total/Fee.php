@@ -23,7 +23,7 @@ class Inovarti_Pagarme_Model_Quote_Address_Total_Fee extends Mage_Sales_Model_Qu
         $quote = $address->getQuote();
         $paymentMethod = $quote->getPayment()->getMethod();
 
-        $baseSubtotalWithDiscount = $quote->getBaseSubtotalWithDiscount();
+        $baseSubtotalWithDiscount = $address->getSubtotalWithDiscount();
         $shippingAmount = $quote->getShippingAddress()->getShippingAmount();
         $total = $baseSubtotalWithDiscount + $shippingAmount;
 
