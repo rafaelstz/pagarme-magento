@@ -94,7 +94,7 @@ abstract class Inovarti_Pagarme_Model_Abstract extends Inovarti_Pagarme_Model_Sp
           $paymentMethod = $payment->getPagarmeCheckoutPaymentMethod();   
         }
         
-        $transactionAmount = $this->getAmountWithInterestRate($orderAmount, $installments);
+        $transactionAmount = $this->getAmountWithInterestRate($orderAmount, $installments, $checkout);
 
         $requestParams = new Varien_Object();
 
@@ -268,9 +268,13 @@ abstract class Inovarti_Pagarme_Model_Abstract extends Inovarti_Pagarme_Model_Sp
                . Mage::helper('pagarme')->__($result);
     }
 
-    protected function getAmountWithInterestRate($amount, $chosenInstallment) {
+    protected function getAmountWithInterestRate($amount, $chosenInstallment, $checkout) {
         $api = Mage::getModel('pagarme/api');
         $installmentConfig = Mage::getModel('pagarme/cc')->getPagarMeCcInstallmentConfig();
+        if($checkout) {
+            $installmentConfig = Mage::getModel('pagarme/checkout')->getPagarMeCheckoutInstallmentConfig();
+        }
+
         $installments = $this->getAvailableInstallments($amount, $installmentConfig, $api);
 
         return $installments[$chosenInstallment]->getAmount();
