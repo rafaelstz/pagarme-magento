@@ -21,13 +21,43 @@ class Inovarti_Pagarme_Transaction_CreditcardController
 
             $currentStatus = $request->getPost('current_status');
 
+            if ($currentStatus === Inovarti_Pagarme_Model_Api::TRANSACTION_STATUS_AUTHORIZED) {
+
+                if($order->hasInvoices()) {
+                    Mage::log('Order already invoiced: '.$orderId, null, 'pagarme.log');
+
+                    Mage::throwException(Mage::helper('core')->__('Order already invoiced.'));
+                }
+
+                $invoice = Mage::getModel('sales/service_order', $order)->prepareInvoice();
+
+                if (!$invoice->getTotalQty()) {
+                    Mage::log('Cannot create an invoice without products. Order '.$orderId, null, 'pagarme.log');
+
+                    Mage::throwException(Mage::helper('core')->__('Cannot create an invoice without products.'));
+                }
+
+                $invoice->register();
+
+                Mage::getModel('core/resource_transaction')
+                    ->addObject($invoice)
+                    ->addObject($invoice->getOrder())
+                    ->save();
+
+                Mage::log('Invoice created for order '.$orderId, null, 'pagarme.log');
+
+                return $this->getResponse()->setBody('ok');
+            }
+
             if ($currentStatus === Inovarti_Pagarme_Model_Api::TRANSACTION_STATUS_PAID) {
 
                 if (!$order->getId()) {
-                    throw new Exception('Invalid order number.');
+                    Mage::log('Order '.$orderId.' not found', null, 'pagarme.log');
+                    throw new Exception('Order not found.');
                 }
 
                 if (!$order->hasInvoices()) {
+                    Mage::log('Order '.$orderId.' does not have any invoices.', null, 'pagarme.log');
                     throw new Exception('Order does not have any invoices.');
                 }
 
@@ -44,6 +74,7 @@ class Inovarti_Pagarme_Transaction_CreditcardController
 
                 $invoice->sendEmail();
                 $order->addStatusHistoryComment($this->__('Approved by Pagarme via Creditcard postback.'))->save();
+                Mage::log('Order '.$orderId.' successfully updated to '.$currentStatus, null, 'pagarme.log');
 
                 return $this->getResponse()->setBody('ok');
             }
