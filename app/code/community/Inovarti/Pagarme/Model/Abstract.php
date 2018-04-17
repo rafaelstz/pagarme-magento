@@ -112,8 +112,8 @@ abstract class Inovarti_Pagarme_Model_Abstract extends Inovarti_Pagarme_Model_Sp
 
         if ($this->getConfigData('async')) {
             $requestParams->setAsync(true);
+            $requestParams->setPostbackUrl(Mage::getUrl('pagarme/transaction_creditcard/postback'));
         }
-        $requestParams->setPostbackUrl(Mage::getUrl('pagarme/transaction_creditcard/postback'));
 
         $incrementId = $payment->getOrder()->getQuote()->getIncrementId();
         $requestParams->setMetadata(array('order_id' => $incrementId));
@@ -153,7 +153,9 @@ abstract class Inovarti_Pagarme_Model_Abstract extends Inovarti_Pagarme_Model_Sp
           );
         }
 
-        $payment->setIsTransactionPending(true);
+        if ($this->getConfigData('async')) {
+            $payment->setIsTransactionPending(true);
+        }
 
         $payment->setCcOwner($transaction->getCardHolderName())
             ->setCcLast4($transaction->getCardLastDigits())
