@@ -12,14 +12,23 @@ class PagarMe_CreditCard_Model_Observers_OrderObserver
     {
         $order = $observer->getEvent()->getOrder();
         $pagarmeTransaction = $order->getPagarmeTransaction();
+
         if (!$pagarmeTransaction instanceof AbstractTransaction) {
             return;
         }
+
         if (
-            $order->getCapture() === 'authorize_capture' &&
+            $this->isAuthorizeAndCapture($order) &&
             $pagarmeTransaction->isPaid()
         ) {
             $this->createInvoice($order);
+        }
+
+        if (
+            $this->isAuthorizeAndCapture($order) &&
+            $pagarmeTransaction->isRefused()
+        ) {
+            $this->setStateForRefusedTransaction($order);
         }
     }
 
@@ -50,5 +59,47 @@ class PagarMe_CreditCard_Model_Observers_OrderObserver
             ->addObject($order)
             ->addObject($invoice)
             ->save();
+    }
+
+    /**
+     * Returns true if the payment_action is authorize and capture
+     *
+     * @param \Mage_Sales_Model_Order $order
+     * @return bool
+     */
+    private function isAuthorizeAndCapture($order)
+    {
+        return $order->getCapture() === 'authorize_capture';
+    }
+
+    /**
+     * Update and insert a feedback about why an order is refused by gateway
+     *
+     * @param \Mage_Sales_Model_Order $order
+     * @return void
+     */
+    private function setStateForRefusedTransaction($order)
+    {
+        $transactionRefusedReason = $order
+            ->getPagarmeTransaction()
+            ->getRefuseReason();
+
+        $refusedMessage = 'Refused by gateway.';
+
+        if ($transactionRefusedReason === 'acquirer') {
+            $refusedMessage .= ' Transaction unauthorized';
+        }
+
+        if ($transactionRefusedReason === 'antifraud') {
+            $refusedMessage .= ' Suspected fraud';
+        }
+
+        $createCommentHistory = true;
+
+        $order->setState(
+            Mage_Sales_Model_Order::STATE_CANCELED,
+            $createCommentHistory,
+            Mage::helper('pagarme_core')->__($refusedMessage)
+        );
     }
 }
