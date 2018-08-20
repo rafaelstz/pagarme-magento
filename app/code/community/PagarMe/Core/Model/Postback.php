@@ -1,5 +1,7 @@
 <?php
 
+use PagarMe_Core_Model_PostbackHandler_Factory as PostbackHandlerFactory;
+
 class PagarMe_Core_Model_Postback extends Mage_Core_Model_Abstract
 {
     const POSTBACK_STATUS_PAID = 'paid';
@@ -93,40 +95,30 @@ class PagarMe_Core_Model_Postback extends Mage_Core_Model_Abstract
     /**
      * @param int $transactionId
      * @param string $currentStatus
+     * @param string $oldStatus
      *
-     * @return type
-     * @throws Exception
+     * @return Mage_Sales_Model_Order
+     * @throws Exception|PagarMe_Core_Model_PostbackHandler_Exception
      */
-    public function processPostback($transactionId, $currentStatus)
+    public function processPostback($transactionId, $currentStatus, $oldStatus)
     {
         $order = $this->getOrderService()
             ->getOrderByTransactionId($transactionId);
 
-        if (!$this->canProceedWithPostback($order, $currentStatus)) {
-            throw new Exception(
-                Mage::helper('pagarme_core')->__('Can\'t proccess postback '.$currentStatus.'.')
-            );
-        }
+        $postbackHandler = PostbackHandlerFactory::createFromDesiredStatus(
+            $currentStatus,
+            $oldStatus,
+            $order,
+            $transactionId
+        );
 
-        switch ($currentStatus) {
-            case self::POSTBACK_STATUS_PAID:
-                $this->setOrderAsPaid($order);
-                break;
-            case self::POSTBACK_STATUS_REFUNDED:
-                $this->setOrderAsRefunded($order);
-                break;
-            case self::POSTBACK_STATUS_AUTHORIZED:
-                $this->setOrderAsAuthorized($order);
-                break;
-            case self::POSTBACK_STATUS_REFUSED:
-                $this->setOrderAsRefused($order);
-                break;
-        }
-
-        return $order;
+        return $postbackHandler->process();
     }
 
     /**
+     * @deprecated
+     * @see PagarMe_Core_Model_PostbackHandler_Paid::process()
+     *
      * @param Mage_Sales_Model_Order $order
      * @return void
      */
@@ -147,6 +139,9 @@ class PagarMe_Core_Model_Postback extends Mage_Core_Model_Abstract
     }
 
     /**
+     * @deprecated
+     * @see PagarMe_Core_Model_PostbackHandler_Authorized::process()
+     *
      * @param Mage_Sales_Model_Order $order
      * @return void
      */
@@ -166,6 +161,9 @@ class PagarMe_Core_Model_Postback extends Mage_Core_Model_Abstract
     }
 
     /**
+     * @deprecated
+     * @see \PagarMe_Core_Model_PostbackHandler_Refunded::process()
+     *
      * @param Mage_Sales_Model_Order $order
      * @return void
      */
@@ -195,6 +193,9 @@ class PagarMe_Core_Model_Postback extends Mage_Core_Model_Abstract
     }
 
     /**
+     * @deprecated
+     * @see \PagarMe_Core_Model_PostbackHandler_Refused::process()
+     *
      * @param Mage_Sales_Model_Order $order
      * @return void
      */
