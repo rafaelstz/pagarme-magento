@@ -9,6 +9,7 @@ use PagarMe_CreditCard_Model_Exception_InvalidInstallments as InvalidInstallment
 use PagarMe_CreditCard_Model_Exception_GenerateCard as GenerateCardException;
 use PagarMe_CreditCard_Model_Exception_TransactionsInstallmentsDivergent as TransactionsInstallmentsDivergent;
 use PagarMe_CreditCard_Model_Exception_CantCaptureTransaction as CantCaptureTransaction;
+use PagarMe_Core_Model_System_Config_Source_PaymentAction as PaymentActionConfig;
 
 class PagarMe_CreditCard_Model_Creditcard extends PagarMe_Core_Model_AbstractPaymentMethod
 {
@@ -26,6 +27,7 @@ class PagarMe_CreditCard_Model_Creditcard extends PagarMe_Core_Model_AbstractPay
     protected $_canRefund = true;
     protected $_canUseForMultishipping = true;
     protected $_canManageRecurringProfiles = true;
+    protected $_isInitializeNeeded = true;
 
     /**
      * @var \PagarMe\Sdk\PagarMe
@@ -54,6 +56,8 @@ class PagarMe_CreditCard_Model_Creditcard extends PagarMe_Core_Model_AbstractPay
 
     const AUTHORIZED = 'authorized';
     const PAID = 'paid';
+    const REFUSE_REASON_ACQUIRER = 'acquirer';
+    const REFUSE_REASON_ANTIFRAUD = 'antifraud';
 
     public function __construct($attributes, PagarMeSdk $sdk = null)
     {
@@ -67,6 +71,52 @@ class PagarMe_CreditCard_Model_Creditcard extends PagarMe_Core_Model_AbstractPay
         $this->transactionModel = Mage::getModel('pagarme_core/transaction');
 
         parent::__construct($attributes);
+    }
+
+    /**
+     * Method that will be executed instead of magento's default workflow
+     * (authorize or capture)
+     *
+     * @param string $paymentAction
+     * @param Varien_Object $stateObject
+     *
+     * @return Mage_Payment_Model_Method_Abstract
+     */
+    public function initialize($paymentAction, $stateObject)
+    {
+        $paymentActionConfig = $this->getPaymentActionConfig();
+        $asyncTransactionConfig = (bool) $this->getAsyncTransactionConfig();
+        $payment = $this->getInfoInstance();
+
+        $stateObject->setState(Mage_Sales_Model_Order::STATE_PROCESSING);
+        $stateObject->setStatus(Mage_Sales_Model_Order::STATE_PROCESSING);
+        $stateObject->setIsNotified(true);
+
+        if (
+            $paymentActionConfig === PaymentActionConfig::AUTH_ONLY ||
+            $asyncTransactionConfig === true
+        ) {
+            $stateObject->setState(
+                Mage_Sales_Model_Order::STATE_PENDING_PAYMENT
+            );
+            $stateObject->setStatus(
+                Mage_Sales_Model_Order::STATE_PENDING_PAYMENT
+            );
+        }
+
+        if (
+            $paymentAction ===
+            Mage_Payment_Model_Method_Abstract::ACTION_AUTHORIZE
+        ) {
+            $this->authorize(
+                $payment,
+                $payment->getOrder()->getBaseTotalDue()
+            );
+            $payment->setAmountAuthorized(
+                $payment->getOrder()->getTotalDue()
+            );
+        }
+        return $this;
     }
 
     /**
@@ -269,12 +319,6 @@ class PagarMe_CreditCard_Model_Creditcard extends PagarMe_Core_Model_AbstractPay
         $invoice->register()->pay();
         $invoice->setTransactionId($this->transaction->getId());
 
-        $order->setState(
-            Mage_Sales_Model_Order::STATE_PROCESSING,
-            true,
-            "pago"
-        );
-
         Mage::getModel('core/resource_transaction')
             ->addObject($order)
             ->addObject($invoice)
@@ -358,17 +402,73 @@ class PagarMe_CreditCard_Model_Creditcard extends PagarMe_Core_Model_AbstractPay
         return $this;
     }
 
-    public function handlePaymentStatus(
-        CreditCardTransaction $transaction,
-        Varien_Object $payment
-    ) {
-        switch ($transaction->getStatus()) {
-            case AbstractTransaction::PROCESSING:
-            case AbstractTransaction::REFUSED:
-            case 'pending_review':
-                $payment->setIsTransactionPending(true);
-                break;
+    private function buildRefusedReasonMessage()
+    {
+        $refusedMessage = 'Unauthorized';
+
+        $refusedReason = $this->transaction->getRefuseReason();
+
+        if ($refusedReason === self::REFUSE_REASON_ANTIFRAUD) {
+            $refusedMessage = 'Suspected fraud';
         }
+
+        return $refusedMessage;
+    }
+
+    /**
+     * @param \PagarMe\Sdk\Transaction\CreditCardTransaction $transaction
+     * @param \Mage_Sales_Model_Order_Payment
+     *
+     * @return \Varien_Object
+     */
+    private function handlePaymentStatus(
+        Mage_Sales_Model_Order_Payment $payment
+    ) {
+        $order = $payment->getOrder();
+        $notifyCustomer = false;
+        $amount = Mage::helper('core')->currency(
+            $order->getGrandTotal(),
+            true,
+            false
+        );
+
+        if ($this->transaction->isProcessing()) {
+            $message = 'Processing on Gateway. Waiting response';
+            $desiredStatus = Mage_Sales_Model_Order::STATE_PENDING_PAYMENT;
+        }
+
+        if ($this->transaction->isPendingReview()) {
+            $message = 'Waiting transaction review on Pagar.me\'s Dashboard';
+            $desiredStatus = Mage_Sales_Model_Order::STATE_PAYMENT_REVIEW;
+        }
+
+        if ($this->transaction->isRefused()) {
+            $message = sprintf(
+                'Transaction refused by Gateway. %s',
+                $this->buildRefusedReasonMessage()
+            );
+            $desiredStatus = Mage_Sales_Model_Order::STATE_CANCELED;
+        }
+
+        if ($this->transaction->isAuthorized()) {
+            $message = 'Authorized amount of %s';
+            $desiredStatus = Mage_Sales_Model_Order::STATE_PENDING_PAYMENT;
+            $notifyCustomer = true;
+        }
+
+        if ($this->transaction->isPaid()) {
+            $message = 'Captured amount of %s';
+            $desiredStatus = Mage_Sales_Model_Order::STATE_PROCESSING;
+            $notifyCustomer = true;
+        }
+
+        $order->setState(
+            $desiredStatus,
+            $desiredStatus,
+            $this->pagarmeCoreHelper->__($message, $amount),
+            $notifyCustomer
+        );
+
         return $payment;
     }
 
@@ -397,7 +497,7 @@ class PagarMe_CreditCard_Model_Creditcard extends PagarMe_Core_Model_AbstractPay
         $asyncTransaction = $this->getAsyncTransactionConfig();
         $paymentActionConfig = $this->getPaymentActionConfig();
         $captureTransaction = true;
-        if ($paymentActionConfig === 'authorize_only') {
+        if ($paymentActionConfig === PaymentActionConfig::AUTH_ONLY) {
             $captureTransaction = false;
         }
         $infoInstance = $this->getInfoInstance();
@@ -448,7 +548,11 @@ class PagarMe_CreditCard_Model_Creditcard extends PagarMe_Core_Model_AbstractPay
             $order->setPagarmeTransaction($this->transaction);
             $this->checkInstallments($installments);
 
-            $payment = $this->handlePaymentStatus($this->transaction, $payment);
+            if ($this->transaction->isPaid()) {
+                $this->createInvoice($order);
+            }
+
+            $payment = $this->handlePaymentStatus($payment);
             $payment = $this->insertCardInfosOnPayment(
                 $payment,
                 $this->transaction->getCard()

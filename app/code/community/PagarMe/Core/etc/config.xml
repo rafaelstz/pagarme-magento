@@ -2,7 +2,7 @@
 <config>
     <modules>
         <PagarMe_Core>
-            <version>3.13.1</version>
+            <version>3.14.0</version>
         </PagarMe_Core>
     </modules>
     <global>
@@ -101,7 +101,7 @@
             <pagarme_creditcard>
                 <active>1</active>
                 <model>pagarme_creditcard/creditcard</model>
-                <order_status>processing</order_status>
+                <order_status>pending_payment</order_status>
                 <allowspecific>0</allowspecific>
                 <payment_methods>credit_card</payment_methods>
                 <payment_action>authorize</payment_action>
