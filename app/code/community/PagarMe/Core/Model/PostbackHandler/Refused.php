@@ -1,12 +1,15 @@
 <?php
 
+use \PagarMe\Sdk\Transaction\AbstractTransaction;
+
 class PagarMe_Core_Model_PostbackHandler_Refused extends PagarMe_Core_Model_PostbackHandler_Base
 {
     const MAGENTO_DESIRED_STATE = Mage_Sales_Model_Order::STATE_CANCELED;
 
     /**
      * Returns the desired state on magento
-     *
+     * @deprecated
+     * @see PagarMe_Core_Model_OrderStatusHandler_Canceled
      * @return string
      */
     protected function getDesiredState()
@@ -15,20 +18,28 @@ class PagarMe_Core_Model_PostbackHandler_Refused extends PagarMe_Core_Model_Post
     }
 
     /**
+     * @return AbstractTransaction
+     */
+    private function retrieveTransaction()
+    {
+        $sdk = Mage::getModel('pagarme_core/sdk_adapter')
+            ->getPagarMeSdk();
+
+        return $sdk->transaction()->get($this->transactionId);
+    }
+
+    /**
      * @return \Mage_Sales_Model_Order
      */
     public function process()
     {
-        $transaction = Mage::getModel('core/resource_transaction');
+        $transaction = $this->retrieveTransaction();
 
-        $this->order->setState(
-            Mage_Sales_Model_Order::STATE_CANCELED,
-            true,
-            Mage::helper('pagarme_core')->
-            __('Refused by gateway.')
+        $canceledHandler = new PagarMe_Core_Model_OrderStatusHandler_Canceled(
+            $this->order,
+            $transaction
         );
-
-        $transaction->addObject($this->order)->save();
+        $canceledHandler->handleStatus();
 
         return $this->order;
     }
