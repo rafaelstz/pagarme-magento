@@ -15,13 +15,37 @@ class PagarMe_Boleto_Block_Info_Boleto extends Mage_Payment_Block_Info
         $this->helper = Mage::helper('pagarme_boleto');
     }
 
+    /**
+     * @return int
+     * @throws Exception
+     */
     public function transactionId()
     {
         return $this->getTransaction()->getId();
     }
 
+    /**
+     * @return string
+     * @throws Exception
+     */
     public function getBoletoUrl()
     {
         return $this->getTransaction()->getBoletoUrl();
+    }
+
+    /**
+     * Returns the template to be showed
+     *
+     * @return string
+     */
+    public function renderView()
+    {
+        try {
+            $this->getTransaction();
+        } catch (\Exception $exception) {
+            $this->setTemplate('pagarme/form/payment_method.phtml');
+        }
+
+        return parent::renderView();
     }
 }
