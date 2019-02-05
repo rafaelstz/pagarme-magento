@@ -20,10 +20,10 @@
 * Descompacte o arquivo baixado e copie as pastas ``` app```, ```js``` e ```skin``` para dentro do diretório principal do Magento
 * Limpe a cache em ```Sistema > Gerenciamento de Cache```
 
-```
-Copiando as pastas app, js, lib e skin
-Assim como o segundo item diz, você precisa copiar algumas pastas para o diretório principal do Magento, que já é composto pelas pastas app, js e skin. Ou seja, o que você precisa é mesclar o conteúdo que acabou de baixar do repositório Pagar.me com o que já existe no Magento.
-```
+
+>Copiando as pastas app, js, lib e skin
+>Assim como o segundo item diz, você precisa copiar algumas pastas para o diretório principal do Magento, que já é composto pelas pastas app, js e skin. Ou seja, o que você precisa é mesclar o conteúdo que acabou de baixar do repositório Pagar.me com o que já existe no Magento.
+
 
 O próximo passo é configurar o módulo Pagar.me para que consiga criar as transações. Para fazer isso, siga o seguinte caminho no seu painel Magento: ```Sistema > Configuração > Vendas > Métodos de Pagamento``` — ou, caso seu Magento esteja em Inglês: ```System > Configuration > Sales > Payment Methods```
 
@@ -44,10 +44,10 @@ Caso você esteja utilizando a opção de Checkout Transparente do Pagar.me para
 ##### Pagar.me - Checkout Pagar.Me:
 Este item define também as configurações do Checkout para cartão de crédito, mas utiliza o modal de pagamento Pagar.me para receber as informações do usuário. Veja mais em Checkout
 
-```
-Campos obrigatórios para criar uma transação:
-Caso você opte pelo Checkout Transparente, é necessário que a sua aplicação garanta o envio dos campos CPF/CNPJ e os campos que compõem os dados dados de endereço (Rua, Número da rua, Bairro e CEP). Lembre-se sempre desses campos, pois a falta de qualquer um deles invalida a criação da transação.
-```
+
+>Campos obrigatórios para criar uma transação:
+>Caso você opte pelo Checkout Transparente, é necessário que a sua aplicação garanta o envio dos campos CPF/CNPJ e os campos que compõem os dados dados de endereço (Rua, Número da rua, Bairro e CEP). Lembre-se sempre desses campos, pois a falta de qualquer um deles invalida a criação da transação.
+
 
 ## Configuração
 
@@ -62,24 +62,24 @@ Aqui você define qual é o ambiente que você está usando, entre Teste ou Prod
 ##### Chave de API:
 Neste campo você coloca a sua API Key, que é uma chave utilizada para autenticar o seu negócio junto à API do Pagar.me.
 
-```
-Chave de teste e de produção
-Preste atenção sempre em qual chave você está usando, se é a de teste ou a de produção.
 
-Exemplo de API Key de teste: ak_test_grXijQ4GicOa2BLGZrDRTR5qNQxJW0
-Exemplo de API Key de produção: ak_live_qlSlEXJgsqaCjKohh5AZfnqv7OLP5Q .
-```
+>Chave de teste e de produção
+>Preste atenção sempre em qual chave você está usando, se é a de teste ou a de produção.
+>
+>Exemplo de API Key de teste: ak_test_grXijQ4GicOa2BLGZrDRTR5qNQxJW0
+>Exemplo de API Key de produção: ak_live_qlSlEXJgsqaCjKohh5AZfnqv7OLP5Q .
+
 
 ##### Chave de criptografia:
 Neste campo você deve colocar a sua Encryption Key, que é uma chave essencial para realizar transações com Cartão de crédito usando a API Pagar.me.
 
-```
-Chave de teste e de produção
-Da mesma forma que o campo anterior, preste atenção sempre em qual chave você está usando, se é a de teste ou a de produção.
 
-Exemplo de Encryption Key de teste: ek_test_aHGru3d5a7qweiftqXg1bQvbN1c7K0
-Exemplo de Encryption Key de produção: ek_live_Wa8CDUuLlFvSQzjxf4YFZIBQvb2l1p
-```
+>Chave de teste e de produção
+>Da mesma forma que o campo anterior, preste atenção sempre em qual chave você está usando, se é a de teste ou a de produção.
+>
+>Exemplo de Encryption Key de teste: ek_test_aHGru3d5a7qweiftqXg1bQvbN1c7K0
+>Exemplo de Encryption Key de produção: ek_live_Wa8CDUuLlFvSQzjxf4YFZIBQvb2l1p
+
 
 ##### Custom Cpf Field e Custom Cnpj Field:
 O módulo Pagar.me usa por padrão o campo ```taxvat``` para receber o número de documento de uma pessoa em sua loja. No entanto, caso você tenha implementado algo específico, é preciso informar ao módulo qual é o nome que foi dado para esse campo. Lembrando que essa informação é obrigatória para a criação de uma transação no sistema do Pagar.me.
@@ -151,10 +151,10 @@ Os valores possíveis desse campo são:
 
 * **Autorizar e capturar**: quando essa opção é selecionada, o módulo Magento informa à API Pagar.me para fazer o fluxo de informação completo. Isto é, é feita a reserva e a confirmação junto ao banco emissor, para que seja feita a cobrança da quantia passada no cartão utilizado.
 
-```
-Diferença entre autorização e captura
-Para entender melhor qual é a diferença entre autorização e captura, veja: Autorização e captura. Dessa forma, você pode escolher qual modelo serve melhor à sua realidade.
-```
+
+>Diferença entre autorização e captura
+>Para entender melhor qual é a diferença entre autorização e captura, veja: Autorização e captura. Dessa forma, você pode escolher qual modelo serve melhor à sua realidade.
+
 
 ##### Async:
 Esta propriedade, quando selecionada como **true**, faz com que o processo de criação de transação seja assíncrono. Ou seja, a sua loja recebe como primeira resposta da API um status intermediário chamado ```processing``` e, uma vez que a transação já tenha um status definido (```paid```, ```refused``` etc), o seu servidor recebe uma notificação da API para que o pedido seja atualizado de acordo com o status final. A opção **Async** é particulamente importante se a sua loja recebe um número muito alto de requisições e precisa responder rapidamente aos clientes.
@@ -215,13 +215,13 @@ Este é um campo ```True/False```, que deve ser configurado da seguinte forma:
 * Quando o valor desse campo for ```true```, automaticamente o pedido será enviado para o fluxo de informação junto à API Pagar.me.
 * Quando esse valor for ```false```, o cliente terá que manualmente clicar em **Finalizar pedido**.
 
-### Configuração de campos de customer
+### Configuração de campos de Cliente
 
-Após realizar a configuração do módulo do Pagar.me, é necessário realizar algumas modificações em relação as propriedades do seu **customer** antes de começar a transacionar. Para isso, é necessário seguir o seguinte caminho: ```Sistema > Configuração``` (ou, caso o seu Magento esteja em Inglês, ```System > Configuration```).
+Após realizar a configuração do módulo do Pagar.me, é necessário realizar algumas modificações em relação as propriedades do seu **cliente** antes de começar a transacionar. Para isso, é necessário seguir o seguinte caminho: ```Sistema > Configuração``` (ou, caso o seu Magento esteja em Inglês, ```System > Configuration```).
 
 ![Passo 11](https://i.imgur.com/XZ0Q82M.png)
 
-Na página de configuração é necessário localizar no menu lateral esquerdo a aba "Customer" e clicar em ```configuração de clientes``` (ou, se seu Magento estiver em inglês, ```customer configuration```) e uma nova página será exibida, como a que é mostrada abaixo:
+Na página de configuração é necessário localizar no menu lateral esquerdo a aba "Cliente" e clicar em ```configuração de clientes``` (ou, se seu Magento estiver em inglês, ```customer configuration```) e uma nova página será exibida, como a que é mostrada abaixo:
 
 ![Passo 12](https://i.imgur.com/ZLk21EU.png)
 
