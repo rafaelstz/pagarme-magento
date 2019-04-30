@@ -14,6 +14,7 @@ Feature: Credit Card
         And login with registered user
         And confirm billing and shipping address information
         And choose pay with transparent checkout using credit card
+        And I choose 1
         And I confirm my payment information
         And place order
         Then the purchase must be paid with success
@@ -35,6 +36,7 @@ Feature: Credit Card
         And login with registered user
         And confirm billing and shipping address information
         And choose pay with transparent checkout using credit card
+        And I choose 1
         And I give a invalid payment information
         And place order
         Then I must stay in the checkout page
@@ -49,6 +51,7 @@ Feature: Credit Card
         And confirm billing and shipping address information
         And choose pay with transparent checkout using credit card
         And I give a invalid payment information
+        And I choose 1
         And place order
         Then the purchase must be paid with success
         And I get the created order id from success page
@@ -64,6 +67,7 @@ Feature: Credit Card
         And login with registered user
         And confirm billing and shipping address information
         And choose pay with transparent checkout using credit card
+        And I choose 1
         And I confirm my payment information
         And I should see only installment options up to "<desired_max_installment>"
         And place order

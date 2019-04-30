@@ -543,11 +543,17 @@ class CreditCardContext extends RawMinkContext
      */
     public function iShouldSeeOnlyInstallmentOptionsUpTo($maxInstallments)
     {
-        $this->assertSession()->elementsCount(
-            'css',
-            '#pagarme_creditcard_creditcard_installments > option',
-            intval($maxInstallments)
+        $page = $this->session->getPage();
+
+        $lastInstallment = $page
+            ->find('css', '#pagarme_creditcard_creditcard_installments :last-child')
+            ->getAttribute('value');
+
+        \PHPUnit_Framework_TestCase::assertEquals(
+            $lastInstallment,
+            $maxInstallments
         );
+
         $this->assertThereIsEveryOptionValueUntil(
             $maxInstallments,
             '#pagarme_creditcard_creditcard_installments'
@@ -558,7 +564,7 @@ class CreditCardContext extends RawMinkContext
         $maxValue,
         $selectCssSelector
     ) {
-        for ($value = 1; $value <= $maxValue; $value++) {
+        for ($value = 0; $value <= $maxValue; $value++) {
             $this->assertSession()->elementExists(
                 'css',
                 $selectCssSelector . " > option[value={$value}]"

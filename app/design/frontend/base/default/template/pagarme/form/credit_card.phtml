@@ -81,20 +81,35 @@
                         title="<?= $helper->__('Installments') ?>"
                         class="input-text required-entry"
                     >
+                    <option value="0">
+                      <?= Mage::helper('pagarme_core')->__('Please, select the number of installments'); ?>
+                    </option>
                     <?php foreach ($this->getInstallments() as $installmentNumber => $installmentInfo) : ?>
                         <option value="<?= $installmentNumber ?>">
                             <?php
                                 $moduleHelper = Mage::helper('pagarme_core');
-                                $floatPrice = $moduleHelper
+                                $floatInstallmentAmount = $moduleHelper
                                     ->parseAmountToCurrency(
                                         $installmentInfo['installment_amount']
                                     );
-                                echo sprintf(
-                                    '%sx - (%s x R$%s)',
-                                    $installmentNumber,
-                                    $installmentNumber,
-                                    $moduleHelper->formatFloatToCurrentLocale($floatPrice)
+                                $floatInstallmentTotalAmount = $moduleHelper
+                                    ->parseAmountToCurrency(
+                                        $installmentInfo['total_amount']
                                 );
+                                if ((int)$installmentNumber <= $this->getFreeInstallmentsConfig()) {
+                                  echo sprintf(
+                                    '%sx R$ %s (sem juros)',
+                                    $installmentNumber,
+                                    number_format($floatInstallmentAmount, 2, ",", ".")
+                                  );
+                                } else {
+                                  echo sprintf(
+                                    '%sx R$ %s (total R$ %s)',
+                                    $installmentNumber,
+                                    number_format($floatInstallmentAmount, 2, ",", "."),
+                                    number_format($floatInstallmentTotalAmount, 2, ",", ".")
+                                  );
+                                }
                             ?>
                         </option>
                     <?php endforeach; ?>
