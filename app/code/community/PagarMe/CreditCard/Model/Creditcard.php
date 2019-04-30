@@ -278,7 +278,7 @@ class PagarMe_CreditCard_Model_Creditcard extends PagarMe_Core_Model_AbstractPay
     {
         if ($installments <= 0) {
             $message = $this->pagarmeCoreHelper->__(
-                'Installments number should be greater than zero. Was: '
+                'Please, select the number of installments'
             );
             throw new InvalidInstallmentsException($message . $installments);
         }
@@ -660,7 +660,7 @@ class PagarMe_CreditCard_Model_Creditcard extends PagarMe_Core_Model_AbstractPay
         } catch (InvalidInstallmentsException $exception) {
             Mage::log($exception->getMessage());
             Mage::logException($exception);
-            Mage::throwException($exception);
+            Mage::throwException($exception->getMessage());
         } catch (TransactionsInstallmentsDivergent $exception) {
             Mage::log($exception->getMessage());
             Mage::logException($exception);
