@@ -211,4 +211,9 @@ class PagarMeCreditCardModelCreditcardTest extends PHPUnit_Framework_TestCase
         $creditCardModel->capture();
         $this->assertTrue($creditCardModel->transactionIsPaid());
     }
+
+    public function mustBeAvailableAsCaptureMethod()
+    {
+        
+    }
 }

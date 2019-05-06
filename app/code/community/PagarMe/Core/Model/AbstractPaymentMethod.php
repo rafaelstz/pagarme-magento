@@ -38,12 +38,27 @@ abstract class PagarMe_Core_Model_AbstractPaymentMethod extends Mage_Payment_Mod
     }
 
     /**
+     * @return string
+     */
+    public function getCode()
+    {
+        return $this->_code;
+    }
+
+    /**
      * @return boolean
      */
     public function isAvailable()
     {
-        var_dump($this->_code, $this->getActiveTransparentPaymentMethod(), $this->isTransparentCheckoutActiveStoreConfig());
+        echo '----------';
+        var_dump(
+            $this->getCode(),
+            $this->getActiveTransparentPaymentMethod(),
+            $this->isTransparentCheckoutActiveStoreConfig()
+        );
+        echo '----------';
+
         return $this->isTransparentCheckoutActiveStoreConfig()
-            && strpos($this->getActiveTransparentPaymentMethod(), $this->_code);
+            && strpos($this->getActiveTransparentPaymentMethod(), $this->getCode());
     }
 }

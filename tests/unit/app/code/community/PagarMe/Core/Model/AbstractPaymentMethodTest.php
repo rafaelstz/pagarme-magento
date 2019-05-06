@@ -4,13 +4,35 @@ class PagarMe_Core_Model_AbstractPaymentMethodTest extends \PHPUnit_Framework_Te
 {
     private $paymentMethod;
 
-    public function setup()
+    /**
+     * @param boolean $status
+     */
+    private function setupTransparentCheckout($status)
+    {
+        $value = $status === true ? 1 : 0;
+
+        Mage::getModel('core/config')
+            ->saveConfig('payment/pagarme_configurations/transparent_active', $value);
+
+        Mage::getModel('core/config')->cleanCache();
+    }
+
+    private function setPaymentMethodActive($paymentMethod)
+    {
+        Mage::getModel('core/config')
+            ->saveConfig(
+                'payment/pagarme_configurations/transparent_payment_methods',
+                $paymentMethod
+            );
+
+        Mage::getModel('core/config')->cleanCache();
+    }
+
+    public function setUp()
     {
         $this->paymentMethod = $this
             ->getMockBuilder('PagarMe_Core_Model_AbstractPaymentMethod')
             ->setMethods([
-                'isTransparentCheckoutActiveStoreConfig',
-                'getActiveTransparentPaymentMethod',
                 'getPostbackCode'
             ])
             ->getMock();
@@ -19,25 +41,8 @@ class PagarMe_Core_Model_AbstractPaymentMethodTest extends \PHPUnit_Framework_Te
             ->expects($this->any())
             ->method('getPostbackCode')
             ->willReturn('');
-    }
 
-    /**
-     * @param boolean $status
-     */
-    private function setupTransparentCheckout($status)
-    {
-        $this->paymentMethod
-            ->expects($this->any())
-            ->method('isTransparentCheckoutActiveStoreConfig')
-            ->willReturn($status);
-    }
-
-    private function setPaymentMethodActive($paymentMethod)
-    {
-        $this->paymentMethod
-            ->expects($this->any())
-            ->method('getActiveTransparentPaymentMethod')
-            ->willReturn($paymentMethod);
+        $this->setupTransparentCheckout(true);
     }
 
     /**
@@ -75,5 +80,10 @@ class PagarMe_Core_Model_AbstractPaymentMethodTest extends \PHPUnit_Framework_Te
 
         $this->paymentMethod->_code = 'pagarme_boleto';
         $this->assertFalse($this->paymentMethod->isAvailable());
+    }
+
+    public function tearDown()
+    {
+        $this->setupTransparentCheckout(false);
     }
 }

@@ -43,7 +43,7 @@ trait PagarMe_Core_Trait_ConfigurationsAccessor
     /**
      * @return bool
      */
-    private function isTransparentCheckoutActiveStoreConfig()
+    public function isTransparentCheckoutActiveStoreConfig()
     {
         return (bool) $this->getConfigurationWithName(
             'pagarme_configurations/transparent_active'
@@ -58,7 +58,7 @@ trait PagarMe_Core_Trait_ConfigurationsAccessor
      *
      * @return string
      */
-    private function getActiveTransparentPaymentMethod()
+    public function getActiveTransparentPaymentMethod()
     {
         return $this->getConfigurationWithName(
             'pagarme_configurations/transparent_payment_methods'
