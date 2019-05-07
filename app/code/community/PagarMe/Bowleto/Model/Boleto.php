@@ -218,7 +218,7 @@ class PagarMe_Bowleto_Model_Boleto extends PagarMe_Core_Model_AbstractPaymentMet
                 );
                 return false;
             }
-            $telephone = preg_replace("/[^0-9]/", "", $billingAddress->getTelephone());
+            $telephone = $billingAddress->getTelephone();
             $customer = $this->pagarmeCoreHelper->prepareCustomerData([
                 'pagarme_modal_customer_document_number' => $quote->getCustomerTaxvat(),
                 'pagarme_modal_customer_document_type' => $this->pagarmeCoreHelper->getDocumentType($quote),

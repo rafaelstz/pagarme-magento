@@ -176,7 +176,7 @@ class PagarMe_Modal_Block_Form_Modal extends Mage_Payment_Block_Form
             return false;
         }
 
-        $telephone = preg_replace("/[^0-9]/", "", $billingAddress->getTelephone());
+        $telephone = $billingAddress->getTelephone();
 
         $helper = Mage::helper('pagarme_core');
 
