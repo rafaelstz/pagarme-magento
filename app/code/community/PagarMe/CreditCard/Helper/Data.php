@@ -11,7 +11,7 @@ class PagarMe_CreditCard_Helper_Data extends Mage_Core_Helper_Abstract
             return false;
         }
 
-        $telephone = $billingAddress->getTelephone();
+        $telephone = preg_replace("/[^0-9]/", "", $billingAddress->getTelephone());
 
         $helper = Mage::helper('pagarme_core');
 

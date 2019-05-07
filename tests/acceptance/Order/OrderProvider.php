@@ -201,10 +201,10 @@ class OrderProvider
                 'phone' => [
                     'ddi' => '55',
                     'ddd' => $helper->getDddFromPhoneNumber(
-                        $customerAddress->getTelephone()
+                        preg_replace("/[^0-9]/", "", $customerAddress->getTelephone())
                     ),
                     'number' => $helper->getPhoneWithoutDdd(
-                        $customerAddress->getTelephone()
+                        preg_replace("/[^0-9]/", "", $customerAddress->getTelephone())
                     )
                 ]
             ],
